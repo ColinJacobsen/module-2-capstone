@@ -8,11 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.LoginDto;
@@ -20,6 +16,8 @@ import com.techelevator.tenmo.model.RegisterUserDto;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.security.jwt.TokenProvider;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.math.BigDecimal;
 
 /**
  * Controller to authenticate users.
@@ -59,6 +57,12 @@ public class AuthenticationController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User registration failed.");
         }
     }
+
+    /*@RequestMapping(value = "/user/{id}/balance", method = RequestMethod.GET)
+    public BigDecimal getUserBalance(@PathVariable int id){
+        return userDao.getUserBalance(id);
+
+    }*/
 
 }
 
