@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -103,17 +104,32 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public void transferBalance(int senderId, int recipientId, BigDecimal amount) {
-        String sql = "BEGIN; " +
+    public void doTransfer(int senderId, int recipientId, BigDecimal amount) {
+
+        String sqlDoTransfer = "BEGIN; " +
                 "UPDATE account SET balance = balance - ? " +
                 "WHERE user_id = ?; " +
                 "UPDATE account SET balance = balance + ? " +
                 "WHERE user_id = ?; " +
                 "COMMIT;";
-        jdbcTemplate.update(sql, senderId, amount, recipientId, amount);
-
+        jdbcTemplate.update(sqlDoTransfer, amount, senderId, amount, recipientId);
     }
 
+    @Override
+    public void createTransfer(Transfer transfer) {
+        // update the balance where account from id = account id and account to id = account id
+        String createTransfer = "INSERT INTO transfer (transfer_status_id, transfer_type_id, account_from, account_to, amount) " +
+                    "values(?,?,?,?,?)";
+        int transferStatus = transfer.getTransferStatus();
+        int transferType = transfer.getTransferType();
+        int senderId = transfer.getAccountFrom();
+        int recipientId = transfer.getAccountTo();
+        BigDecimal amount = transfer.getAmount();
+
+
+        jdbcTemplate.update(createTransfer, transferStatus, transferType, senderId, recipientId, amount);
+
+    }
 
     private User mapRowToUser(SqlRowSet rs) {
         User user = new User();

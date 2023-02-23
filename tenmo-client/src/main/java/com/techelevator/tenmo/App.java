@@ -1,6 +1,7 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.ActiveService;
@@ -106,14 +107,13 @@ public class App {
 	}
 
 	private void sendBucks() {
-		// TODO Auto-generated method stub
-        for(User user : activeService.getAllUsers(currentUser)) {
-            if(user.getId() == currentUser.getUser().getId()){
-                continue;
-            }
-            System.out.println(user.getUsername());
-        }
-	}
+        // TODO Auto-generated method stub
+        consoleService.printUsers(activeService, currentUser);
+        String recipient = consoleService.promptForString("Type the name of the account you would like to send to: ");
+        BigDecimal amount = consoleService.promptForBigDecimal("How much would you like to send?: ");
+        Transfer transfer = new Transfer(2,2,2004, 2005, amount);
+        transfer = activeService.makeTransfer(transfer, currentUser);
+    }
 
 	private void requestBucks() {
 		// TODO Auto-generated method stub

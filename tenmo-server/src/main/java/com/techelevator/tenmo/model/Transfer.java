@@ -7,16 +7,16 @@ public class Transfer {
     private final String[] STATUS_OPTIONS = {"Pending", "Approved", "Rejected"};
     private final String[] TRANSFER_TYPES = {"Request", "Send"};
     private int transferId;
-    private String transferStatus;
-    private String transferType;
+    private int transferStatus;
+    private int transferType;
     private int accountFrom;
     private int accountTo;
     private BigDecimal amount;
 
-    public Transfer(int transferId, int transferStatus, int transferType, int accountFrom, int accountTo, BigDecimal amount) {
-        this.transferId = transferId;
-        this.transferStatus = STATUS_OPTIONS[transferStatus - 1];
-        this.transferType = TRANSFER_TYPES[transferType - 1];
+    public Transfer(int transferStatus, int transferType, int accountFrom, int accountTo, BigDecimal amount) {
+        // this.transferId = transferId;
+        this.transferStatus = transferStatus;
+        this.transferType = transferType;
         this.accountFrom = accountFrom;
         this.accountTo = accountTo;
         this.amount = amount;
@@ -30,19 +30,20 @@ public class Transfer {
         this.transferId = transferId;
     }
 
-    public String getTransferStatus() {
-        return transferStatus;
+    public int getTransferStatus(){
+        return this.transferStatus;
     }
-
-    public void setTransferStatus(String transferStatus) {
-        this.transferStatus = transferStatus;
-    }
-
-    public String getTransferType() {
+    public int getTransferType() {
         return transferType;
     }
 
-    public void setTransferType(String transferType) {
+    public void setTransferStatus(int transferStatus) {
+        this.transferStatus = transferStatus;
+    }
+
+
+
+    public void setTransferType(int transferType) {
         this.transferType = transferType;
     }
 
