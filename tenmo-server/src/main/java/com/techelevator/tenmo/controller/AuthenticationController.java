@@ -18,6 +18,7 @@ import com.techelevator.tenmo.security.jwt.TokenProvider;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Controller to authenticate users.
@@ -58,11 +59,20 @@ public class AuthenticationController {
         }
     }
 
-    /*@RequestMapping(value = "/user/{id}/balance", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/{id}/balance", method = RequestMethod.GET)
     public BigDecimal getUserBalance(@PathVariable int id){
         return userDao.getUserBalance(id);
 
-    }*/
+    }
 
+    @GetMapping(path = "/user")
+    public List<User> getAllUsers(){
+        return userDao.findAll();
+    }
+
+    @PutMapping(path = "/user/{id}/balance")
+    public void transferBalance(@PathVariable int senderId, @PathVariable int recipientId, BigDecimal amount){
+        userDao.transferBalance(senderId, recipientId, amount);
+    }
 }
 

@@ -1,10 +1,13 @@
 package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.ActiveService;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
+
+import java.math.BigDecimal;
 
 public class App {
 
@@ -104,7 +107,12 @@ public class App {
 
 	private void sendBucks() {
 		// TODO Auto-generated method stub
-		
+        for(User user : activeService.getAllUsers(currentUser)) {
+            if(user.getId() == currentUser.getUser().getId()){
+                continue;
+            }
+            System.out.println(user.getUsername());
+        }
 	}
 
 	private void requestBucks() {

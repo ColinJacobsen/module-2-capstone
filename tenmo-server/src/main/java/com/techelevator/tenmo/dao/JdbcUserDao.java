@@ -102,6 +102,19 @@ public class JdbcUserDao implements UserDao {
         return jdbcTemplate.queryForObject(sql, BigDecimal.class, id);
     }
 
+    @Override
+    public void transferBalance(int senderId, int recipientId, BigDecimal amount) {
+        String sql = "BEGIN; " +
+                "UPDATE account SET balance = balance - ? " +
+                "WHERE user_id = ?; " +
+                "UPDATE account SET balance = balance + ? " +
+                "WHERE user_id = ?; " +
+                "COMMIT;";
+        jdbcTemplate.update(sql, senderId, amount, recipientId, amount);
+
+    }
+
+
     private User mapRowToUser(SqlRowSet rs) {
         User user = new User();
         user.setId(rs.getInt("user_id"));

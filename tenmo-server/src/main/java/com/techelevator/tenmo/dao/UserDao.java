@@ -17,5 +17,8 @@ public interface UserDao {
 
     boolean create(String username, String password);
 
-    public BigDecimal getUserBalance(int id);
+    BigDecimal getUserBalance(int id);
+
+    void transferBalance(int senderId, int recipientId, BigDecimal amount);
+
 }
