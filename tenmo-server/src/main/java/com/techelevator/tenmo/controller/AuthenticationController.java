@@ -69,8 +69,19 @@ public class AuthenticationController {
 
 
     @PostMapping(path = "/transfers")
-    public void createTransfer(@RequestBody Transfer transfer){
-        userDao.createTransfer(transfer);
+    @ResponseStatus(HttpStatus.CREATED)
+    public int createTransfer(@RequestBody Transfer transfer){
+        return userDao.createTransfer(transfer);
+    }
+
+    @GetMapping(path = "/account/{id}")
+    public int userToAccount(@PathVariable int id){
+        return userDao.userToAccount(id);
+    }
+
+    @PutMapping(path = "/transfers/{id}")
+    public void doTransfer(@PathVariable int id, @RequestBody Transfer transfer){
+        userDao.doTransfer(transfer, id);
     }
 
 

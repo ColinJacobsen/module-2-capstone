@@ -104,22 +104,24 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public void doTransfer(int senderId, int recipientId, BigDecimal amount) {
+    public void doTransfer(Transfer transfer, int id) {
 
         String sqlDoTransfer = "BEGIN; " +
                 "UPDATE account SET balance = balance - ? " +
-                "WHERE user_id = ?; " +
+                "WHERE account_id = ?; " +
                 "UPDATE account SET balance = balance + ? " +
-                "WHERE user_id = ?; " +
+                "WHERE account_id = ?; " +
                 "COMMIT;";
-        jdbcTemplate.update(sqlDoTransfer, amount, senderId, amount, recipientId);
+
+            jdbcTemplate.update(sqlDoTransfer, transfer.getAmount(), transfer.getAccountFrom(), transfer.getAmount(), transfer.getAccountTo());
+
     }
 
     @Override
-    public void createTransfer(Transfer transfer) {
+    public int createTransfer(Transfer transfer) {
         // update the balance where account from id = account id and account to id = account id
         String createTransfer = "INSERT INTO transfer (transfer_status_id, transfer_type_id, account_from, account_to, amount) " +
-                    "values(?,?,?,?,?)";
+                    "values(?,?,?,?,?) returning transfer_id";
         int transferStatus = transfer.getTransferStatus();
         int transferType = transfer.getTransferType();
         int senderId = transfer.getAccountFrom();
@@ -127,9 +129,17 @@ public class JdbcUserDao implements UserDao {
         BigDecimal amount = transfer.getAmount();
 
 
-        jdbcTemplate.update(createTransfer, transferStatus, transferType, senderId, recipientId, amount);
+        return jdbcTemplate.queryForObject(createTransfer, int.class, transferStatus, transferType, senderId, recipientId, amount);
 
     }
+
+    @Override
+    public int userToAccount(int id) {
+        String sql = "Select account_id from account where user_id = ?";
+
+        return jdbcTemplate.queryForObject(sql, int.class, id);
+    }
+
 
     private User mapRowToUser(SqlRowSet rs) {
         User user = new User();

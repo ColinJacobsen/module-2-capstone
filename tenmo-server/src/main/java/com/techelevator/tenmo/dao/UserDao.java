@@ -20,8 +20,10 @@ public interface UserDao {
 
     BigDecimal getUserBalance(int id);
 
-    void doTransfer(int senderId, int recipientId, BigDecimal amount);
+    void doTransfer(Transfer transfer, int id);
 
-    void createTransfer(Transfer transfer);
+    int createTransfer(Transfer transfer);
 
-    }
+    int userToAccount(int id);
+
+}

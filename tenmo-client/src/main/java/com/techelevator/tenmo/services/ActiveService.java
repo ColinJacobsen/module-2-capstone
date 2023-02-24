@@ -56,17 +56,44 @@ public class ActiveService {
         }
         return users;
     }
+    public User getUserByName(String name){
+        for(User user : getAllUsers(currentUser)) {
+            if(user.getUsername().equals(name)){
+                return user;
+            }
+        }
+        BasicLogger.log("Username not found");
+        return null;
+    }
 
-    public Transfer makeTransfer(Transfer transfer, AuthenticatedUser currentUser) {
-        Transfer transfer1 = null;
+    public int makeTransfer(Transfer transfer, AuthenticatedUser currentUser) {
+
         HttpEntity<Transfer> entity = transferEntity(currentUser.getToken(), transfer);
-
         try {
-            transfer1 = restTemplate.postForObject(BASE_URL + "/transfers", entity, Transfer.class);
+            return restTemplate.exchange(BASE_URL+"/transfers", HttpMethod.POST, entity, int.class).getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
         BasicLogger.log(e.getMessage());
     }
-        return transfer1;
+        return 0;
+    }
+
+    public int userToAccount(User user){
+        int accountId = 0;
+        try{
+            accountId = restTemplate.getForObject(BASE_URL + "/account/"+user.getId(), int.class);
+        }catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return accountId;
+    }
+
+    public BigDecimal doTransfer(Transfer transfer){
+        try{
+            restTemplate.put(BASE_URL+"/transfers/"+transfer.getTransferId(), transferEntity(currentUser.getToken(), transfer));
+        }catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return new BigDecimal(0);
     }
 
 
@@ -80,6 +107,12 @@ public class ActiveService {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         return new HttpEntity<>(transfer, headers);
+    }
+    private HttpEntity<User> userEntity (String token, User user) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(token);
+        return new HttpEntity<>(user, headers);
     }
 
 }

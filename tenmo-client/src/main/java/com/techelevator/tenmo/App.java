@@ -108,11 +108,17 @@ public class App {
 
 	private void sendBucks() {
         // TODO Auto-generated method stub
+        activeService.setCurrentUser(currentUser);
         consoleService.printUsers(activeService, currentUser);
         String recipient = consoleService.promptForString("Type the name of the account you would like to send to: ");
+
         BigDecimal amount = consoleService.promptForBigDecimal("How much would you like to send?: ");
-        Transfer transfer = new Transfer(2,2,2004, 2005, amount);
-        transfer = activeService.makeTransfer(transfer, currentUser);
+        Transfer transfer = new Transfer(2,2,activeService.userToAccount(currentUser.getUser()), activeService.userToAccount(activeService.getUserByName(recipient)), amount);
+
+        transfer.setTransferId(activeService.makeTransfer(transfer, currentUser));
+        //activeService.makeTransfer(transfer, currentUser).getTransferId()
+        System.out.println(activeService.doTransfer(transfer));
+
     }
 
 	private void requestBucks() {
