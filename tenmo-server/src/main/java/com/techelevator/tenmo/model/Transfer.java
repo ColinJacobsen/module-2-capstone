@@ -5,10 +5,11 @@ import java.math.BigDecimal;
 public class Transfer {
 
     private final String[] STATUS_OPTIONS = {"Pending", "Approved", "Rejected"};
-    private final String[] TRANSFER_TYPES = {"Request", "Send"};
+    private final String[] TRANSFER_TYPES = {"Requested", "Sent"};
     private int transferId;
     private int transferStatus;
     private int transferType;
+
     private int accountFrom;
     private int accountTo;
     private BigDecimal amount;

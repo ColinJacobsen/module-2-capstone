@@ -33,9 +33,13 @@ public class TransferController {
     @GetMapping(path = "/history/{id}")
     public List<Transfer> transferHistory(@PathVariable int id){return transferDao.transferHistory(id);}
 
+    @GetMapping(path = "/pending/{accountFrom}")
+    public List<Transfer> pendingRequests(@PathVariable int accountFrom){
+        return transferDao.pendingRequests(accountFrom);
+    }
     @GetMapping(path = "/{id}")
     public Transfer getTransferById(@PathVariable int id){
-        return transferDao.findTransferById(id);
+        return transferDao.getTransferById(id);
     }
 
 }

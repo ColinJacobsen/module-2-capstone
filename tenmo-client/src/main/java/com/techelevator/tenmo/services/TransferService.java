@@ -7,6 +7,7 @@ import io.cucumber.java.ja.但し;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
@@ -66,11 +67,23 @@ public class TransferService {
         Transfer transfer = null;
         try{
             transfer =
-                    restTemplate.getForObject(BASE_URL +"/transfers/" + transferId, Transfer.class );
+                    restTemplate.getForObject(BASE_URL +"/transfers/" + transferId, Transfer.class);
         }catch (RestClientResponseException | ResourceAccessException e) {
         BasicLogger.log(e.getMessage());
     }
         return transfer;
+    }
+
+
+    public Transfer[] pendingRequest(int accountFrom){
+        Transfer[] requests = null;
+        try{
+            requests =
+                    restTemplate.getForObject(BASE_URL+"/transfers/pending/" + accountFrom, Transfer[].class);
+        }catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return requests;
     }
 
     private HttpEntity<Transfer> transferEntity (String token, Transfer transfer) {

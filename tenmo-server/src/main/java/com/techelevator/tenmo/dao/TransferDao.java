@@ -7,8 +7,10 @@ import java.util.List;
 
 public interface TransferDao {
 
-    Transfer findTransferById(int transferId);
+    Transfer getTransferById(int transferId);
     void doTransfer(Transfer transfer, int id);
     int createTransfer(Transfer transfer);
     List<Transfer> transferHistory(int id);
+    List<Transfer> pendingRequests(int accountFrom);
+
 }

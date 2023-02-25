@@ -19,11 +19,11 @@ public class JdbcTransferDao implements TransferDao{
     }
 
     @Override
-    public Transfer findTransferById(int transferId) {
+    public Transfer getTransferById(int transferId) {
         Transfer transfer = null;
         String sql = "SELECT * FROM transfer " +
                 "WHERE transfer_id = ?";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, Transfer.class, transferId);
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transferId);
 
         if (results.next()) {
             transfer = mapRowToTransfer(results);
@@ -49,10 +49,17 @@ public class JdbcTransferDao implements TransferDao{
         // update the balance where account from id = account id and account to id = account id
         String createTransfer = "INSERT INTO transfer (transfer_status_id, transfer_type_id, account_from, account_to, amount) " +
                 "values(?,?,?,?,?) returning transfer_id";
+        int senderId;
+        int recipientId;
         int transferStatus = transfer.getTransferStatus();
         int transferType = transfer.getTransferType();
-        int senderId = transfer.getAccountFrom();
-        int recipientId = transfer.getAccountTo();
+        if(transferType == 2) {
+            senderId = transfer.getAccountFrom();
+            recipientId = transfer.getAccountTo();
+        } else {
+            recipientId = transfer.getAccountFrom();
+            senderId = transfer.getAccountTo();
+        }
         BigDecimal amount = transfer.getAmount();
 
 
@@ -70,6 +77,19 @@ public class JdbcTransferDao implements TransferDao{
             listOfAccountTransfers.add(transfer);
         }
         return listOfAccountTransfers;
+    }
+
+    @Override
+    public List<Transfer> pendingRequests(int accountFrom){
+        List<Transfer> pendingRequests = new ArrayList<>();
+        String sql = "SELECT * " +
+                "FROM transfer " +
+                "WHERE account_from = ? AND transfer_type = 1;";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountFrom);
+        while(results.next()){
+            pendingRequests.add(mapRowToTransfer(results));
+        }
+        return pendingRequests;
     }
 
 

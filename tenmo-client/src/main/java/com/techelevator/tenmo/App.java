@@ -103,22 +103,23 @@ public class App {
 
     private void viewTransferHistory() {
         // TODO Auto-generated method stub
-        consoleService.printHistory(activeService.userToAccount(currentUser.getUser()), activeService, 2);
-
-
-
-
-
+        consoleService.printHistory(activeService.userToAccount(currentUser.getUser()), activeService);
     }
 
     private void viewPendingRequests() {
         // TODO Auto-generated method stub
-
-        int id = consoleService.printHistory(activeService.userToAccount(currentUser.getUser()), activeService, 1);
-        String response = consoleService.promptForString("Would you like to approve this transfer? (Y/N): ").toUpperCase();
-        if(response.equals("Y")){
-            transferService.doTransfer(transferService.getTransferByTransferId(id));
+        int accountFrom = activeService.userToAccount(currentUser.getUser());
+        Transfer[] transfers = transferService.pendingRequest(accountFrom);
+        for (Transfer transfer : transfers) {
+            System.out.println(transfers.toString());
         }
+        consoleService.pendingRequests(transfers);
+
+//        int id = consoleService.printHistory(activeService.userToAccount(currentUser.getUser()), activeService, 1);
+//        String response = consoleService.promptForString("Would you like to approve this transfer? (Y/N): ").toUpperCase();
+//        if(response.equals("Y")){
+//            transferService.doTransfer(transferService.getTransferByTransferId(id));
+//        }
     }
 
     private void sendBucks() {
