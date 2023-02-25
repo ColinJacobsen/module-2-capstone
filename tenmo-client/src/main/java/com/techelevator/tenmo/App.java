@@ -7,6 +7,7 @@ import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.ActiveService;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
+import com.techelevator.tenmo.services.TransferService;
 
 import java.math.BigDecimal;
 
@@ -19,6 +20,7 @@ public class App {
 
     private AuthenticatedUser currentUser;
     private final ActiveService activeService = new ActiveService(API_BASE_URL, currentUser);
+    private final TransferService transferService = new TransferService(API_BASE_URL);
 
     public static void main(String[] args) {
         App app = new App();
@@ -62,6 +64,7 @@ public class App {
     private void handleLogin() {
         UserCredentials credentials = consoleService.promptForCredentials();
         currentUser = authenticationService.login(credentials);
+        transferService.setCurrentUser(currentUser);
         if (currentUser == null) {
             consoleService.printErrorMessage();
         }
@@ -100,12 +103,22 @@ public class App {
 
     private void viewTransferHistory() {
         // TODO Auto-generated method stub
+        consoleService.printHistory(activeService.userToAccount(currentUser.getUser()), activeService, 2);
+
+
+
+
 
     }
 
     private void viewPendingRequests() {
         // TODO Auto-generated method stub
 
+        int id = consoleService.printHistory(activeService.userToAccount(currentUser.getUser()), activeService, 1);
+        String response = consoleService.promptForString("Would you like to approve this transfer? (Y/N): ").toUpperCase();
+        if(response.equals("Y")){
+            transferService.doTransfer(transferService.getTransferByTransferId(id));
+        }
     }
 
     private void sendBucks() {
@@ -118,15 +131,19 @@ public class App {
         } else {
 
             BigDecimal amount = consoleService.promptForBigDecimal("How much would you like to send?: ");
-            Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()), activeService.userToAccount(activeService.getUserByName(recipient)), amount);
-
-            if (activeService.getAccountBalance(transfer.getAccountFrom()).compareTo(amount) >= 0) {
-                transfer.setTransferId(activeService.makeTransfer(transfer, currentUser));
-                System.out.println(activeService.doTransfer(transfer));
-
+            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+                System.err.println("Value must be more than $0.00");
             } else {
-                consoleService.printMainMenu();
-                System.err.println("Insufficient Balance");
+                Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()), activeService.userToAccount(activeService.getUserByName(recipient)), amount);
+
+                if (activeService.getAccountBalance(transfer.getAccountFrom()).compareTo(amount) >= 0) {
+                    transfer.setTransferId(transferService.makeTransfer(transfer, currentUser));
+                    System.out.println(transferService.doTransfer(transfer));
+
+                } else {
+                    consoleService.printMainMenu();
+                    System.err.println("Insufficient Balance");
+                }
             }
         }
     }
@@ -141,13 +158,17 @@ public class App {
         } else {
 
             BigDecimal amount = consoleService.promptForBigDecimal("How much would you like to request?: ");
-            Transfer transfer = new Transfer(1, 1, activeService.userToAccount(activeService.getUserByName(recipient)), activeService.userToAccount(currentUser.getUser()), amount);
+            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+                System.err.println("Value must be more than $0.00");
+            } else {
+                Transfer transfer = new Transfer(1, 1, activeService.userToAccount(activeService.getUserByName(recipient)), activeService.userToAccount(currentUser.getUser()), amount);
 
-            transfer.setTransferId(activeService.makeTransfer(transfer, currentUser));
-            if (transfer.getTransferId() > 3000) {
-                System.out.println("\nRequest Sent to " + recipient);
+                transfer.setTransferId(transferService.makeTransfer(transfer, currentUser));
+                if (transfer.getTransferId() > 3000) {
+                    System.out.println("\nRequest Sent to " + recipient);
+                }
             }
-        }
 
+        }
     }
 }

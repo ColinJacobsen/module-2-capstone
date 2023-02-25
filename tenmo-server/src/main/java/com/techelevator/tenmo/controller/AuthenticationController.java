@@ -89,6 +89,20 @@ public class AuthenticationController {
         userDao.doTransfer(transfer, id);
     }
 
+    @GetMapping(path = "/history/{id}")
+    public List<Transfer> transferHistory(@PathVariable int id){return userDao.transferHistory(id);}
+
+    @GetMapping(path = "/account/{id}/username")
+    public String getAccountUsername(@PathVariable int id){
+        return userDao.findUsernameByAccountId(id);
+    }
+
+    @GetMapping(path = "/transfers/{transferId}")
+    public Transfer getTransferById(@PathVariable int transferId){
+        return userDao.findTransferById(transferId);
+    }
+
+
 
 
 }

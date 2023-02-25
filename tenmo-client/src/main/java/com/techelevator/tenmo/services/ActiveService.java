@@ -78,18 +78,6 @@ public class ActiveService {
         BasicLogger.log("Username not found");
         return null;
     }
-
-    public int makeTransfer(Transfer transfer, AuthenticatedUser currentUser) {
-
-        HttpEntity<Transfer> entity = transferEntity(currentUser.getToken(), transfer);
-        try {
-            return restTemplate.exchange(BASE_URL+"/transfers", HttpMethod.POST, entity, int.class).getBody();
-        } catch (RestClientResponseException | ResourceAccessException e) {
-        BasicLogger.log(e.getMessage());
-    }
-        return 0;
-    }
-
     public int userToAccount(User user){
         int accountId = 0;
         try{
@@ -100,14 +88,17 @@ public class ActiveService {
         return accountId;
     }
 
-    public BigDecimal doTransfer(Transfer transfer){
-        try{
-            restTemplate.put(BASE_URL+"/transfers/"+transfer.getTransferId(), transferEntity(currentUser.getToken(), transfer));
-        }catch (RestClientResponseException | ResourceAccessException e) {
+    public String accountIdToUsername(int accountId) {
+        String username= null;
+        try {
+            username = restTemplate.getForObject(BASE_URL + "/account/" + accountId + "/username", String.class);
+        } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
-        return new BigDecimal(0);
+        return username;
     }
+
+
 
 
     private HttpEntity<Void> makeAuthEntity(String token) {
@@ -116,16 +107,24 @@ public class ActiveService {
         return new HttpEntity<>(headers);
     }
 
-    private HttpEntity<Transfer> transferEntity (String token, Transfer transfer) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
-        return new HttpEntity<>(transfer, headers);
-    }
+
     private HttpEntity<User> userEntity (String token, User user) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(token);
         return new HttpEntity<>(user, headers);
+    }
+
+    public Transfer[] transferHistory(int accountId){
+        Transfer[] history = null;
+        try{
+            ResponseEntity<Transfer[]> response =
+                    restTemplate.exchange(BASE_URL+"/history/"+accountId,HttpMethod.GET, makeAuthEntity(authToken), Transfer[].class);
+            history = response.getBody();
+        }catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return history;
     }
 
 }

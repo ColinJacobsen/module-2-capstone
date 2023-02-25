@@ -16,6 +16,10 @@ public interface UserDao {
 
     User findByUsername(String username);
 
+    String findUsernameByAccountId(int accountId);
+
+    Transfer findTransferById(int transferId);
+
     int findIdByUsername(String username);
 
     boolean create(String username, String password);
@@ -27,5 +31,7 @@ public interface UserDao {
     int createTransfer(Transfer transfer);
 
     int userToAccount(int id);
+
+    List<Transfer> transferHistory(int id);
 
 }

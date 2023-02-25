@@ -2,6 +2,7 @@ package com.techelevator.tenmo.services;
 
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 import io.cucumber.java.bs.A;
@@ -91,13 +92,43 @@ public class ConsoleService {
         System.out.println("An error occurred. Check the log for details.");
     }
 
-    public void printUsers(ActiveService activeService, AuthenticatedUser currentUser){
-                for(User user : activeService.getAllUsers(currentUser)) {
-            if(user.getId() == currentUser.getUser().getId()){
+    public void printUsers(ActiveService activeService, AuthenticatedUser currentUser) {
+        for (User user : activeService.getAllUsers(currentUser)) {
+            if (user.getId() == currentUser.getUser().getId()) {
                 continue;
             }
             System.out.println(user.getUsername());
         }
     }
 
+    public int printHistory(int id, ActiveService activeService, int status) {
+        Transfer[] transfers = activeService.transferHistory(id);
+        System.out.println("\n\nTRANSFERS\n_____________________________");
+        for (Transfer transfer : transfers) {
+            if (status == 1 && transfer.getTransferStatus()== 1) {
+                System.out.println("Id: " + transfer.getTransferId() + "  ||   " + transfer.getTransferTypeString(transfer.getTransferType())
+                                 + "  ||   $" + transfer.getAmount() + "  || " + transfer.getTransferStatusAsString(transfer.getTransferStatus()).toUpperCase());
+            } else if (transfer.getTransferStatus() != 1){
+                System.out.println("Id: " + transfer.getTransferId() + "  ||   " + transfer.getTransferTypeString(transfer.getTransferType())
+                        + "  ||   $" + transfer.getAmount() + "  || " + transfer.getTransferStatusAsString(transfer.getTransferStatus()).toUpperCase());
+
+            }
+        }
+        int transferId = promptForInt("Enter the id for the transfer you would like to view: ");
+
+        for (Transfer transfer : transfers) {
+            if (transferId == transfer.getTransferId()) {
+                System.out.println("-----------------------------------------------");
+                System.out.println("Transfer ID: " + transfer.getTransferId());
+                //System.out.println("Transfer status: " + transfer.getTransferStatus());
+                System.out.println("Transfer type: " + transfer.getTransferTypeString(transfer.getTransferType()));
+                System.out.println("Sending account: " + activeService.accountIdToUsername(transfer.getAccountFrom()));
+                System.out.println("receiving account: " + activeService.accountIdToUsername(transfer.getAccountTo()));
+                System.out.println("Transfer amount : $" + transfer.getAmount());
+                System.out.println("-----------------------------------------------");
+            }
+        }
+        return transferId;
+
+    }
 }

@@ -22,6 +22,16 @@ public class Transfer {
         this.amount = amount;
     }
 
+    public Transfer() {
+    }
+    public String getTransferTypeString(int index){
+        return TRANSFER_TYPES[index-1];
+
+    }
+    public String getTransferStatusAsString(int index){
+        return STATUS_OPTIONS[index-1];
+
+    }
     public int getTransferId() {
         return transferId;
     }
