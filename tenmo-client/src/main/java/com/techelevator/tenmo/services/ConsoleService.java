@@ -101,14 +101,15 @@ public class ConsoleService {
         }
     }
 
-    public int printHistory(int id, ActiveService activeService, int status) {
+    public  int printHistory(int id, ActiveService activeService, int status) {
         Transfer[] transfers = activeService.transferHistory(id);
         System.out.println("\n\nTRANSFERS\n_____________________________");
         for (Transfer transfer : transfers) {
-            if (status == 1 && transfer.getTransferStatus()== 1) {
+            int transferStatus = transfer.getTransferStatus();
+            if (status == 1 && transferStatus == 1) {
                 System.out.println("Id: " + transfer.getTransferId() + "  ||   " + transfer.getTransferTypeString(transfer.getTransferType())
                                  + "  ||   $" + transfer.getAmount() + "  || " + transfer.getTransferStatusAsString(transfer.getTransferStatus()).toUpperCase());
-            } else if (transfer.getTransferStatus() != 1){
+            } else if (transferStatus != 1){
                 System.out.println("Id: " + transfer.getTransferId() + "  ||   " + transfer.getTransferTypeString(transfer.getTransferType())
                         + "  ||   $" + transfer.getAmount() + "  || " + transfer.getTransferStatusAsString(transfer.getTransferStatus()).toUpperCase());
 
@@ -118,12 +119,14 @@ public class ConsoleService {
 
         for (Transfer transfer : transfers) {
             if (transferId == transfer.getTransferId()) {
+                String senderUsername = activeService.accountIdToUsername(transfer.getAccountFrom());
+                String recipientUsername = activeService.accountIdToUsername(transfer.getAccountTo());
                 System.out.println("-----------------------------------------------");
                 System.out.println("Transfer ID: " + transfer.getTransferId());
                 //System.out.println("Transfer status: " + transfer.getTransferStatus());
                 System.out.println("Transfer type: " + transfer.getTransferTypeString(transfer.getTransferType()));
-                System.out.println("Sending account: " + activeService.accountIdToUsername(transfer.getAccountFrom()));
-                System.out.println("receiving account: " + activeService.accountIdToUsername(transfer.getAccountTo()));
+                System.out.println("Sending account: " + senderUsername);
+                System.out.println("receiving account: " + recipientUsername);
                 System.out.println("Transfer amount : $" + transfer.getAmount());
                 System.out.println("-----------------------------------------------");
             }

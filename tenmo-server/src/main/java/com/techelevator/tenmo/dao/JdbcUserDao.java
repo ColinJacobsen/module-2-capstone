@@ -93,7 +93,7 @@ public class JdbcUserDao implements UserDao {
        return jdbcTemplate.queryForObject(sql, String.class, accountId);
     }
 
-    @Override
+
     public Transfer findTransferById(int transferId) {
         Transfer transfer = null;
         String sql = "SELECT * FROM transfer " +
@@ -133,7 +133,7 @@ public class JdbcUserDao implements UserDao {
         return jdbcTemplate.queryForObject(sql, BigDecimal.class, id);
     }
 
-    @Override
+
     public void doTransfer(Transfer transfer, int id) {
 
         String sqlDoTransfer = "BEGIN; " +
@@ -147,7 +147,7 @@ public class JdbcUserDao implements UserDao {
 
     }
 
-    @Override
+
     public int createTransfer(Transfer transfer) {
         // update the balance where account from id = account id and account to id = account id
         String createTransfer = "INSERT INTO transfer (transfer_status_id, transfer_type_id, account_from, account_to, amount) " +
@@ -163,7 +163,6 @@ public class JdbcUserDao implements UserDao {
 
     }
 
-    @Override
     public int userToAccount(int id) {
         String sql = "Select account_id from account where user_id = ?";
 
@@ -181,7 +180,7 @@ public class JdbcUserDao implements UserDao {
         return user;
     }
 
-    @Override
+
     public List<Transfer> transferHistory(int id) {
         String sql = "select * from transfer where account_from = ? or account_to = ?";
         List<Transfer> listOfAccountTransfers = new ArrayList<>();

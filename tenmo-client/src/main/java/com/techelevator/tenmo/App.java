@@ -134,15 +134,17 @@ public class App {
             if (amount.compareTo(BigDecimal.ZERO) <= 0) {
                 System.err.println("Value must be more than $0.00");
             } else {
-                Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()), activeService.userToAccount(activeService.getUserByName(recipient)), amount);
+                Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()),
+                        activeService.userToAccount(activeService.getUserByName(recipient)),
+                        amount);
 
                 if (activeService.getAccountBalance(transfer.getAccountFrom()).compareTo(amount) >= 0) {
                     transfer.setTransferId(transferService.makeTransfer(transfer, currentUser));
                     System.out.println(transferService.doTransfer(transfer));
 
                 } else {
-                    consoleService.printMainMenu();
                     System.err.println("Insufficient Balance");
+                    consoleService.printMainMenu();
                 }
             }
         }

@@ -18,7 +18,7 @@ public interface UserDao {
 
     String findUsernameByAccountId(int accountId);
 
-    Transfer findTransferById(int transferId);
+//    Transfer findTransferById(int transferId);
 
     int findIdByUsername(String username);
 
@@ -26,12 +26,12 @@ public interface UserDao {
 
     BigDecimal getUserBalance(int id);
 
-    void doTransfer(Transfer transfer, int id);
+//    void doTransfer(Transfer transfer, int id);
 
-    int createTransfer(Transfer transfer);
+//    int createTransfer(Transfer transfer);
 
     int userToAccount(int id);
 
-    List<Transfer> transferHistory(int id);
+//    List<Transfer> transferHistory(int id);
 
 }

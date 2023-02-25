@@ -1,0 +1,7 @@
+2023-02-25T13:53:02.3326677 404 : [{"timestamp":"2023-02-25T18:53:02.304+00:00","status":404,"error":"Not Found","message":"No message available","path":"/history/2001"}]
+2023-02-25T13:56:02.4499247 404 : [{"timestamp":"2023-02-25T18:56:02.435+00:00","status":404,"error":"Not Found","message":"No message available","path":"/history/2001"}]
+2023-02-25T13:56:31.4069912 404 : [{"timestamp":"2023-02-25T18:56:31.394+00:00","status":404,"error":"Not Found","message":"No message available","path":"/history/2001"}]
+2023-02-25T14:10:25.3744337 500 : [{"timestamp":"2023-02-25T19:10:25.358+00:00","status":500,"error":"Internal Server Error","message":"PreparedStatementCallback; bad SQL grammar [SELECT * FROM transfer WHERE transfer_id = ?]; nested e... (411 bytes)]
+2023-02-25T14:50:40.3663814 404 : [{"timestamp":"2023-02-25T19:50:40.349+00:00","status":404,"error":"Not Found","message":"No message available","path":"/user/1001/balance"}]
+2023-02-25T14:51:25.2166666 404 : [{"timestamp":"2023-02-25T19:51:25.214+00:00","status":404,"error":"Not Found","message":"No message available","path":"/user/1001/balance"}]
+2023-02-25T15:21:59.5468406 500 : [{"timestamp":"2023-02-25T20:21:59.509+00:00","status":500,"error":"Internal Server Error","message":"PreparedStatementCallback; bad SQL grammar [SELECT * FROM transfer WHERE transfer_id = ?]; nested e... (414 bytes)]

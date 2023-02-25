@@ -119,7 +119,7 @@ public class ActiveService {
         Transfer[] history = null;
         try{
             ResponseEntity<Transfer[]> response =
-                    restTemplate.exchange(BASE_URL+"/history/"+accountId,HttpMethod.GET, makeAuthEntity(authToken), Transfer[].class);
+                    restTemplate.exchange(BASE_URL+"transfers/history/"+accountId,HttpMethod.GET, makeAuthEntity(authToken), Transfer[].class);
             history = response.getBody();
         }catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());

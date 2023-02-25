@@ -56,24 +56,6 @@ public class AuthenticationController {
         }
     }
 
-    @RequestMapping(value = "/user/{id}/balance", method = RequestMethod.GET)
-    public BigDecimal getUserBalance(@PathVariable int id){
-        return userDao.getUserBalance(id);
-
-    }
-
-    @GetMapping(path = "/user")
-    public List<User> getAllUsers(){
-        return userDao.findAll();
-    }
-
-
-    @PostMapping(path = "/transfers")
-    @ResponseStatus(HttpStatus.CREATED)
-    public int createTransfer(@RequestBody Transfer transfer){
-        return userDao.createTransfer(transfer);
-    }
-
     @GetMapping(path = "/account/{id}")
     public int userToAccount(@PathVariable int id){
         return userDao.userToAccount(id);
@@ -84,23 +66,45 @@ public class AuthenticationController {
         return userDao.getBalanceByAccountId(id);
     }
 
-    @PutMapping(path = "/transfers/{id}")
-    public void doTransfer(@PathVariable int id, @RequestBody Transfer transfer){
-        userDao.doTransfer(transfer, id);
-    }
-
-    @GetMapping(path = "/history/{id}")
-    public List<Transfer> transferHistory(@PathVariable int id){return userDao.transferHistory(id);}
 
     @GetMapping(path = "/account/{id}/username")
     public String getAccountUsername(@PathVariable int id){
         return userDao.findUsernameByAccountId(id);
     }
 
-    @GetMapping(path = "/transfers/{transferId}")
-    public Transfer getTransferById(@PathVariable int transferId){
-        return userDao.findTransferById(transferId);
-    }
+    // Moved into other controllers
+
+//    @RequestMapping(value = "/user/{id}/balance", method = RequestMethod.GET)
+//    public BigDecimal getUserBalance(@PathVariable int id){
+//        return userDao.getUserBalance(id);
+//
+//    }
+
+//    @GetMapping(path = "/user")
+//    public List<User> getAllUsers(){
+//        return userDao.findAll();
+//    }
+
+
+//    @PostMapping(path = "/transfers")
+//    @ResponseStatus(HttpStatus.CREATED)
+//    public int createTransfer(@RequestBody Transfer transfer){
+//        return userDao.createTransfer(transfer);
+//    }
+
+//    @PutMapping(path = "/transfers/{id}")
+//    public void doTransfer(@PathVariable int id, @RequestBody Transfer transfer){
+//        userDao.doTransfer(transfer, id);
+//    }
+
+//    @GetMapping(path = "/history/{id}")
+//    public List<Transfer> transferHistory(@PathVariable int id){return userDao.transferHistory(id);}
+
+
+//    @GetMapping(path = "/transfers/{transferId}")
+//    public Transfer getTransferById(@PathVariable int transferId){
+//        return userDao.findTransferById(transferId);
+//    }
 
 
 
