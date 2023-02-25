@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface UserDao {
 
+    BigDecimal getBalanceByAccountId(int accountId);
+
     List<User> findAll();
 
     User getUserById(int id);

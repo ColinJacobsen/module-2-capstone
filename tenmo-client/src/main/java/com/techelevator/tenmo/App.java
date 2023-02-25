@@ -19,6 +19,7 @@ public class App {
 
     private AuthenticatedUser currentUser;
     private final ActiveService activeService = new ActiveService(API_BASE_URL, currentUser);
+
     public static void main(String[] args) {
         App app = new App();
         app.run();
@@ -31,6 +32,7 @@ public class App {
             mainMenu();
         }
     }
+
     private void loginMenu() {
         int menuSelection = -1;
         while (menuSelection != 0 && currentUser == null) {
@@ -89,41 +91,63 @@ public class App {
         }
     }
 
-	private void viewCurrentBalance() {
-		// TODO Auto-generated method stub
+    private void viewCurrentBalance() {
+        // TODO Auto-generated method stub
         activeService.setCurrentUser(currentUser);
         System.out.println(activeService.getUserBalance(currentUser, currentUser.getUser().getId()));
-		
-	}
 
-	private void viewTransferHistory() {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
-	private void viewPendingRequests() {
-		// TODO Auto-generated method stub
-		
-	}
+    private void viewTransferHistory() {
+        // TODO Auto-generated method stub
 
-	private void sendBucks() {
+    }
+
+    private void viewPendingRequests() {
+        // TODO Auto-generated method stub
+
+    }
+
+    private void sendBucks() {
         // TODO Auto-generated method stub
         activeService.setCurrentUser(currentUser);
         consoleService.printUsers(activeService, currentUser);
         String recipient = consoleService.promptForString("Type the name of the account you would like to send to: ");
+        if (recipient.toLowerCase().equals(currentUser.getUser().getUsername())) {
+            System.err.println("\nYou can not send to yourself");
+        } else {
 
-        BigDecimal amount = consoleService.promptForBigDecimal("How much would you like to send?: ");
-        Transfer transfer = new Transfer(2,2,activeService.userToAccount(currentUser.getUser()), activeService.userToAccount(activeService.getUserByName(recipient)), amount);
+            BigDecimal amount = consoleService.promptForBigDecimal("How much would you like to send?: ");
+            Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()), activeService.userToAccount(activeService.getUserByName(recipient)), amount);
 
-        transfer.setTransferId(activeService.makeTransfer(transfer, currentUser));
-        //activeService.makeTransfer(transfer, currentUser).getTransferId()
-        System.out.println(activeService.doTransfer(transfer));
+            if (activeService.getAccountBalance(transfer.getAccountFrom()).compareTo(amount) >= 0) {
+                transfer.setTransferId(activeService.makeTransfer(transfer, currentUser));
+                System.out.println(activeService.doTransfer(transfer));
 
+            } else {
+                consoleService.printMainMenu();
+                System.err.println("Insufficient Balance");
+            }
+        }
     }
 
-	private void requestBucks() {
-		// TODO Auto-generated method stub
-		
-	}
+    private void requestBucks() {
+        // TODO Auto-generated method stub
+        activeService.setCurrentUser(currentUser);
+        consoleService.printUsers(activeService, currentUser);
+        String recipient = consoleService.promptForString("Type the name of the account you would like to send request to: ");
+        if (recipient.toLowerCase().equals(currentUser.getUser().getUsername())) {
+            System.err.println("\nYou can not request from yourself");
+        } else {
 
+            BigDecimal amount = consoleService.promptForBigDecimal("How much would you like to request?: ");
+            Transfer transfer = new Transfer(1, 1, activeService.userToAccount(activeService.getUserByName(recipient)), activeService.userToAccount(currentUser.getUser()), amount);
+
+            transfer.setTransferId(activeService.makeTransfer(transfer, currentUser));
+            if (transfer.getTransferId() > 3000) {
+                System.out.println("\nRequest Sent to " + recipient);
+            }
+        }
+
+    }
 }

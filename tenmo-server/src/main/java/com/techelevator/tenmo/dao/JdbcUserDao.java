@@ -50,6 +50,13 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
+    public BigDecimal getBalanceByAccountId(int accountId) {
+        String sql = "SELECT balance FROM account " +
+                     "WHERE account_id = ?";
+        return jdbcTemplate.queryForObject(sql, BigDecimal.class, accountId);
+    }
+
+    @Override
     public List<User> findAll() {
         List<User> users = new ArrayList<>();
         String sql = "SELECT user_id, username, password_hash FROM tenmo_user";
@@ -82,7 +89,7 @@ public class JdbcUserDao implements UserDao {
         String sql = "INSERT INTO tenmo_user (username, password_hash) VALUES (?, ?) RETURNING user_id";
         String password_hash = new BCryptPasswordEncoder().encode(password);
         Integer newUserId;
-        newUserId = jdbcTemplate.queryForObject(sql, Integer.class, username, password_hash);
+        newUserId = jdbcTemplate.queryForObject(sql, Integer.class, username.toLowerCase(), password_hash);
 
         if (newUserId == null) return false;
 

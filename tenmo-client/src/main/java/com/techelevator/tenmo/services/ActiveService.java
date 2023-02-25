@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.services;
 
+import com.techelevator.tenmo.dao.JdbcUserDao;
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
@@ -7,6 +8,7 @@ import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.util.BasicLogger;
 import io.cucumber.java.bs.A;
 import org.springframework.http.*;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
@@ -19,11 +21,9 @@ public class ActiveService {
     private final String BASE_URL;
 
 
-
     private AuthenticatedUser currentUser;
     private String authToken;
     private final RestTemplate restTemplate = new RestTemplate();
-
 
     public ActiveService(String BASE_URL, AuthenticatedUser currentUser){
         this.BASE_URL = BASE_URL;
@@ -43,6 +43,19 @@ public class ActiveService {
             BasicLogger.log(e.getMessage());
         }
         return balance;
+    }
+
+    public BigDecimal getAccountBalance(int accountId){
+        BigDecimal balance = null;
+        try {
+            ResponseEntity<BigDecimal> response =
+                    restTemplate.exchange(BASE_URL + "/account/" + accountId + "/balance", HttpMethod.GET, makeAuthEntity((currentUser.getToken())), BigDecimal.class);
+            balance = response.getBody();
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return balance;
+
     }
 
     public User[] getAllUsers(AuthenticatedUser currentUser){

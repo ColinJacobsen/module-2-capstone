@@ -79,6 +79,11 @@ public class AuthenticationController {
         return userDao.userToAccount(id);
     }
 
+    @GetMapping(path = "/account/{id}/balance")
+    public BigDecimal getAccountBalance(@PathVariable int id){
+        return userDao.getBalanceByAccountId(id);
+    }
+
     @PutMapping(path = "/transfers/{id}")
     public void doTransfer(@PathVariable int id, @RequestBody Transfer transfer){
         userDao.doTransfer(transfer, id);
