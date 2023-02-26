@@ -120,6 +120,11 @@ public class App {
         String response = consoleService.promptForString("Would you like to approve this transfer? (Y/N): ").toUpperCase();
         if(response.equals("Y")){
             transferService.doTransfer(transferService.getTransferByTransferId(accountId));
+            transferService.updateTransferStatus(2, accountId);
+        } else if(response.equals("N")){
+            transferService.updateTransferStatus(3, accountId);
+        } else {
+            System.out.println("Invalid Response");
         }
     }
 

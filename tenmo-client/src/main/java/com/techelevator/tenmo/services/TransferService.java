@@ -63,6 +63,14 @@ public class TransferService {
         return new BigDecimal(0);
     }
 
+    public void updateTransferStatus(int transferStatusId, int transferId){
+        try {
+            restTemplate.put(BASE_URL + "/update/" + transferId, transferStatusId);
+        }catch (RestClientResponseException | ResourceAccessException e){
+            BasicLogger.log(e.getMessage());
+        }
+    }
+
     public Transfer getTransferByTransferId(int transferId){
         Transfer transfer = null;
         try{

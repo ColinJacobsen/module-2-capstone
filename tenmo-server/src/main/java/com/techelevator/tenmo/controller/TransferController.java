@@ -30,6 +30,11 @@ public class TransferController {
         transferDao.doTransfer(transfer, id);
     }
 
+    @PutMapping(path = "/update/{id}")
+    public void updateTransferStatus(int transferStatusId, @PathVariable int transferId){
+        transferDao.updateTransferStatus(transferStatusId, transferId);
+    }
+
     @GetMapping(path = "/history/{id}")
     public List<Transfer> transferHistory(@PathVariable int id){return transferDao.transferHistory(id);}
 

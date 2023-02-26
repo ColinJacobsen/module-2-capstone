@@ -23,3 +23,10 @@
 2023-02-25T17:52:59.4895929 Username not found
 2023-02-25T18:11:49.1154625 I/O error on POST request for "http://localhost:8080/login": Connection refused: connect; nested exception is java.net.ConnectException: Connection refused: connect
 2023-02-25T18:11:54.7087141 I/O error on POST request for "http://localhost:8080/login": Connection refused: connect; nested exception is java.net.ConnectException: Connection refused: connect
+2023-02-25T20:07:55.267926 404 : [{"timestamp":"2023-02-26T01:07:55.246+00:00","status":404,"error":"Not Found","message":"No message available","path":"/update/3002"}]
+2023-02-25T20:12:06.4087987 404 : [{"timestamp":"2023-02-26T01:12:06.388+00:00","status":404,"error":"Not Found","message":"No message available","path":"/update/3006"}]
+2023-02-25T20:15:07.7993961 404 : [{"timestamp":"2023-02-26T01:15:07.785+00:00","status":404,"error":"Not Found","message":"No message available","path":"/update/3006"}]
+2023-02-25T20:16:31.7028426 404 : [{"timestamp":"2023-02-26T01:16:31.684+00:00","status":404,"error":"Not Found","message":"No message available","path":"/update/3002"}]
+2023-02-25T20:18:18.9404605 404 : [{"timestamp":"2023-02-26T01:18:18.925+00:00","status":404,"error":"Not Found","message":"No message available","path":"/transfers/pending/2002"}]
+2023-02-25T20:19:14.6113378 404 : [{"timestamp":"2023-02-26T01:19:14.581+00:00","status":404,"error":"Not Found","message":"No message available","path":"/updates/3005"}]
+2023-02-25T20:26:23.2337752 404 : [{"timestamp":"2023-02-26T01:26:23.213+00:00","status":404,"error":"Not Found","message":"No message available","path":"/update/3005"}]

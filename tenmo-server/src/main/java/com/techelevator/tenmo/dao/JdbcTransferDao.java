@@ -1,6 +1,7 @@
 package com.techelevator.tenmo.dao;
 
 import com.techelevator.tenmo.model.Transfer;
+import org.jboss.logging.BasicLogger;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
@@ -68,6 +69,15 @@ public class JdbcTransferDao implements TransferDao{
     }
 
     @Override
+    public void updateTransferStatus(int transferStatusId, int transferId){
+        String sql = "UPDATE transfer " +
+                "SET transfer_status_id = ? " +
+                "WHERE transfer_id = ?;";
+
+            jdbcTemplate.update(sql, transferStatusId, transferId);
+    }
+
+    @Override
     public List<Transfer> transferHistory(int id) {
         String sql = "select * from transfer where account_from = ? or account_to = ?";
         List<Transfer> listOfAccountTransfers = new ArrayList<>();
@@ -84,7 +94,7 @@ public class JdbcTransferDao implements TransferDao{
         List<Transfer> pendingRequests = new ArrayList<>();
         String sql = "SELECT * " +
                 "FROM transfer " +
-                "WHERE account_from = ? AND transfer_type_id = 2;";
+                "WHERE account_from = ? AND transfer_type_id = 1;";
         //Investigate why account_to works and not account_from
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountFrom);
         while(results.next()){
