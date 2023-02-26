@@ -20,3 +20,6 @@
 2023-02-25T17:21:08.31443 401 : [no body]
 2023-02-25T17:23:35.7839177 500 : [{"timestamp":"2023-02-25T22:23:35.772+00:00","status":500,"error":"Internal Server Error","message":"Missing URI template variable 'accountFrom' for method parameter of type int","path":"/transfers/pending/2002"}]
 2023-02-25T17:30:58.74388 500 : [{"timestamp":"2023-02-25T22:30:58.722+00:00","status":500,"error":"Internal Server Error","message":"PreparedStatementCallback; bad SQL grammar [SELECT * FROM transfer WHERE account_from = ? AND trans... (450 bytes)]
+2023-02-25T17:52:59.4895929 Username not found
+2023-02-25T18:11:49.1154625 I/O error on POST request for "http://localhost:8080/login": Connection refused: connect; nested exception is java.net.ConnectException: Connection refused: connect
+2023-02-25T18:11:54.7087141 I/O error on POST request for "http://localhost:8080/login": Connection refused: connect; nested exception is java.net.ConnectException: Connection refused: connect

@@ -111,15 +111,16 @@ public class App {
         int accountFrom = activeService.userToAccount(currentUser.getUser());
         Transfer[] transfers = transferService.pendingRequest(accountFrom);
         for (Transfer transfer : transfers) {
-            System.out.println(transfers.toString());
+            System.out.println(transfer.toString());
         }
-        consoleService.pendingRequests(transfers);
+        int accountId = consoleService.pendingRequests(transfers, activeService);
+        System.out.println(accountId);
 
 //        int id = consoleService.printHistory(activeService.userToAccount(currentUser.getUser()), activeService, 1);
-//        String response = consoleService.promptForString("Would you like to approve this transfer? (Y/N): ").toUpperCase();
-//        if(response.equals("Y")){
-//            transferService.doTransfer(transferService.getTransferByTransferId(id));
-//        }
+        String response = consoleService.promptForString("Would you like to approve this transfer? (Y/N): ").toUpperCase();
+        if(response.equals("Y")){
+            transferService.doTransfer(transferService.getTransferByTransferId(accountId));
+        }
     }
 
     private void sendBucks() {

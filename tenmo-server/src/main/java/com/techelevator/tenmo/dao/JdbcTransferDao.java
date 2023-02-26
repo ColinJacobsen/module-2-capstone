@@ -53,7 +53,7 @@ public class JdbcTransferDao implements TransferDao{
         int recipientId;
         int transferStatus = transfer.getTransferStatus();
         int transferType = transfer.getTransferType();
-        if(transferType == 2) {
+        if(transferType == 1) {
             senderId = transfer.getAccountFrom();
             recipientId = transfer.getAccountTo();
         } else {
@@ -84,7 +84,8 @@ public class JdbcTransferDao implements TransferDao{
         List<Transfer> pendingRequests = new ArrayList<>();
         String sql = "SELECT * " +
                 "FROM transfer " +
-                "WHERE account_from = ? AND transfer_type = 1;";
+                "WHERE account_from = ? AND transfer_type_id = 2;";
+        //Investigate why account_to works and not account_from
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountFrom);
         while(results.next()){
             pendingRequests.add(mapRowToTransfer(results));

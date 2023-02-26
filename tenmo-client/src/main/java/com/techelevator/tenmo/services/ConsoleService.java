@@ -110,30 +110,29 @@ public class ConsoleService {
             }
     }
 
-    public  void pendingRequests(Transfer[] transfers) {
-        System.out.println("\n\nTRANSFERS\n_____________________________");
+    public int pendingRequests(Transfer[] transfers, ActiveService activeService) {
+        System.out.println("\n\nPENDING REQUESTS\n_____________________________");
         for (Transfer transfer : transfers) {
 //            int transferStatus = transfer.getTransferStatus();
                 System.out.println("Id: " + transfer.getTransferId() + "  ||   " + transfer.getTransferTypeString(transfer.getTransferType())
-                        + "  ||   $" + transfer.getAmount() + "  || " + transfer.getTransferStatusAsString(transfer.getTransferStatus()).toUpperCase());
+                        + "  ||   $" + transfer.getAmount() + "  || " + transfer.getTransferStatusAsString(transfer.getTransferStatus()).toUpperCase() + "\n");
         }
-//        int transferId = promptForInt("Enter the id for the transfer you would like to view: ");
-//
-//        for (Transfer transfer : transfers) {
-//            if (transferId == transfer.getTransferId()) {
-//                String senderUsername = activeService.accountIdToUsername(transfer.getAccountFrom());
-//                String recipientUsername = activeService.accountIdToUsername(transfer.getAccountTo());
-//                System.out.println("-----------------------------------------------");
-//                System.out.println("Transfer ID: " + transfer.getTransferId());
-//                //System.out.println("Transfer status: " + transfer.getTransferStatus());
-//                System.out.println("Transfer type: " + transfer.getTransferTypeString(transfer.getTransferType()));
-//                System.out.println("Sending account: " + senderUsername);
-//                System.out.println("receiving account: " + recipientUsername);
-//                System.out.println("Transfer amount : $" + transfer.getAmount());
-//                System.out.println("-----------------------------------------------");
-//            }
-//        }
-//        return transferId;
+        int transferId = promptForInt("Enter the id for the transfer you would like to view: ");
+
+        for (Transfer transfer : transfers) {
+            if (transferId == transfer.getTransferId()) {
+                String recipientUsername = activeService.accountIdToUsername(transfer.getAccountFrom());
+                String senderUsername = activeService.accountIdToUsername(transfer.getAccountTo());
+                System.out.println("-----------------------------------------------");
+                System.out.println("Transfer ID: " + transfer.getTransferId());
+                //System.out.println("Transfer status: " + transfer.getTransferStatus());
+                System.out.println("Transfer type: " + transfer.getTransferTypeString(transfer.getTransferType()));
+                System.out.println("Requested by: " + senderUsername);
+                System.out.println("Transfer amount : $" + transfer.getAmount());
+                System.out.println("-----------------------------------------------");
+            }
+        }
+        return transferId;
 
     }
 }
