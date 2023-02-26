@@ -9,6 +9,8 @@ import com.techelevator.tenmo.services.ConsoleService;
 import com.techelevator.tenmo.services.TransferService;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class App {
 
@@ -63,7 +65,9 @@ public class App {
     private void handleLogin() {
         UserCredentials credentials = consoleService.promptForCredentials();
         currentUser = authenticationService.login(credentials);
-        transferService.setCurrentUser(currentUser);
+        //transferService.setCurrentUser(currentUser); swapping this out for just the get token, dont think we need the whole object, but keeping it here just in case
+        activeService.setAuthToken(currentUser.getToken());
+        transferService.setAuthToken(currentUser.getToken());
         if (currentUser == null) {
             consoleService.printErrorMessage();
         }
@@ -109,23 +113,18 @@ public class App {
         // TODO Auto-generated method stub
         int accountFrom = activeService.userToAccount(currentUser.getUser());
         Transfer[] transfers = transferService.pendingRequest(accountFrom);
-//        for (Transfer transfer : transfers) {
-//            System.out.println(transfer.toString()); ---------COMMENTED OUT BECAUSE I DON'T KNOW IF ITS NEEDED -K
-//        }
         int transferId = consoleService.printPendingRequests(transfers, activeService);
-        //System.out.println(accountId);
-
-//        int id = consoleService.printHistory(activeService.userToAccount(currentUser.getUser()), activeService, 1);
         if (transferId > 3000) {
-            Transfer transfer = transferService.getTransferByTransferId(transferId);
+            AtomicReference<Transfer> approveTransfer = new AtomicReference<>();//makes atomic transfer so i can use it in the lambda
+            Arrays.stream(transfers).forEach(transfer-> {if (transfer.getTransferId() == transferId) approveTransfer.set(transfer); });// sets a transfer object based on the one the use picks from the array
             String response = consoleService.promptForString("Would you like to approve this transfer? (Y/N): ").toUpperCase();
             if (response.equals("Y")) {
-                //if (activeService.getAccountBalance(transfer.getAccountFrom()).compareTo(transfer.getAmount()) >= 0) {
+                if (activeService.getAccountBalance(approveTransfer.getPlain().getAccountFrom()).compareTo(approveTransfer.getPlain().getAmount()) >= 0) {//reworded to use the approvedTransfer Object
                     transferService.doTransfer(transferService.getTransferByTransferId(transferId));
                     transferService.updateTransferStatus(2, transferId);
-           //     } else {
-            //        System.err.println("\nInsufficient Balance");
-            //    }
+                } else {
+                   System.err.println("\nInsufficient Balance");
+                }
             }else if (response.equals("N")) {
                 transferService.updateTransferStatus(3, transferId);
             } else {

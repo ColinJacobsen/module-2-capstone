@@ -22,7 +22,14 @@ public class ActiveService {
 
 
     private AuthenticatedUser currentUser;
+
+
+
     private String authToken;
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     public ActiveService(String BASE_URL, AuthenticatedUser currentUser){
@@ -49,7 +56,7 @@ public class ActiveService {
         BigDecimal balance = null;
         try {
             ResponseEntity<BigDecimal> response =
-                    restTemplate.exchange(BASE_URL + "/account/" + accountId + "/balance", HttpMethod.GET, makeAuthEntity((currentUser.getToken())), BigDecimal.class);
+                    restTemplate.exchange(BASE_URL + "/account/" + accountId + "/balance", HttpMethod.GET, makeAuthEntity(authToken), BigDecimal.class);
             balance = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());

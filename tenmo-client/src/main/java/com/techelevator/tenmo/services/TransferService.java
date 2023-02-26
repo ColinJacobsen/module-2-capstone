@@ -55,7 +55,7 @@ public class TransferService {
     public boolean doTransfer(Transfer transfer){  //CHANGED FROM BIGDECIMAL RETURN TO A BOOLEAN
         boolean transferCompleted = false;
         try{
-            restTemplate.put(BASE_URL+"/transfers/"+transfer.getTransferId(), transferEntity(currentUser.getToken(), transfer));
+            restTemplate.put(BASE_URL+"/transfers/"+transfer.getTransferId(), transferEntity(authToken, transfer));
             transferCompleted = true;
         }catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
