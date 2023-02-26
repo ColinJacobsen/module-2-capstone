@@ -97,7 +97,8 @@ public class JdbcTransferDao implements TransferDao{
                 "FROM transfer " +
                 "WHERE account_from = ? " +
                 "AND transfer_type_id = 1 " +
-                "AND transfer_status_id = 1;";
+                "AND transfer_status_id = 1 " +
+                "ORDER BY transfer_id;";
         //Investigate why account_to works and not account_from
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountFrom);
         while(results.next()){
