@@ -113,6 +113,7 @@ public class ConsoleService {
 //                System.out.println("Id: " + transfer.getTransferId() + "  ||   " + transfer.getTransferTypeString(transfer.getTransferType())
 //                                 + "  ||   $" + transfer.getAmount() + "  || " + transfer.getTransferStatusAsString(transfer.getTransferStatus()).toUpperCase());
             }
+        System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
     }
 
     public int printPendingRequests(Transfer[] transfers, ActiveService activeService) {
@@ -130,6 +131,7 @@ public class ConsoleService {
 //                System.out.println("Id: " + transfer.getTransferId() + "  ||   " + transfer.getTransferTypeString(transfer.getTransferType())
 //                        + "  ||   $" + transfer.getAmount() + "  || " + transfer.getTransferStatusAsString(transfer.getTransferStatus()).toUpperCase() + "\n");
             }
+            System.out.println("\033[32m+---------------+---------------+\033[0m");
             transferId = promptForInt("Enter the id for the transfer you would like to view: ");
 
             for (Transfer transfer : transfers) {
@@ -142,6 +144,7 @@ public class ConsoleService {
                     System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
                 }
             }
+
         } else {
             System.out.println("You have no pending transfer requests");
         }
