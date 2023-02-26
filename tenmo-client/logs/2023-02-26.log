@@ -1,2 +1,4 @@
 2023-02-26T06:19:59.2387488 Username not found
 2023-02-26T10:35:46.6417544 401 : [no body]
+2023-02-26T12:37:28.3065667 500 : [{"timestamp":"2023-02-26T20:37:28.291+00:00","status":500,"error":"Internal Server Error","message":"PreparedStatementCallback; bad SQL grammar [select * from transfer where account_from = ? or account_to = ?ORDER BY transfer_id]; nested exception is org.postgresql.util.PSQLException: ERROR: trailing junk after parameter at or near \"$2O\"\n  Position: 64","path":"/transfers/history/2002"}]
+2023-02-26T12:39:12.0018938 401 : [no body]

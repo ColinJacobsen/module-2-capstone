@@ -79,7 +79,8 @@ public class JdbcTransferDao implements TransferDao{
 
     @Override
     public List<Transfer> transferHistory(int id) {
-        String sql = "select * from transfer where account_from = ? or account_to = ?";
+        String sql = "select * from transfer where account_from = ? or account_to = ? " +
+                     "ORDER BY transfer_id";
         List<Transfer> listOfAccountTransfers = new ArrayList<>();
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id, id);
         while (rowSet.next()){
