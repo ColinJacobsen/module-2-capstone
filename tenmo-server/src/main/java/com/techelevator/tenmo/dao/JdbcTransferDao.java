@@ -69,7 +69,7 @@ public class JdbcTransferDao implements TransferDao{
     }
 
     @Override
-    public void updateTransferStatus(int transferStatusId, int transferId){
+    public void updateTransferStatus(Integer transferStatusId, int transferId){
         String sql = "UPDATE transfer " +
                 "SET transfer_status_id = ? " +
                 "WHERE transfer_id = ?;";
@@ -94,7 +94,9 @@ public class JdbcTransferDao implements TransferDao{
         List<Transfer> pendingRequests = new ArrayList<>();
         String sql = "SELECT * " +
                 "FROM transfer " +
-                "WHERE account_from = ? AND transfer_type_id = 1;";
+                "WHERE account_from = ? " +
+                "AND transfer_type_id = 1 " +
+                "AND transfer_status_id = 1;";
         //Investigate why account_to works and not account_from
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountFrom);
         while(results.next()){

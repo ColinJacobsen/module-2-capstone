@@ -10,7 +10,7 @@ public interface TransferDao {
     Transfer getTransferById(int transferId);
     void doTransfer(Transfer transfer, int id);
     int createTransfer(Transfer transfer);
-    void updateTransferStatus (int transferStatusId, int transferId);
+    void updateTransferStatus (Integer transferStatusId, int transferId);
     List<Transfer> transferHistory(int id);
     List<Transfer> pendingRequests(int accountFrom);
 

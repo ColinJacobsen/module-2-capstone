@@ -2,7 +2,6 @@ package com.techelevator.tenmo;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.Transfer;
-import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.tenmo.services.ActiveService;
 import com.techelevator.tenmo.services.AuthenticationService;
@@ -110,21 +109,28 @@ public class App {
         // TODO Auto-generated method stub
         int accountFrom = activeService.userToAccount(currentUser.getUser());
         Transfer[] transfers = transferService.pendingRequest(accountFrom);
-        for (Transfer transfer : transfers) {
-            System.out.println(transfer.toString());
-        }
-        int accountId = consoleService.pendingRequests(transfers, activeService);
-        System.out.println(accountId);
+//        for (Transfer transfer : transfers) {
+//            System.out.println(transfer.toString()); ---------COMMENTED OUT BECAUSE I DON'T KNOW IF ITS NEEDED -K
+//        }
+        int transferId = consoleService.printPendingRequests(transfers, activeService);
+        //System.out.println(accountId);
 
 //        int id = consoleService.printHistory(activeService.userToAccount(currentUser.getUser()), activeService, 1);
-        String response = consoleService.promptForString("Would you like to approve this transfer? (Y/N): ").toUpperCase();
-        if(response.equals("Y")){
-            transferService.doTransfer(transferService.getTransferByTransferId(accountId));
-            transferService.updateTransferStatus(2, accountId);
-        } else if(response.equals("N")){
-            transferService.updateTransferStatus(3, accountId);
-        } else {
-            System.out.println("Invalid Response");
+        if (transferId > 3000) {
+            Transfer transfer = transferService.getTransferByTransferId(transferId);
+            String response = consoleService.promptForString("Would you like to approve this transfer? (Y/N): ").toUpperCase();
+            if (response.equals("Y")) {
+                //if (activeService.getAccountBalance(transfer.getAccountFrom()).compareTo(transfer.getAmount()) >= 0) {
+                    transferService.doTransfer(transferService.getTransferByTransferId(transferId));
+                    transferService.updateTransferStatus(2, transferId);
+           //     } else {
+            //        System.err.println("\nInsufficient Balance");
+            //    }
+            }else if (response.equals("N")) {
+                transferService.updateTransferStatus(3, transferId);
+            } else {
+                System.out.println("Invalid Response");
+            }
         }
     }
 

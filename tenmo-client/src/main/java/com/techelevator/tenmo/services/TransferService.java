@@ -3,16 +3,12 @@ package com.techelevator.tenmo.services;
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.util.BasicLogger;
-import io.cucumber.java.ja.但し;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
-
-import java.math.BigDecimal;
 
 public class TransferService {
     private final String BASE_URL;
@@ -54,18 +50,22 @@ public class TransferService {
         return 0;
     }
 
-    public BigDecimal doTransfer(Transfer transfer){
+
+
+    public boolean doTransfer(Transfer transfer){  //CHANGED FROM BIGDECIMAL RETURN TO A BOOLEAN
+        boolean transferCompleted = false;
         try{
             restTemplate.put(BASE_URL+"/transfers/"+transfer.getTransferId(), transferEntity(currentUser.getToken(), transfer));
+            transferCompleted = true;
         }catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
-        return new BigDecimal(0);
+        return transferCompleted;
     }
 
-    public void updateTransferStatus(int transferStatusId, int transferId){
+    public void updateTransferStatus(Integer transferStatusId, int transferId){
         try {
-            restTemplate.put(BASE_URL + "/update/" + transferId, transferStatusId);
+            restTemplate.put(BASE_URL + "/transfers/update/" + transferId + "/" + transferStatusId, transferStatusId);
         }catch (RestClientResponseException | ResourceAccessException e){
             BasicLogger.log(e.getMessage());
         }

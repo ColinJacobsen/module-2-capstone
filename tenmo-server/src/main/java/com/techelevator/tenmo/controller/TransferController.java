@@ -2,7 +2,9 @@ package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.TransferDao;
 import com.techelevator.tenmo.model.Transfer;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,9 +32,16 @@ public class TransferController {
         transferDao.doTransfer(transfer, id);
     }
 
-    @PutMapping(path = "/update/{id}")
-    public void updateTransferStatus(int transferStatusId, @PathVariable int transferId){
-        transferDao.updateTransferStatus(transferStatusId, transferId);
+    @PutMapping(path = "/update/{transferId}/{transferStatusId}")
+    public ResponseEntity<String> updateTransferStatus(@PathVariable Integer transferStatusId, @PathVariable int transferId){
+        try {
+            transferDao.updateTransferStatus(transferStatusId, transferId);
+            return ResponseEntity.ok("Transfer status updated successfully");
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body("Invalid transfer status ID");
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while updating transfer status");
+        }
     }
 
     @GetMapping(path = "/history/{id}")
