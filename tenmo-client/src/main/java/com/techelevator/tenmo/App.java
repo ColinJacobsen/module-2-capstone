@@ -117,16 +117,21 @@ public class App {
         if (transferId > 3000) {
             AtomicReference<Transfer> approveTransfer = new AtomicReference<>();//makes atomic transfer so i can use it in the lambda
             Arrays.stream(transfers).forEach(transfer-> {if (transfer.getTransferId() == transferId) approveTransfer.set(transfer); });// sets a transfer object based on the one the use picks from the array
-            String response = consoleService.promptForString("Would you like to approve this transfer? (Y/N): ").toUpperCase();
-            if (response.equals("Y")) {
+            int response = consoleService.promptForInt("Would you like to approve to do?\n" +
+                    " 1) Approve Request\n" +
+                    " 2) Deny Request\n" +
+                    " 3) Leave as Pending\n");
+            if (response == 1) {
                 if (activeService.getAccountBalance(approveTransfer.getPlain().getAccountFrom()).compareTo(approveTransfer.getPlain().getAmount()) >= 0) {//reworded to use the approvedTransfer Object
                     transferService.doTransfer(transferService.getTransferByTransferId(transferId));
                     transferService.updateTransferStatus(2, transferId);
                 } else {
                    System.err.println("\nInsufficient Balance");
                 }
-            }else if (response.equals("N")) {
+            }else if (response == 2) {
                 transferService.updateTransferStatus(3, transferId);
+            }else if (response == 3) {
+                System.out.println("\u001B[32mRequest saved for later\u001B[0m");
             } else {
                 System.out.println("Invalid Response");
             }

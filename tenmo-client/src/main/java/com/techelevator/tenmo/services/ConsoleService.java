@@ -112,25 +112,28 @@ public class ConsoleService {
     public int printPendingRequests(Transfer[] transfers, ActiveService activeService) {
         int transferId= 0;
         if (transfers.length > 0) {
-            System.out.println("\n\nPENDING REQUESTS\n_____________________________");
+            System.out.println("\033[32m+---------------+---------------+\033[0m");
+            System.out.println("\033[32m+-------\u001B[1m\033[36mPENDING REQUESTS\u001B[0m\033[32m--------+\033[0m");
+            System.out.println("\033[32m+---------------+---------------+\033[0m");
+            System.out.printf("\033[32m| \u001B[1m\033[36m%-13s\033[0m\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m |\033[0m\n", "ID ", "Amount" );
+            System.out.println("\033[32m+---------------+---------------+\033[0m");
+            //System.out.println("\n\nPENDING REQUESTS\n_____________________________");
             for (Transfer transfer : transfers) {
 //            int transferStatus = transfer.getTransferStatus();
-                System.out.println("Id: " + transfer.getTransferId() + "  ||   " + transfer.getTransferTypeString(transfer.getTransferType())
-                        + "  ||   $" + transfer.getAmount() + "  || " + transfer.getTransferStatusAsString(transfer.getTransferStatus()).toUpperCase() + "\n");
+                System.out.printf("\033[32m| \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m |\033[0m\n", transfer.getTransferId() , "$" +transfer.getAmount() );
+//                System.out.println("Id: " + transfer.getTransferId() + "  ||   " + transfer.getTransferTypeString(transfer.getTransferType())
+//                        + "  ||   $" + transfer.getAmount() + "  || " + transfer.getTransferStatusAsString(transfer.getTransferStatus()).toUpperCase() + "\n");
             }
             transferId = promptForInt("Enter the id for the transfer you would like to view: ");
 
             for (Transfer transfer : transfers) {
                 if (transferId == transfer.getTransferId()) {
-                    String recipientUsername = activeService.accountIdToUsername(transfer.getAccountFrom());
                     String senderUsername = activeService.accountIdToUsername(transfer.getAccountTo());
-                    System.out.println("-----------------------------------------------");
-                    System.out.println("Transfer ID: " + transfer.getTransferId());
-                    //System.out.println("Transfer status: " + transfer.getTransferStatus());
-                    System.out.println("Transfer type: " + transfer.getTransferTypeString(transfer.getTransferType()));
-                    System.out.println("Requested by: " + senderUsername);
-                    System.out.println("Transfer amount : $" + transfer.getAmount());
-                    System.out.println("-----------------------------------------------");
+                    System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
+                    System.out.printf("| \u001B[1m\033[36m%-13s\033[0m\u001B[0m | \u001B[1m\033[36m%-13s\033[0m\u001B[0m | \u001B[1m\033[36m%-13s\033[0m\u001B[0m | \u001B[1m\033[36m%-13s\033[0m\u001B[0m |\n", "ID ", "Type", "Requested By", "Amount" ) ;
+                    System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
+                    System.out.printf("| \033[36m%-13s\033[0m | \033[36m%-13s\033[0m | \033[36m%-13s\033[0m | \033[36m%-13s\033[0m |\n", transferId, transfer.getTransferTypeString(transfer.getTransferType()), senderUsername,"$" +transfer.getAmount());
+                    System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
                 }
             }
         } else {

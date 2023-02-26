@@ -41,3 +41,5 @@
 2023-02-25T19:24:24.2761948 404 : [{"timestamp":"2023-02-26T03:24:24.259+00:00","status":404,"error":"Not Found","message":"No message available","path":"/transfers/update/3002"}]
 2023-02-25T19:36:21.408065 500 : [{"timestamp":"2023-02-26T03:36:21.391+00:00","status":500,"error":"Internal Server Error","message":"PreparedStatementCallback; bad SQL grammar [SELECT * FROM transfer WHERE account_from = ? AND trans... (411 bytes)]
 2023-02-25T19:56:00.8239441 500 : [{"timestamp":"2023-02-26T03:56:00.805+00:00","status":500,"error":"Internal Server Error","message":"PreparedStatementCallback; SQL [INSERT INTO tenmo_user (username, password_hash) VALUES (?, ?) RETU... (524 bytes)]
+2023-02-25T22:11:33.834216 500 : [{"timestamp":"2023-02-26T06:11:33.805+00:00","status":500,"error":"Internal Server Error","message":"PreparedStatementCallback; SQL [INSERT INTO tenmo_user (username, password_hash) VALUES (?, ?) RETU... (534 bytes)]
+2023-02-25T22:11:46.9991917 401 : [no body]
