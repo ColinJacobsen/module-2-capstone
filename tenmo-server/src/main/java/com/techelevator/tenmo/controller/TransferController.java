@@ -5,6 +5,7 @@ import com.techelevator.tenmo.model.Transfer;
 import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class TransferController {
 
     public TransferController(TransferDao transferDao) {this.transferDao = transferDao;}
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public int createTransfer(@RequestBody Transfer transfer){
@@ -31,7 +33,7 @@ public class TransferController {
     public void doTransfer(@PathVariable int id, @RequestBody Transfer transfer){
         transferDao.doTransfer(transfer, id);
     }
-
+    @PreAuthorize("isAuthenticated()")
     @PutMapping(path = "/update/{transferId}/{transferStatusId}")
     public ResponseEntity<String> updateTransferStatus(@PathVariable Integer transferStatusId, @PathVariable int transferId){
         try {

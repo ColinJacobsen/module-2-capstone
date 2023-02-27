@@ -21,7 +21,7 @@ public class App {
 
     private AuthenticatedUser currentUser;
     private final ActiveService activeService = new ActiveService(API_BASE_URL, currentUser);
-    private final TransferService transferService = new TransferService(API_BASE_URL);
+    private final TransferService transferService = new TransferService(API_BASE_URL, currentUser);
 
     public static void main(String[] args) {
         App app = new App();
@@ -65,7 +65,8 @@ public class App {
     private void handleLogin() {
         UserCredentials credentials = consoleService.promptForCredentials();
         currentUser = authenticationService.login(credentials);
-        //transferService.setCurrentUser(currentUser); swapping this out for just the get token, dont think we need the whole object, but keeping it here just in case
+        transferService.setCurrentUser(currentUser);
+//        swapping this out for just the get token, dont think we need the whole object, but keeping it here just in case
         activeService.setAuthToken(currentUser.getToken());
         transferService.setAuthToken(currentUser.getToken());
         if (currentUser == null) {
@@ -156,7 +157,7 @@ public class App {
                         amount);
 
                 if (activeService.getAccountBalance(transfer.getAccountFrom()).compareTo(amount) >= 0) {
-                    transfer.setTransferId(transferService.makeTransfer(transfer, currentUser));
+                    transfer.setTransferId(transferService.makeTransfer(transfer));
                     System.out.println(transferService.doTransfer(transfer));
 
                 } else {
@@ -182,7 +183,7 @@ public class App {
             } else {
                 Transfer transfer = new Transfer(1, 1, activeService.userToAccount(activeService.getUserByName(recipient)), activeService.userToAccount(currentUser.getUser()), amount);
 
-                transfer.setTransferId(transferService.makeTransfer(transfer, currentUser));
+                transfer.setTransferId(transferService.makeTransfer(transfer));
                 if (transfer.getTransferId() > 3000) {
                     System.out.println("\nRequest Sent to " + recipient);
                 }

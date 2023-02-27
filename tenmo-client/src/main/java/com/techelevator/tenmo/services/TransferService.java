@@ -18,8 +18,9 @@ public class TransferService {
     private String authToken;
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public TransferService(String BASE_URL) {
+    public TransferService(String BASE_URL, AuthenticatedUser currentUser) {
         this.BASE_URL= BASE_URL;
+        this.currentUser = currentUser;
 
     }
 
@@ -39,7 +40,7 @@ public class TransferService {
         this.authToken = authToken;
     }
 
-    public int makeTransfer(Transfer transfer, AuthenticatedUser currentUser) {
+    public int makeTransfer(Transfer transfer) {
 
         HttpEntity<Transfer> entity = transferEntity(currentUser.getToken(), transfer);
         try {
@@ -54,6 +55,7 @@ public class TransferService {
 
     public boolean doTransfer(Transfer transfer){  //CHANGED FROM BIGDECIMAL RETURN TO A BOOLEAN
         boolean transferCompleted = false;
+
         try{
             restTemplate.put(BASE_URL+"/transfers/"+transfer.getTransferId(), transferEntity(authToken, transfer));
             transferCompleted = true;
@@ -64,8 +66,15 @@ public class TransferService {
     }
 
     public void updateTransferStatus(Integer transferStatusId, int transferId){
+
+        HttpEntity<Object> entity = transferVoidEntity(currentUser.getToken());
+
         try {
-            restTemplate.put(BASE_URL + "/transfers/update/" + transferId + "/" + transferStatusId, transferStatusId);
+//            restTemplate.put(BASE_URL + "/transfers/update/" + transferId + "/" + transferStatusId, transferStatusId);
+            restTemplate.exchange(BASE_URL + "/transfers/update/" + transferId + "/" + transferStatusId,
+                    HttpMethod.PUT,
+                    entity,
+                    Void.class );
         }catch (RestClientResponseException | ResourceAccessException e){
             BasicLogger.log(e.getMessage());
         }
@@ -85,6 +94,7 @@ public class TransferService {
 
     public Transfer[] pendingRequest(int accountFrom){
         Transfer[] requests = null;
+
         try{
             requests =
                     restTemplate.getForObject(BASE_URL+"/transfers/pending/" + accountFrom, Transfer[].class);
@@ -98,6 +108,12 @@ public class TransferService {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         return new HttpEntity<>(transfer, headers);
+    }
+
+    private HttpEntity<Object> transferVoidEntity (String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        return new HttpEntity<>(Void.class, headers);
     }
 
 
