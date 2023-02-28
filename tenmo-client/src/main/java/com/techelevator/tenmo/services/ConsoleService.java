@@ -7,6 +7,8 @@ import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleService {
@@ -102,14 +104,22 @@ public class ConsoleService {
 
     public  void printHistory(int accountId, ActiveService activeService) {
         Transfer[] transfers = activeService.transferHistory(accountId);
+
         System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
         System.out.println("\033[32m+---------------+---------\u001B[1m\033[36mTRANSACTIONS\u001B[0m\033[32m----------+---------------+\033[0m");
         System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
-        System.out.printf("\033[32m| \u001B[1m\033[36m%-13s\033[0m\u001B[32m | \u001B[1m\033[36m%-13s\033[0m\u001B[32m | \u001B[1m\033[36m%-13s\033[0m\u001B[32m | \u001B[1m\033[36m%-13s\033[0m\u001B[32m |\n", "ID ", "Type", "Status", "Amount" ) ;
-        System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
 
         for (Transfer transfer : transfers) {
-            System.out.printf("\033[32m| \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \033[0m\n", transfer.getTransferId() , transfer.getTransferTypeString(transfer.getTransferType()), transfer.getTransferStatusAsString(transfer.getTransferStatus()), "$" +transfer.getAmount());
+            char debitOrCredit;
+            if(transfer.getAccountTo() == accountId){
+                debitOrCredit = '-';
+            } else {
+                debitOrCredit = '+';
+            }
+            System.out.printf("\033[32m| \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \033[0m\n",
+                    transfer.getTransferId() , transfer.getTransferTypeString(transfer.getTransferType()),
+                    transfer.getTransferStatusAsString(transfer.getTransferStatus()),
+                    debitOrCredit + " $" + transfer.getAmount());
 //                System.out.println("Id: " + transfer.getTransferId() + "  ||   " + transfer.getTransferTypeString(transfer.getTransferType())
 //                                 + "  ||   $" + transfer.getAmount() + "  || " + transfer.getTransferStatusAsString(transfer.getTransferStatus()).toUpperCase());
             }
