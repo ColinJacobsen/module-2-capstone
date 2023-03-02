@@ -14,6 +14,10 @@ public interface UserDao {
 
     User getUserById(int id);
 
+    List<String> findAllUsernames();
+
+    List<String> searchUsernames(String searchTerm);
+
     User findByUsername(String username);
 
     String findUsernameByAccountId(int accountId);

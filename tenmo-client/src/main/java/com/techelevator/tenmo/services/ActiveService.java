@@ -7,6 +7,7 @@ import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.util.BasicLogger;
 import io.cucumber.java.bs.A;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.client.ResourceAccessException;
@@ -76,6 +77,24 @@ public class ActiveService {
         }
         return users;
     }
+
+    public List<String> getAllUsernames(){
+
+        List<String> usernames = null;
+        try{
+            ResponseEntity<List<String>> response =
+                    restTemplate.exchange(BASE_URL + "/user/usernames", HttpMethod.GET,
+                            makeAuthEntity(currentUser.getToken()), new ParameterizedTypeReference<List<String>>(){
+                            });
+
+            usernames = response.getBody();
+
+        } catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return usernames;
+
+    }
     public User getUserByName(String name){
         for(User user : getAllUsers(currentUser)) {
             if(user.getUsername().equals(name)){
@@ -132,6 +151,20 @@ public class ActiveService {
             BasicLogger.log(e.getMessage());
         }
         return history;
+    }
+
+
+    public List<String> searchForUsernames(String searchTerm){
+        List<String> results = null;
+        try{
+            ResponseEntity<List<String>> response =
+                    restTemplate.exchange(BASE_URL + "/search/" + searchTerm, HttpMethod.GET, makeAuthEntity(authToken), new ParameterizedTypeReference<List<String>>(){
+                    });
+            results = response.getBody();
+        }catch (RestClientResponseException | ResourceAccessException e) {
+        BasicLogger.log(e.getMessage());
+    }
+        return results;
     }
 
 

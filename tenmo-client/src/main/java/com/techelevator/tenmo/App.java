@@ -1,8 +1,12 @@
 package com.techelevator.tenmo;
 
+import ch.qos.logback.core.subst.Token;
+import com.techelevator.tenmo.consoleGUI.ConsoleGUI;
+import com.techelevator.tenmo.consoleGUI.LogInPage;
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.UserCredentials;
+import com.techelevator.tenmo.security.jwt.TokenProvider;
 import com.techelevator.tenmo.services.ActiveService;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
@@ -22,6 +26,8 @@ public class App {
     private AuthenticatedUser currentUser;
     private final ActiveService activeService = new ActiveService(API_BASE_URL, currentUser);
     private final TransferService transferService = new TransferService(API_BASE_URL, currentUser);
+
+    //private final String token = currentUser.getToken();
 
     public static void main(String[] args) {
         App app = new App();
@@ -45,12 +51,20 @@ public class App {
                 handleRegister();
             } else if (menuSelection == 2) {
                 handleLogin();
-            } else if (menuSelection != 0) {
+            }else if(menuSelection == 3){
+                LogInPage logInPage = new LogInPage();
+            }else if (menuSelection != 0) {
                 System.out.println("Invalid Selection");
                 consoleService.pause();
             }
         }
     }
+
+//    private void GUILogIn(){
+//        if(currentUser == null){
+//            ConsoleGUI gui = new ConsoleGUI(currentUser);
+//        }
+//    }
 
     private void handleRegister() {
         System.out.println("Please register a new user account");

@@ -27,4 +27,12 @@ public class UserController {
     public List<User> getAllUsers(){
         return userDao.findAll();
     }
+
+    @GetMapping (path = "/usernames")
+    public List<String> getAllUsernames(){return userDao.findAllUsernames();}
+
+    @GetMapping (path = "/search/{searchTerm}")
+    List<String> searchUsernames(@PathVariable String searchTerm){
+        return userDao.searchUsernames(searchTerm);
+    }
 }
