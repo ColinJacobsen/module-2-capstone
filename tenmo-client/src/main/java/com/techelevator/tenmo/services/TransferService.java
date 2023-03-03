@@ -41,10 +41,12 @@ public class TransferService {
     }
 
     public int makeTransfer(Transfer transfer) {
-
         HttpEntity<Transfer> entity = transferEntity(currentUser.getToken(), transfer);
+
         try {
-            return restTemplate.exchange(BASE_URL+"/transfers", HttpMethod.POST, entity, int.class).getBody();
+            return restTemplate.postForObject(BASE_URL+"/transfers",
+                    entity,
+                    int.class);
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
@@ -53,11 +55,15 @@ public class TransferService {
 
 
 
+    // Wraps both the account debit and credit in a transaction method. Ensures both will complete or neither.
     public boolean doTransfer(Transfer transfer){  //CHANGED FROM BIGDECIMAL RETURN TO A BOOLEAN
         boolean transferCompleted = false;
+        HttpEntity<Transfer> entity = transferEntity(authToken, transfer);
 
         try{
-            restTemplate.put(BASE_URL+"/transfers/"+transfer.getTransferId(), transferEntity(authToken, transfer));
+            restTemplate.put(BASE_URL+"/transfers/"+transfer.getTransferId(),
+                    entity);
+
             transferCompleted = true;
         }catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
@@ -66,11 +72,11 @@ public class TransferService {
     }
 
     public void updateTransferStatus(Integer transferStatusId, int transferId){
-
-        HttpEntity<Object> entity = transferVoidEntity(currentUser.getToken());
+        HttpEntity<Void> entity = transferVoidEntity(currentUser.getToken());
 
         try {
-            restTemplate.put(BASE_URL + "/transfers/update/" + transferId + "/" + transferStatusId, entity);
+            restTemplate.put(BASE_URL + "/transfers/update/" + transferId + "/" + transferStatusId,
+                    entity);
 //            restTemplate.exchange(BASE_URL + "/transfers/update/" + transferId + "/" + transferStatusId,
 //                    HttpMethod.PUT,
 //                    entity,
@@ -82,9 +88,14 @@ public class TransferService {
 
     public Transfer getTransferByTransferId(int transferId){
         Transfer transfer = null;
+        HttpEntity<Void> entity = transferVoidEntity(currentUser.getToken());
+
         try{
             transfer =
-                    restTemplate.getForObject(BASE_URL +"/transfers/" + transferId, Transfer.class);
+                    restTemplate.exchange(BASE_URL + "/transers/" + transferId,
+                            HttpMethod.GET,
+                            entity,
+                            Transfer.class).getBody();
         }catch (RestClientResponseException | ResourceAccessException e) {
         BasicLogger.log(e.getMessage());
     }
@@ -94,15 +105,22 @@ public class TransferService {
 
     public Transfer[] pendingRequest(int accountFrom){
         Transfer[] requests = null;
+        HttpEntity<Void> entity = transferVoidEntity(currentUser.getToken());
 
         try{
             requests =
-                    restTemplate.getForObject(BASE_URL+"/transfers/pending/" + accountFrom, Transfer[].class);
+                    restTemplate.exchange(BASE_URL+"/transfers/pending/" + accountFrom,
+                            HttpMethod.GET,
+                            entity,
+                            Transfer[].class).getBody();
         }catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
         return requests;
     }
+
+
+    // Entity Convenience Methods
 
     private HttpEntity<Transfer> transferEntity (String token, Transfer transfer) {
         HttpHeaders headers = new HttpHeaders();
@@ -110,10 +128,10 @@ public class TransferService {
         return new HttpEntity<>(transfer, headers);
     }
 
-    private HttpEntity<Object> transferVoidEntity (String token) {
+    private HttpEntity<Void> transferVoidEntity (String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
-        return new HttpEntity<>(Void.class, headers);
+        return new HttpEntity<>(headers);
     }
 
 

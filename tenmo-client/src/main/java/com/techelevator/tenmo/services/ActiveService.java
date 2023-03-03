@@ -127,21 +127,6 @@ public class ActiveService {
         return username;
     }
 
-
-    private HttpEntity<Void> makeAuthEntity(String token) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBearerAuth(token);
-        return new HttpEntity<>(headers);
-    }
-
-
-    private HttpEntity<User> userEntity (String token, User user) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(token);
-        return new HttpEntity<>(user, headers);
-    }
-
     public Transfer[] transferHistory(int accountId){
         Transfer[] history = null;
         try{
@@ -172,7 +157,7 @@ public class ActiveService {
         List<Integer> contactIds = new ArrayList<>();
         try {
             ResponseEntity<List<Integer>> response =
-                    restTemplate.exchange(BASE_URL + "/user/contacts/" + userId, HttpMethod.GET, makeAuthEntity(authToken), new ParameterizedTypeReference<List<Integer>>() {
+                    restTemplate.exchange(BASE_URL + "/user/contacts/" + userId, HttpMethod.GET, makeAuthEntity(authToken), new ParameterizedTypeReference<>() {
                     });
             contactIds = response.getBody();
         }catch (RestClientResponseException | ResourceAccessException e) {
@@ -196,5 +181,22 @@ public class ActiveService {
             BasicLogger.log(e.getMessage());
         }
     }
+
+    // Entity Convenience Methods
+
+    private HttpEntity<Void> makeAuthEntity(String token) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        return new HttpEntity<>(headers);
+    }
+
+
+    private HttpEntity<User> userEntity (String token, User user) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(token);
+        return new HttpEntity<>(user, headers);
+    }
+
 
 }
