@@ -124,6 +124,31 @@ public class ConsoleService {
 //                                 + "  ||   $" + transfer.getAmount() + "  || " + transfer.getTransferStatusAsString(transfer.getTransferStatus()).toUpperCase());
             }
         System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
+
+        int requestedTransferId = promptForInt("Which transaction would you like to view?");
+
+        for(Transfer transfer : transfers){
+            if(transfer.getTransferId() == requestedTransferId){
+                char debitOrCredit;
+                if(transfer.getAccountTo() == accountId){
+                    debitOrCredit = '-';
+                } else {
+                    debitOrCredit = '+';
+                }
+
+//                System.out.printf("\033[32m| \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \033[0m\n",
+//                        transfer.getTransferId() , transfer.getTransferTypeString(transfer.getTransferType()),
+//                        transfer.getTransferStatusAsString(transfer.getTransferStatus()),
+//                        debitOrCredit + " $" + transfer.getAmount());
+
+                System.out.println("Transfer ID: " + transfer.getTransferId() + "\n" +
+                        "Transfer Status: " + transfer.getTransferStatusAsString(transfer.getTransferStatus()) +
+                        "  || Transfer Type: " + transfer.getTransferTypeString(transfer.getTransferType()) + "\n" +
+                        "Account From: " + activeService.accountIdToUsername(transfer.getAccountFrom()) + "  ||  Account To: " + activeService.accountIdToUsername(transfer.getAccountTo()) + "\n" +
+                        "Amount: " + debitOrCredit + transfer.getAmount());
+
+            }
+        }
     }
 
     public int printPendingRequests(Transfer[] transfers, ActiveService activeService) {
@@ -160,5 +185,21 @@ public class ConsoleService {
         }
 
         return transferId;
+    }
+
+    public void printTransfer(Transfer transfer, int accountId){
+        char debitOrCredit;
+        if(transfer.getAccountTo() == accountId){
+            debitOrCredit = '-';
+        } else {
+            debitOrCredit = '+';
+        }
+
+        System.out.printf("\033[32m| \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \033[0m\n",
+                transfer.getTransferId() , transfer.getTransferTypeString(transfer.getTransferType()),
+                transfer.getTransferStatusAsString(transfer.getTransferStatus()),
+                debitOrCredit + " $" + transfer.getAmount());
+
+
     }
 }

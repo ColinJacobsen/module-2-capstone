@@ -70,11 +70,11 @@ public class TransferService {
         HttpEntity<Object> entity = transferVoidEntity(currentUser.getToken());
 
         try {
-//            restTemplate.put(BASE_URL + "/transfers/update/" + transferId + "/" + transferStatusId, transferStatusId);
-            restTemplate.exchange(BASE_URL + "/transfers/update/" + transferId + "/" + transferStatusId,
-                    HttpMethod.PUT,
-                    entity,
-                    Void.class );
+            restTemplate.put(BASE_URL + "/transfers/update/" + transferId + "/" + transferStatusId, entity);
+//            restTemplate.exchange(BASE_URL + "/transfers/update/" + transferId + "/" + transferStatusId,
+//                    HttpMethod.PUT,
+//                    entity,
+//                    Void.class);
         }catch (RestClientResponseException | ResourceAccessException e){
             BasicLogger.log(e.getMessage());
         }

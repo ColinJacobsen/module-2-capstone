@@ -66,7 +66,6 @@ public class AuthenticationController {
         return userDao.getBalanceByAccountId(id);
     }
 
-
     @GetMapping(path = "/account/{id}/username")
     public String getAccountUsername(@PathVariable int id){
         return userDao.findUsernameByAccountId(id);

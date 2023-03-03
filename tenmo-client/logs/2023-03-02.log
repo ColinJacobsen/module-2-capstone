@@ -1,3 +1,23 @@
 2023-03-02T09:38:29.6306209 404 : [{"timestamp":"2023-03-02T17:38:29.618+00:00","status":404,"error":"Not Found","message":"No message available","path":"/usernames"}]
 2023-03-02T09:42:46.256061 404 : [{"timestamp":"2023-03-02T17:42:46.245+00:00","status":404,"error":"Not Found","message":"No message available","path":"/usernames"}]
 2023-03-02T09:46:14.4294264 404 : [{"timestamp":"2023-03-02T17:46:14.418+00:00","status":404,"error":"Not Found","message":"No message available","path":"/usernames"}]
+2023-03-02T15:40:50.5441924 Username not found
+2023-03-02T15:47:27.8262729 401 : [no body]
+2023-03-02T15:51:30.2881178 401 : [no body]
+2023-03-02T15:53:48.4108269 401 : [no body]
+2023-03-02T16:52:55.1482601 404 : [{"timestamp":"2023-03-02T21:52:55.133+00:00","status":404,"error":"Not Found","message":"No message available","path":"/account/2002/username"}]
+2023-03-02T16:52:55.1562295 404 : [{"timestamp":"2023-03-02T21:52:55.154+00:00","status":404,"error":"Not Found","message":"No message available","path":"/account/2003/username"}]
+2023-03-02T16:56:16.5170699 404 : [{"timestamp":"2023-03-02T21:56:16.501+00:00","status":404,"error":"Not Found","message":"No message available","path":"/account/2003/username"}]
+2023-03-02T16:56:55.7929198 401 : [no body]
+2023-03-02T16:57:38.557179 404 : [{"timestamp":"2023-03-02T21:57:38.543+00:00","status":404,"error":"Not Found","message":"No message available","path":"/account/2002/username"}]
+2023-03-02T16:57:38.562181 404 : [{"timestamp":"2023-03-02T21:57:38.561+00:00","status":404,"error":"Not Found","message":"No message available","path":"/account/2003/username"}]
+2023-03-02T16:57:47.6147565 404 : [{"timestamp":"2023-03-02T21:57:47.613+00:00","status":404,"error":"Not Found","message":"No message available","path":"/account/2003/username"}]
+2023-03-02T17:01:22.822655 401 : [no body]
+2023-03-02T17:02:58.8008599 401 : [no body]
+2023-03-02T17:03:48.0057632 401 : [no body]
+2023-03-02T17:07:07.0254084 401 : [no body]
+2023-03-02T17:08:13.8478409 401 : [no body]
+2023-03-02T17:09:08.1755005 Username not found
+2023-03-02T17:13:39.2463816 Username not found
+2023-03-02T17:14:41.4942495 Username not found
+2023-03-02T17:15:46.6569153 Username not found

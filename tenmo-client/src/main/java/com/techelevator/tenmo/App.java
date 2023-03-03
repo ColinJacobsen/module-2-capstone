@@ -12,6 +12,7 @@ import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
 import com.techelevator.tenmo.services.TransferService;
 
+import javax.validation.constraints.Null;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
@@ -50,7 +51,7 @@ public class App {
             if (menuSelection == 1) {
                 handleRegister();
             } else if (menuSelection == 2) {
-                handleLogin();
+                    handleLogin();
             }else if(menuSelection == 3){
                 LogInPage logInPage = new LogInPage();
             }else if (menuSelection != 0) {
@@ -79,12 +80,13 @@ public class App {
     private void handleLogin() {
         UserCredentials credentials = consoleService.promptForCredentials();
         currentUser = authenticationService.login(credentials);
-        transferService.setCurrentUser(currentUser);
+        try {
+            transferService.setCurrentUser(currentUser);
 //        swapping this out for just the get token, dont think we need the whole object, but keeping it here just in case
-        activeService.setAuthToken(currentUser.getToken());
-        transferService.setAuthToken(currentUser.getToken());
-        if (currentUser == null) {
-            consoleService.printErrorMessage();
+            activeService.setAuthToken(currentUser.getToken());
+            transferService.setAuthToken(currentUser.getToken());
+        } catch (NullPointerException e) {
+            System.err.println("\nPlease enter valid login.");
         }
     }
 
@@ -122,6 +124,7 @@ public class App {
     private void viewTransferHistory() {
         // TODO Auto-generated method stub
         consoleService.printHistory(activeService.userToAccount(currentUser.getUser()), activeService);
+
     }
 
     private void viewPendingRequests() {
@@ -166,17 +169,21 @@ public class App {
             if (amount.compareTo(BigDecimal.ZERO) <= 0) {
                 System.err.println("Value must be more than $0.00");
             } else {
-                Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()),
-                        activeService.userToAccount(activeService.getUserByName(recipient)),
-                        amount);
+                try {
+                    Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()),
+                            activeService.userToAccount(activeService.getUserByName(recipient)),
+                            amount);
 
-                if (activeService.getAccountBalance(transfer.getAccountFrom()).compareTo(amount) >= 0) {
-                    transfer.setTransferId(transferService.makeTransfer(transfer));
-                    System.out.println(transferService.doTransfer(transfer));
+                    if (activeService.getAccountBalance(transfer.getAccountFrom()).compareTo(amount) >= 0) {
+                        transfer.setTransferId(transferService.makeTransfer(transfer));
+                        System.out.println(transferService.doTransfer(transfer));
 
-                } else {
-                    System.err.println("Insufficient Balance");
-                    consoleService.printMainMenu();
+                    } else {
+                        System.err.println("Insufficient Balance");
+                        consoleService.printMainMenu();
+                    }
+                } catch (NullPointerException e){
+                    System.err.println("\nPlease enter valid username");
                 }
             }
         }
@@ -195,11 +202,15 @@ public class App {
             if (amount.compareTo(BigDecimal.ZERO) <= 0) {
                 System.err.println("Value must be more than $0.00");
             } else {
-                Transfer transfer = new Transfer(1, 1, activeService.userToAccount(activeService.getUserByName(recipient)), activeService.userToAccount(currentUser.getUser()), amount);
+                try {
+                    Transfer transfer = new Transfer(1, 1, activeService.userToAccount(activeService.getUserByName(recipient)), activeService.userToAccount(currentUser.getUser()), amount);
 
-                transfer.setTransferId(transferService.makeTransfer(transfer));
-                if (transfer.getTransferId() > 3000) {
-                    System.out.println("\nRequest Sent to " + recipient);
+                    transfer.setTransferId(transferService.makeTransfer(transfer));
+                    if (transfer.getTransferId() > 3000) {
+                        System.out.println("\nRequest Sent to " + recipient);
+                    }
+                } catch (NullPointerException e) {
+                    System.err.println("\nPlease enter valid username.");
                 }
             }
 

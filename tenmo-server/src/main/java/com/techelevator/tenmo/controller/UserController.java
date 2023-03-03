@@ -35,4 +35,9 @@ public class UserController {
     List<String> searchUsernames(@PathVariable String searchTerm){
         return userDao.searchUsernames(searchTerm);
     }
+
+//    @GetMapping(path = "/account/{id}/username")
+//    public String getAccountUsername(@PathVariable int id){
+//        return userDao.findUsernameByAccountId(id);
+//    }
 }
