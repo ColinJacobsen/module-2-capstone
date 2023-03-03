@@ -25,38 +25,38 @@ public class MainMenuPanel extends JPanel {
         setOpaque(false);
 
         addMenuItem("View Account Details",
-                new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-money-box-50.png"),
-                new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
+                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-money-box-50.png"),
+                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
             // Perform action for option 1
             System.out.println("Option 1 clicked!");
     });
         addMenuItem("Send TEBucks",
-                new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-money-transfer-50.png"),
-                new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
+                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-money-transfer-50.png"),
+                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
             // Perform action for option 1
             System.out.println("Option 2 clicked!");
         });
         addMenuItem("Request TEBucks",
-                new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-request-money-50.png"),
-                new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
+                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-request-money-50.png"),
+                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
             // Perform action for option 1
             System.out.println("Option 3 clicked!");
         });
         addMenuItem("View Received Requests",
-                new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-man-raising-hand-icon-50.png"),
-                new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
+                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-man-raising-hand-icon-50.png"),
+                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
             // Perform action for option 1
             System.out.println("Option 4 clicked!");
         });
         addMenuItem("View Sent Requests",
-                new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-sent-50.png"),
-                new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
+                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-sent-50.png"),
+                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
             // Perform action for option 1
             System.out.println("Option 5 clicked!");
         });
         addMenuItem("View All Transfers ",
-                new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-infinity-50.png"),
-                new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
+                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-infinity-50.png"),
+                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
             // Perform action for option 1
             System.out.println("Option 6 clicked!");
             setVisible(false);

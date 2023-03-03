@@ -1,23 +1,12 @@
 2023-03-02T09:38:29.6306209 404 : [{"timestamp":"2023-03-02T17:38:29.618+00:00","status":404,"error":"Not Found","message":"No message available","path":"/usernames"}]
 2023-03-02T09:42:46.256061 404 : [{"timestamp":"2023-03-02T17:42:46.245+00:00","status":404,"error":"Not Found","message":"No message available","path":"/usernames"}]
 2023-03-02T09:46:14.4294264 404 : [{"timestamp":"2023-03-02T17:46:14.418+00:00","status":404,"error":"Not Found","message":"No message available","path":"/usernames"}]
-2023-03-02T15:40:50.5441924 Username not found
-2023-03-02T15:47:27.8262729 401 : [no body]
-2023-03-02T15:51:30.2881178 401 : [no body]
-2023-03-02T15:53:48.4108269 401 : [no body]
-2023-03-02T16:52:55.1482601 404 : [{"timestamp":"2023-03-02T21:52:55.133+00:00","status":404,"error":"Not Found","message":"No message available","path":"/account/2002/username"}]
-2023-03-02T16:52:55.1562295 404 : [{"timestamp":"2023-03-02T21:52:55.154+00:00","status":404,"error":"Not Found","message":"No message available","path":"/account/2003/username"}]
-2023-03-02T16:56:16.5170699 404 : [{"timestamp":"2023-03-02T21:56:16.501+00:00","status":404,"error":"Not Found","message":"No message available","path":"/account/2003/username"}]
-2023-03-02T16:56:55.7929198 401 : [no body]
-2023-03-02T16:57:38.557179 404 : [{"timestamp":"2023-03-02T21:57:38.543+00:00","status":404,"error":"Not Found","message":"No message available","path":"/account/2002/username"}]
-2023-03-02T16:57:38.562181 404 : [{"timestamp":"2023-03-02T21:57:38.561+00:00","status":404,"error":"Not Found","message":"No message available","path":"/account/2003/username"}]
-2023-03-02T16:57:47.6147565 404 : [{"timestamp":"2023-03-02T21:57:47.613+00:00","status":404,"error":"Not Found","message":"No message available","path":"/account/2003/username"}]
-2023-03-02T17:01:22.822655 401 : [no body]
-2023-03-02T17:02:58.8008599 401 : [no body]
-2023-03-02T17:03:48.0057632 401 : [no body]
-2023-03-02T17:07:07.0254084 401 : [no body]
-2023-03-02T17:08:13.8478409 401 : [no body]
-2023-03-02T17:09:08.1755005 Username not found
-2023-03-02T17:13:39.2463816 Username not found
-2023-03-02T17:14:41.4942495 Username not found
-2023-03-02T17:15:46.6569153 Username not found
+2023-03-02T12:10:42.1578219 401 : [no body]
+2023-03-02T17:14:29.0525831 500 : [{"timestamp":"2023-03-03T01:14:29.041+00:00","status":500,"error":"Internal Server Error","message":"StatementCallback; bad SQL grammar [SELECT contact_user_id FROM user_contacts WHERE user_id = ? ]; nested exception is org.postgresql.util.PSQLException: ERROR: syntax error at end of input\n  Position: 61","path":"/user/contacts/1001"}]
+2023-03-02T17:21:44.3790557 500 : [{"timestamp":"2023-03-03T01:21:44.367+00:00","status":500,"error":"Internal Server Error","message":"StatementCallback; bad SQL grammar [SELECT contact_user_id FROM user_contacts WHERE user_id = ? ]; nested exception is org.postgresql.util.PSQLException: ERROR: syntax error at end of input\n  Position: 61","path":"/user/contacts/1001"}]
+2023-03-02T17:30:19.9936256 500 : [{"timestamp":"2023-03-03T01:30:19.972+00:00","status":500,"error":"Internal Server Error","message":"StatementCallback; bad SQL grammar [SELECT contact_user_id FROM user_contacts WHERE user_id = ? ]; nested exception is org.postgresql.util.PSQLException: ERROR: syntax error at end of input\n  Position: 61","path":"/user/contacts/1001"}]
+2023-03-02T17:34:40.4215888 500 : [{"timestamp":"2023-03-03T01:34:40.399+00:00","status":500,"error":"Internal Server Error","message":"StatementCallback; bad SQL grammar [SELECT contact_user_id FROM user_contacts WHERE user_id = ? ]; nested exception is org.postgresql.util.PSQLException: ERROR: syntax error at end of input\n  Position: 61","path":"/user/contacts/1001"}]
+2023-03-02T18:07:03.746275 400 : [{"timestamp":"2023-03-03T02:07:03.733+00:00","status":400,"error":"Bad Request","message":"Required Integer parameter 'userId' is not present","path":"/user/addContact"}]
+2023-03-02T18:11:33.277107 404 : [{"timestamp":"2023-03-03T02:11:33.263+00:00","status":404,"error":"Not Found","message":"No message available","path":"/user/addContact"}]
+2023-03-02T22:03:22.1749995 Username not found
+2023-03-02T22:03:31.5679481 Username not found
