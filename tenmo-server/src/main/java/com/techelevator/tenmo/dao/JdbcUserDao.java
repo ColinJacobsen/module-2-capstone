@@ -219,8 +219,8 @@ public class JdbcUserDao implements UserDao {
 
     public void removeUserFromContacts(Integer userId, Integer contactId) {
 
-        String sql = "DELETE * FROM user_contacts " +
-                "WHERE user_id = ? AND contact_user_id = ? ";
+        String sql = "DELETE FROM user_contacts " +
+                    "WHERE user_id = ? AND contact_user_id = ? ";
 
         jdbcTemplate.update(sql, userId, contactId);
     }

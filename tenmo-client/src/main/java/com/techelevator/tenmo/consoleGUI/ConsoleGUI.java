@@ -118,7 +118,7 @@ public class ConsoleGUI extends JFrame {
         searchBarPanel.setOpaque(false);
         cardPanel.add(searchBarPanel, SEARCH_MENU);
 
-        contactsPanel = new ContactsPanel(contactUsernames);
+        contactsPanel = new ContactsPanel(contactUsernames, activeService, transferService, currentUser, allUsers);
         contactsPanel.setBounds(10, 100, 540, 600);
         contactsPanel.setBackground(new Color(10, 120, 120));
         contactsPanel.setOpaque(false);

@@ -114,10 +114,19 @@ public class SearchBarPanel extends JPanel {
                     usernameLabel.setFont(RESULTS_FONT);
                     usernamePanel.add(usernameLabel);
                     usernameLabel.setPreferredSize(new Dimension(375, 40));
+
                     resultsSendButton = new JButton();
                     resultsSendButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-money-transfer-25.png"));
+                    resultsSendButton.addActionListener(e -> {
+                        System.out.println("Set Up Send Transfer transition here");
+                    });
+
                     resultsRequestButton = new JButton();
                     resultsRequestButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-request-money-25.png"));
+                    resultsRequestButton.addActionListener(e -> {
+                        System.out.println("Set Up Request Transfer transition here");
+                    });
+
                     resultsAddToContactsButton = new JButton();
                     resultsAddToContactsButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-address-book-25.png"));
                     resultsAddToContactsButton.addActionListener(e -> {
