@@ -11,19 +11,21 @@ import org.springframework.web.client.RestClientResponseException;
 import org.springframework.web.client.RestTemplate;
 
 public class TransferService {
+
+    // Properties
     private final String BASE_URL;
-
-
     private AuthenticatedUser currentUser;
     private String authToken;
     private final RestTemplate restTemplate = new RestTemplate();
 
+    // Constructor
     public TransferService(String BASE_URL, AuthenticatedUser currentUser) {
         this.BASE_URL= BASE_URL;
         this.currentUser = currentUser;
 
     }
 
+    // Getters and Setters
     public AuthenticatedUser getCurrentUser() {
         return currentUser;
     }
@@ -40,6 +42,7 @@ public class TransferService {
         this.authToken = authToken;
     }
 
+    // Service Methods
     public int makeTransfer(Transfer transfer) {
         HttpEntity<Transfer> entity = transferEntity(currentUser.getToken(), transfer);
 
@@ -51,24 +54,6 @@ public class TransferService {
             BasicLogger.log(e.getMessage());
         }
         return 0;
-    }
-
-
-
-    // Wraps both the account debit and credit in a transaction method. Ensures both will complete or neither.
-    public boolean doTransfer(Transfer transfer){  //CHANGED FROM BIGDECIMAL RETURN TO A BOOLEAN
-        boolean transferCompleted = false;
-        HttpEntity<Transfer> entity = transferEntity(authToken, transfer);
-
-        try{
-            restTemplate.put(BASE_URL+"/transfers/"+transfer.getTransferId(),
-                    entity);
-
-            transferCompleted = true;
-        }catch (RestClientResponseException | ResourceAccessException e) {
-            BasicLogger.log(e.getMessage());
-        }
-        return transferCompleted;
     }
 
     public void updateTransferStatus(Integer transferStatusId, int transferId){
@@ -117,6 +102,22 @@ public class TransferService {
             BasicLogger.log(e.getMessage());
         }
         return requests;
+    }
+
+    // Wraps both the account debit and credit in a transaction method. Ensures both will complete or neither.
+    public boolean doTransfer(Transfer transfer){  //CHANGED FROM BIGDECIMAL RETURN TO A BOOLEAN
+        boolean transferCompleted = false;
+        HttpEntity<Transfer> entity = transferEntity(authToken, transfer);
+
+        try{
+            restTemplate.put(BASE_URL+"/transfers/"+transfer.getTransferId(),
+                    entity);
+
+            transferCompleted = true;
+        }catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return transferCompleted;
     }
 
 

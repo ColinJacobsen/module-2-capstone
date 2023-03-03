@@ -21,13 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ActiveService {
+
+    // Properties
     private final String BASE_URL;
-
-
     private AuthenticatedUser currentUser;
-
-
-
     private String authToken;
     public void setAuthToken(String authToken) {
         this.authToken = authToken;
@@ -35,6 +32,7 @@ public class ActiveService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    // Constructor & Setter
     public ActiveService(String BASE_URL, AuthenticatedUser currentUser){
         this.BASE_URL = BASE_URL;
         this.currentUser = currentUser;
@@ -43,11 +41,26 @@ public class ActiveService {
         this.currentUser = currentUser;
     }
 
+    // Service Methods
+    public User getUserByName(String name){
+        for(User user : getAllUsers(currentUser)) {
+            if(user.getUsername().equals(name)){
+                return user;
+            }
+        }
+        BasicLogger.log("Username not found");
+        return null;
+    }
+
     public BigDecimal getUserBalance(AuthenticatedUser currentUser , int id) {
         BigDecimal balance = null;
+
         try {
             ResponseEntity<BigDecimal> response =
-                    restTemplate.exchange(BASE_URL + "/user/"+id+"/balance", HttpMethod.GET, makeAuthEntity(currentUser.getToken()), BigDecimal.class);
+                    restTemplate.exchange(BASE_URL + "/user/"+id+"/balance",
+                            HttpMethod.GET, makeAuthEntity(currentUser.getToken()),
+                            BigDecimal.class);
+
             balance = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
@@ -57,9 +70,14 @@ public class ActiveService {
 
     public BigDecimal getAccountBalance(int accountId){
         BigDecimal balance = null;
+
         try {
             ResponseEntity<BigDecimal> response =
-                    restTemplate.exchange(BASE_URL + "/account/" + accountId + "/balance", HttpMethod.GET, makeAuthEntity(authToken), BigDecimal.class);
+                    restTemplate.exchange(BASE_URL + "/account/" + accountId + "/balance",
+                            HttpMethod.GET,
+                            makeAuthEntity(authToken),
+                            BigDecimal.class);
+
             balance = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
@@ -70,10 +88,15 @@ public class ActiveService {
 
     public List<User> getAllUsers(AuthenticatedUser currentUser){
         List<User> users = null;
+        HttpEntity<Void> entity = makeAuthEntity(currentUser.getToken());
+
         try {
             ResponseEntity<List<User>> response =
-                    restTemplate.exchange(BASE_URL + "/user", HttpMethod.GET, makeAuthEntity(currentUser.getToken()), new ParameterizedTypeReference<List<User>>(){
-                    });
+                    restTemplate.exchange(BASE_URL + "/user",
+                            HttpMethod.GET,
+                            entity,
+                            new ParameterizedTypeReference<>(){});
+
             users = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
@@ -82,13 +105,15 @@ public class ActiveService {
     }
 
     public List<String> getAllUsernames(){
-
         List<String> usernames = null;
+        HttpEntity<Void> entity = makeAuthEntity(currentUser.getToken());
+
         try{
             ResponseEntity<List<String>> response =
-                    restTemplate.exchange(BASE_URL + "/user/usernames", HttpMethod.GET,
-                            makeAuthEntity(currentUser.getToken()), new ParameterizedTypeReference<List<String>>(){
-                            });
+                    restTemplate.exchange(BASE_URL + "/user/usernames",
+                            HttpMethod.GET,
+                            entity,
+                            new ParameterizedTypeReference<>(){});
 
             usernames = response.getBody();
 
@@ -98,19 +123,16 @@ public class ActiveService {
         return usernames;
 
     }
-    public User getUserByName(String name){
-        for(User user : getAllUsers(currentUser)) {
-            if(user.getUsername().equals(name)){
-                return user;
-            }
-        }
-        BasicLogger.log("Username not found");
-        return null;
-    }
+
     public int userToAccount(User user){
         int accountId = 0;
+        HttpEntity<Void> entity = makeAuthEntity(currentUser.getToken());
+
         try{
-            accountId = restTemplate.getForObject(BASE_URL + "/account/"+user.getId(), int.class);
+            accountId = restTemplate.exchange(BASE_URL + "/account/"+user.getId(),
+                    HttpMethod.GET,
+                    entity,
+                    int.class).getBody();
         }catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
@@ -119,8 +141,14 @@ public class ActiveService {
 
     public String accountIdToUsername(int accountId) {
         String username= null;
+        HttpEntity<Void> entity = makeAuthEntity(currentUser.getToken());
+
         try {
-            username = restTemplate.getForObject(BASE_URL + "/account/" + accountId + "/username", String.class);
+            username = restTemplate.exchange(BASE_URL + "/account/" + accountId + "/username",
+                    HttpMethod.GET,
+                    entity,
+                    String.class).getBody();
+
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
@@ -129,9 +157,15 @@ public class ActiveService {
 
     public Transfer[] transferHistory(int accountId){
         Transfer[] history = null;
+        HttpEntity<Void> entity = makeAuthEntity(currentUser.getToken());
+
         try{
             ResponseEntity<Transfer[]> response =
-                    restTemplate.exchange(BASE_URL+"transfers/history/"+accountId,HttpMethod.GET, makeAuthEntity(authToken), Transfer[].class);
+                    restTemplate.exchange(BASE_URL+"transfers/history/"+accountId,
+                            HttpMethod.GET,
+                            entity,
+                            Transfer[].class);
+
             history = response.getBody();
         }catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
@@ -142,10 +176,15 @@ public class ActiveService {
 
     public List<String> searchForUsernames(String searchTerm){
         List<String> results = null;
+        HttpEntity<Void> entity = makeAuthEntity(currentUser.getToken());
+
         try{
             ResponseEntity<List<String>> response =
-                    restTemplate.exchange(BASE_URL + "/search/" + searchTerm, HttpMethod.GET, makeAuthEntity(authToken), new ParameterizedTypeReference<List<String>>(){
-                    });
+                    restTemplate.exchange(BASE_URL + "/search/" + searchTerm,
+                            HttpMethod.GET,
+                            entity,
+                            new ParameterizedTypeReference<>(){});
+
             results = response.getBody();
         }catch (RestClientResponseException | ResourceAccessException e) {
         BasicLogger.log(e.getMessage());
@@ -155,10 +194,15 @@ public class ActiveService {
 
     public List<Integer> getContactsList (int userId){
         List<Integer> contactIds = new ArrayList<>();
+        HttpEntity<Void> entity = makeAuthEntity(currentUser.getToken());
+
         try {
             ResponseEntity<List<Integer>> response =
-                    restTemplate.exchange(BASE_URL + "/user/contacts/" + userId, HttpMethod.GET, makeAuthEntity(authToken), new ParameterizedTypeReference<>() {
-                    });
+                    restTemplate.exchange(BASE_URL + "/user/contacts/" + userId,
+                            HttpMethod.GET,
+                            entity,
+                            new ParameterizedTypeReference<>() {});
+
             contactIds = response.getBody();
         }catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
@@ -167,16 +211,28 @@ public class ActiveService {
     }
 
     public void addUserToContacts(Integer userId, Integer contactId){
+        HttpEntity<Void> entity = makeAuthEntity(currentUser.getToken());
+
         try{
-            restTemplate.exchange(BASE_URL + "/user/addContact/" + userId + "/" + contactId, HttpMethod.POST, makeAuthEntity(authToken), Integer.class);
+            restTemplate.exchange(BASE_URL + "/user/addContact/" + userId + "/" + contactId,
+                    HttpMethod.POST,
+                    entity,
+                    Integer.class);
+
         }catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
     }
 
     public void deleteUserFromContacts(Integer userId, Integer contactId){
+        HttpEntity<Void> entity = makeAuthEntity(currentUser.getToken());
+
         try{
-            restTemplate.exchange(BASE_URL + "/user/removeContact/"  + userId + "/" + contactId, HttpMethod.DELETE, makeAuthEntity(authToken), Integer.class);
+            restTemplate.exchange(BASE_URL + "/user/removeContact/"  + userId + "/" + contactId,
+                    HttpMethod.DELETE,
+                    entity,
+                    Integer.class);
+            
         }catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
         }
