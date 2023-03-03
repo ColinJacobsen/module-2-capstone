@@ -3,17 +3,14 @@ package com.techelevator.tenmo.consoleGUI;
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.services.ActiveService;
-
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.text.Document;
 
 public class SearchBarPanel extends JPanel {
-    private final Dimension MENU_OPTION_DIMENSION = new Dimension(540, 125);
     private final Font MENU_FONT = new Font("Arial", Font.PLAIN, 40);
 
     private final Font RESULTS_FONT = new Font("Arial", Font.PLAIN, 25);
@@ -21,7 +18,6 @@ public class SearchBarPanel extends JPanel {
     private JButton searchButton;
     private JPanel searchPanel;
     private JPanel resultsPanel;
-    private List<String> resultsList;
     private List<String> usernamesList = new ArrayList<>();
 
     private List<User> allUsers = new ArrayList<>();
@@ -66,25 +62,25 @@ public class SearchBarPanel extends JPanel {
 
 
         searchPanel.setBackground(new Color(50, 150, 100));
-        //searchPanel.setSize(500,300);
         searchPanel.add(searchBarTextField);
-        //searchPanel.add(searchButton);
 
-        resultsPanel = new JPanel() {
-        };
+        //************************************RESULTS PANEL
+        resultsPanel = new JPanel() {};
         resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.Y_AXIS));
-        resultsPanel.setPreferredSize(new Dimension(535, 510));
-        JScrollPane resultsScrollPane = new JScrollPane();
-        JViewport viewport = resultsScrollPane.getViewport();
-        viewport.setBackground(new Color(175, 255, 200));
-        resultsScrollPane.setPreferredSize(new Dimension(525, 500));
+        //resultsPanel.setPreferredSize(new Dimension(520, 500));
+        resultsPanel.setMinimumSize(new Dimension(520,500));
+        resultsPanel.setMaximumSize(new Dimension(520,500));
+        JScrollPane resultsScrollPane = new JScrollPane(resultsPanel);
+        resultsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        resultsScrollPane.setPreferredSize(new Dimension(540, 500));
         resultsPanel.setBackground(new Color(10, 120, 120));
 
-        resultsPanel.add(resultsScrollPane);
+       // resultsPanel.add(resultsScrollPane);
+        //resultsScrollPane.add(resultsPanel);
 
 
         add(searchPanel);
-        add(resultsPanel);
+        add(resultsScrollPane);
     }
 
     private void updateResults() {
@@ -103,7 +99,7 @@ public class SearchBarPanel extends JPanel {
             int resultCounter = 0;
 
             for (String username : filteredResults) {
-                if (resultCounter < 14 && resultCounter < filteredResults.size()) {
+                if (resultCounter < 30 && resultCounter < filteredResults.size()) {
                     JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0)) {
                     };
                     usernamePanel.setPreferredSize(new Dimension(525, 40));
@@ -117,7 +113,7 @@ public class SearchBarPanel extends JPanel {
                     JLabel usernameLabel = new JLabel(username);
                     usernameLabel.setFont(RESULTS_FONT);
                     usernamePanel.add(usernameLabel);
-                    usernameLabel.setPreferredSize(new Dimension(395, 40));
+                    usernameLabel.setPreferredSize(new Dimension(375, 40));
                     resultsSendButton = new JButton();
                     resultsSendButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-money-transfer-25.png"));
                     resultsRequestButton = new JButton();

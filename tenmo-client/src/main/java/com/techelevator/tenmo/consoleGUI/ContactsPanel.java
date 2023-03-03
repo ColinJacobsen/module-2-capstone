@@ -1,5 +1,9 @@
 package com.techelevator.tenmo.consoleGUI;
 
+import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.User;
+import com.techelevator.tenmo.services.ActiveService;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -13,14 +17,15 @@ public class ContactsPanel extends JPanel {
     private JTextField searchBarTextField;
     private JPanel searchPanel;
     private JPanel contactsPanel;
-    private java.util.List<String> resultsList;
     private List<String> contactsList = new ArrayList<String>();
 
+    private List<User> allUsers = new ArrayList<>();
     private JButton contactsSendButton;
     private JButton contactsRequestButton;
     private JButton contactsDeleteFromContactsButton;
+    JScrollPane resultsScrollPane;
 
-    int colorCounter = 0;
+    //int colorCounter = 0;
 
     int resultCounter = 0;
 
@@ -39,78 +44,40 @@ public class ContactsPanel extends JPanel {
         searchBarTextField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                updateResults();
+                updateAndPrintResults();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                updateResults();
+                updateAndPrintResults();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                updateResults();
+                updateAndPrintResults();
             }
         });
 
         searchPanel.setBackground(new Color(50, 150, 100));
-        //searchPanel.setSize(500,300);
         searchPanel.add(searchBarTextField);
-        //searchPanel.add(searchButton);
-
         contactsPanel = new JPanel() {
         };
         contactsPanel.setLayout(new BoxLayout(contactsPanel, BoxLayout.Y_AXIS));
-        contactsPanel.setPreferredSize(new Dimension(535, 510));
-        JScrollPane resultsScrollPane = new JScrollPane();
-        JViewport viewport = resultsScrollPane.getViewport();
-        viewport.setBackground(new Color(175, 255, 200));
-        resultsScrollPane.setPreferredSize(new Dimension(525, 500));
+        //contactsPanel.setPreferredSize(new Dimension(520, 480));
+        resultsScrollPane = new JScrollPane(contactsPanel);
+        resultsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        resultsScrollPane.setPreferredSize(new Dimension(540, 500));
         contactsPanel.setBackground(new Color(10, 120, 120));
 
-        contactsPanel.add(resultsScrollPane);
+//        contactsPanel.add(resultsScrollPane);
 
         add(searchPanel);
-        add(contactsPanel);
+        add(resultsScrollPane);
 
-
-        for (String username : contactUsernames) {
-
-            JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0)) {
-            };
-            usernamePanel.setPreferredSize(new Dimension(525, 40));
-            usernamePanel.setMaximumSize(new Dimension(525, 40));
-            usernamePanel.setMaximumSize(new Dimension(525, 40));
-            if (colorCounter % 2 == 0) {
-                usernamePanel.setBackground(new Color(100, 255, 180));
-            } else {
-                usernamePanel.setBackground(new Color(100, 255, 200));
-            }
-            JLabel usernameLabel = new JLabel(username);
-            usernameLabel.setFont(RESULTS_FONT);
-            usernamePanel.add(usernameLabel);
-            usernameLabel.setPreferredSize(new Dimension(395, 40));
-            contactsSendButton = new JButton();
-            contactsSendButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-money-transfer-25.png"));
-            contactsRequestButton = new JButton();
-            contactsRequestButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-request-money-25.png"));
-            contactsDeleteFromContactsButton = new JButton();
-            contactsDeleteFromContactsButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-close-25.png"));
-
-            contactsSendButton.setPreferredSize(new Dimension(35, 35));
-            contactsRequestButton.setPreferredSize(new Dimension(35, 35));
-            contactsDeleteFromContactsButton.setPreferredSize(new Dimension(35, 35));
-
-            usernamePanel.add(contactsSendButton);
-            usernamePanel.add(contactsRequestButton);
-            usernamePanel.add(contactsDeleteFromContactsButton);
-
-            contactsPanel.add(usernamePanel);
-
-        }
+        //printResults(contactUsernames, 1000);
     }
 
-    private void updateResults() {
+    private void updateAndPrintResults() {
 
         String searchTerm = searchBarTextField.getText();
         List<String> filteredResults = new ArrayList<>();
@@ -122,48 +89,95 @@ public class ContactsPanel extends JPanel {
         }
 
         if (filteredResults.size() > 0) {
-            colorCounter = 0;
-            resultCounter = 0;
+            int colorCounter = 0;
 
             for (String username : filteredResults) {
-                if (resultCounter < 14 && resultCounter < filteredResults.size()) {
-                    JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0)) {
-                    };
-                    usernamePanel.setPreferredSize(new Dimension(525, 40));
-                    usernamePanel.setMaximumSize(new Dimension(525, 40));
-                    usernamePanel.setMaximumSize(new Dimension(525, 40));
-                    if (colorCounter % 2 == 0) {
-                        usernamePanel.setBackground(new Color(100, 255, 180));
-                    } else {
-                        usernamePanel.setBackground(new Color(100, 255, 200));
-                    }
-                    JLabel usernameLabel = new JLabel(username);
-                    usernameLabel.setFont(RESULTS_FONT);
-                    usernamePanel.add(usernameLabel);
-                    usernameLabel.setPreferredSize(new Dimension(395, 40));
-                    contactsSendButton = new JButton();
-                    contactsSendButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-money-transfer-25.png"));
-                    contactsRequestButton = new JButton();
-                    contactsRequestButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-request-money-25.png"));
-                    contactsDeleteFromContactsButton = new JButton();
-                    contactsDeleteFromContactsButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-close-25.png"));
-
-                    contactsSendButton.setPreferredSize(new Dimension(35, 35));
-                    contactsRequestButton.setPreferredSize(new Dimension(35, 35));
-                    contactsDeleteFromContactsButton.setPreferredSize(new Dimension(35, 35));
-
-                    usernamePanel.add(contactsSendButton);
-                    usernamePanel.add(contactsRequestButton);
-                    usernamePanel.add(contactsDeleteFromContactsButton);
-
-                    contactsPanel.add(usernamePanel);
-                    colorCounter++;
-                    resultCounter++;
+                JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0)) {
+                };
+                usernamePanel.setPreferredSize(new Dimension(520, 40));
+                usernamePanel.setMaximumSize(new Dimension(520, 40));
+                usernamePanel.setMaximumSize(new Dimension(520, 40));
+                if (colorCounter % 2 == 0) {
+                    usernamePanel.setBackground(new Color(100, 255, 180));
+                } else {
+                    usernamePanel.setBackground(new Color(100, 255, 200));
                 }
+                JLabel usernameLabel = new JLabel(username);
+                usernameLabel.setFont(RESULTS_FONT);
+                usernamePanel.add(usernameLabel);
+                usernameLabel.setPreferredSize(new Dimension(375, 40));
+                contactsSendButton = new JButton();
+                contactsSendButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-money-transfer-25.png"));
+                contactsRequestButton = new JButton();
+                contactsRequestButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-request-money-25.png"));
+                contactsDeleteFromContactsButton = new JButton();
+                contactsDeleteFromContactsButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-close-25.png"));
+                contactsDeleteFromContactsButton.addActionListener(e -> {
+                    System.out.println("Delete Button Pressed");
+                });
+                contactsSendButton.setPreferredSize(new Dimension(35, 35));
+                contactsRequestButton.setPreferredSize(new Dimension(35, 35));
+                contactsDeleteFromContactsButton.setPreferredSize(new Dimension(35, 35));
+
+                usernamePanel.add(contactsSendButton);
+                usernamePanel.add(contactsRequestButton);
+                usernamePanel.add(contactsDeleteFromContactsButton);
+
+                contactsPanel.add(usernamePanel);
+                colorCounter++;
             }
+
+            contactsPanel.revalidate();
+            contactsPanel.repaint();
         }
+    }
+
+
+    public void printResults(List<String> results, int limit) {
+        int colorCounter = 0;
+        int limitCounter = 0;
+        if (limitCounter < limit && limitCounter < results.size())
+            for (String username : results) {
+                JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0)) {
+                };
+                usernamePanel.setPreferredSize(new Dimension(525, 40));
+                usernamePanel.setMaximumSize(new Dimension(525, 40));
+                usernamePanel.setMaximumSize(new Dimension(525, 40));
+                if (colorCounter % 2 == 0) {
+                    usernamePanel.setBackground(new Color(100, 255, 180));
+                } else {
+                    usernamePanel.setBackground(new Color(100, 255, 200));
+                }
+                JLabel usernameLabel = new JLabel(username);
+                usernameLabel.setFont(RESULTS_FONT);
+                usernamePanel.add(usernameLabel);
+                usernameLabel.setPreferredSize(new Dimension(390, 40));
+                contactsSendButton = new JButton();
+                contactsSendButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-money-transfer-25.png"));
+                contactsRequestButton = new JButton();
+                contactsRequestButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-request-money-25.png"));
+                contactsDeleteFromContactsButton = new JButton();
+                contactsDeleteFromContactsButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-close-25.png"));
+                contactsDeleteFromContactsButton.addActionListener(e -> {
+                    System.out.println("Delete Button Pressed");
+                });
+                contactsSendButton.setPreferredSize(new Dimension(35, 35));
+                contactsRequestButton.setPreferredSize(new Dimension(35, 35));
+                contactsDeleteFromContactsButton.setPreferredSize(new Dimension(35, 35));
+
+                usernamePanel.add(contactsSendButton);
+                usernamePanel.add(contactsRequestButton);
+                usernamePanel.add(contactsDeleteFromContactsButton);
+
+                resultsScrollPane.add(usernamePanel);
+                colorCounter++;
+                limitCounter++;
+            }
+
         contactsPanel.revalidate();
         contactsPanel.repaint();
     }
-
 }
+
+
+
