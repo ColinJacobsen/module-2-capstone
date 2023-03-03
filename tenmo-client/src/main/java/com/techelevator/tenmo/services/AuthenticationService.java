@@ -17,13 +17,16 @@ import java.math.BigDecimal;
 
 public class AuthenticationService {
 
+    // Properties
     private final String baseUrl;
     private final RestTemplate restTemplate = new RestTemplate();
 
+    // Constructor
     public AuthenticationService(String url) {
         this.baseUrl = url;
     }
 
+    // Service Methods
     public AuthenticatedUser login(UserCredentials credentials) {
         HttpEntity<UserCredentials> entity = createCredentialsEntity(credentials);
         AuthenticatedUser user = null;
@@ -49,6 +52,7 @@ public class AuthenticationService {
         return success;
     }
 
+    // Entity Convenience Method
     private HttpEntity<UserCredentials> createCredentialsEntity(UserCredentials credentials) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
