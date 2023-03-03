@@ -4,6 +4,7 @@ import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -205,6 +206,32 @@ public class JdbcUserDao implements UserDao {
             listOfAccountTransfers.add(transfer);
         }
         return listOfAccountTransfers;
+    }
+
+
+
+    public void addUserToContacts(Integer userId, Integer contactId){
+        String sql = "INSERT INTO user_contacts (user_id, contact_user_id) " +
+                     "VALUES (?,?) RETURNING id";
+        jdbcTemplate.queryForObject(sql, Integer.class, userId, contactId);
+
+    };
+
+    public void removeUserFromContacts(Integer userId, Integer contactId) {
+
+        String sql = "DELETE * FROM user_contacts " +
+                "WHERE user_id = ? AND contact_user_id = ? ";
+
+        jdbcTemplate.update(sql, userId, contactId);
+    }
+
+
+    public List<Integer> getContactsList(int userId){
+        String sql = "SELECT contact_user_id FROM " +
+                     "user_contacts WHERE " +
+                     "user_id = ? ";
+        return jdbcTemplate.queryForList(sql, Integer.class, userId);
+
     }
 
     private Transfer mapRowToTransfer(SqlRowSet rs) {

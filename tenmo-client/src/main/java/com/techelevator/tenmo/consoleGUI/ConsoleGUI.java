@@ -1,12 +1,16 @@
 package com.techelevator.tenmo.consoleGUI;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.services.ActiveService;
 import com.techelevator.tenmo.services.TransferService;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 public class ConsoleGUI extends JFrame {
     private static final String API_BASE_URL = "http://localhost:8080/";
@@ -20,16 +24,24 @@ public class ConsoleGUI extends JFrame {
     SearchBarPanel searchBarPanel;
     MainMenuPanel mainMenuPanel;
 
-    JPanel navigationButtonPanel;
+    NavigationButtonPanel navigationButtonPanel;
 
+    ContactsPanel contactsPanel;
     JPanel cardPanel;
 
     private int mouseX;
     private int mouseY;
     java.util.List<String> usernames;
 
+    java.util.List<Integer> contactIds;
+
+    java.util.List<String> contactUsernames = new ArrayList<>();
+
+    java.util.List<User> allUsers;
+
     final static String MAIN_MENU = "Main Menu";
     final static String SEARCH_MENU = "Search Menu";
+    final static String CONTACTS_MENU = "Contacts Menu";
 
     private final ActiveService activeService = new ActiveService(API_BASE_URL, currentUser);
 
@@ -77,7 +89,20 @@ public class ConsoleGUI extends JFrame {
 
         setContentPane(backGroundLabel);
 
+        allUsers = activeService.getAllUsers(currentUser);
+
         usernames = activeService.getAllUsernames();
+        contactIds = activeService.getContactsList(currentUser.getUser().getId());
+
+        for (User user : allUsers){
+            if(contactIds.contains(user.getId())){
+                contactUsernames.add(user.getUsername());
+            }
+        }
+
+
+
+        Collections.sort(usernames);
 
         cardPanel = new JPanel(new CardLayout());
         cardPanel.setBounds(0,150, 560,620);
@@ -87,11 +112,17 @@ public class ConsoleGUI extends JFrame {
         mainMenuPanel.setLocation(0, 100);
         cardPanel.add(mainMenuPanel, MAIN_MENU);
 
-        searchBarPanel = new SearchBarPanel(usernames);
+        searchBarPanel = new SearchBarPanel(usernames, activeService, currentUser, allUsers);
         searchBarPanel.setBounds(10, 100, 540, 600);
         searchBarPanel.setBackground(new Color(10, 120, 120));
         searchBarPanel.setOpaque(false);
         cardPanel.add(searchBarPanel, SEARCH_MENU);
+
+        contactsPanel = new ContactsPanel(contactUsernames);
+        contactsPanel.setBounds(10, 100, 540, 600);
+        contactsPanel.setBackground(new Color(10, 120, 120));
+        contactsPanel.setOpaque(false);
+        cardPanel.add(contactsPanel, CONTACTS_MENU);
 
 
         add(cardPanel);
@@ -102,33 +133,8 @@ public class ConsoleGUI extends JFrame {
         //////NAVIGATION BUTTONS PANEL
 
 
-        navigationButtonPanel = new JPanel() {};
-
-        navigationButtonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
-        navigationButtonPanel.setSize(560, 145);
-        navigationButtonPanel.setOpaque(false);
-
-        JButton homeButton = new JButton(new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-menu-rounded-50.png"));
-        homeButton.setPreferredSize(new Dimension(125, 125));
-        navigationButtonPanel.add(homeButton);
-
-        JButton accountButton = new JButton(new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-money-bag-50.png"));
-        accountButton.setPreferredSize(new Dimension(125, 125));
-        navigationButtonPanel.add(accountButton);
-
-        JButton searchButton = new JButton(new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-search-50.png"));
-        searchButton.setPreferredSize(new Dimension(125, 125));
-        navigationButtonPanel.add(searchButton);
-        searchButton.addActionListener(e -> {
-        cardLayout.show(cardPanel ,SEARCH_MENU);
-        });
-
-        JButton contactsButton = new JButton(new ImageIcon("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\icons8-address-book-50.png"));
-        contactsButton.setPreferredSize(new Dimension(125, 125));
-        navigationButtonPanel.add(contactsButton);
-
-
-        //navigationButtonPanel.setLocation(0, 850);
+        navigationButtonPanel = new NavigationButtonPanel(cardPanel) {};
+        navigationButtonPanel.setLocation(0, 850);
         navigationButtonPanel.setBounds(0,850,560,200);
         add(navigationButtonPanel);
 

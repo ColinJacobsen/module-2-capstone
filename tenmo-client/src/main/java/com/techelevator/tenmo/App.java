@@ -122,6 +122,9 @@ public class App {
     private void viewTransferHistory() {
         // TODO Auto-generated method stub
         consoleService.printHistory(activeService.userToAccount(currentUser.getUser()), activeService);
+        int accountId = consoleService.promptForInt("Which Transfer would you like to view?: ");
+
+
     }
 
     private void viewPendingRequests() {

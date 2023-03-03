@@ -7,7 +7,9 @@ import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.model.UserCredentials;
 import com.techelevator.util.BasicLogger;
 import io.cucumber.java.bs.A;
+import io.cucumber.java.bs.I;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.client.ResourceAccessException;
@@ -66,11 +68,12 @@ public class ActiveService {
 
     }
 
-    public User[] getAllUsers(AuthenticatedUser currentUser){
-        User[] users = null;
+    public List<User> getAllUsers(AuthenticatedUser currentUser){
+        List<User> users = null;
         try {
-            ResponseEntity<User[]> response =
-                    restTemplate.exchange(BASE_URL + "/user", HttpMethod.GET, makeAuthEntity(currentUser.getToken()), User[].class);
+            ResponseEntity<List<User>> response =
+                    restTemplate.exchange(BASE_URL + "/user", HttpMethod.GET, makeAuthEntity(currentUser.getToken()), new ParameterizedTypeReference<List<User>>(){
+                    });
             users = response.getBody();
         } catch (RestClientResponseException | ResourceAccessException e) {
             BasicLogger.log(e.getMessage());
@@ -167,7 +170,33 @@ public class ActiveService {
         return results;
     }
 
+    public List<Integer> getContactsList (int userId){
+        List<Integer> contactIds = new ArrayList<>();
+        try {
+            ResponseEntity<List<Integer>> response =
+                    restTemplate.exchange(BASE_URL + "/user/contacts/" + userId, HttpMethod.GET, makeAuthEntity(authToken), new ParameterizedTypeReference<List<Integer>>() {
+                    });
+            contactIds = response.getBody();
+        }catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+        return contactIds;
+    }
 
+    public void addUserToContacts(Integer userId, Integer contactId){
+        try{
+            restTemplate.exchange(BASE_URL + "/user/addContact/" + userId + "/" + contactId, HttpMethod.POST, makeAuthEntity(authToken), Integer.class);
+        }catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+    }
 
+    public void deleteUserFromContacts(Integer userId, Integer contactId){
+        try{
+            restTemplate.exchange(BASE_URL + "/user/removeContact/"  + userId + "/" + contactId, HttpMethod.DELETE, makeAuthEntity(authToken), Integer.class);
+        }catch (RestClientResponseException | ResourceAccessException e) {
+            BasicLogger.log(e.getMessage());
+        }
+    }
 
 }

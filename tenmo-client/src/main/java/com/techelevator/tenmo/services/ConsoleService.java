@@ -120,8 +120,7 @@ public class ConsoleService {
                     transfer.getTransferId() , transfer.getTransferTypeString(transfer.getTransferType()),
                     transfer.getTransferStatusAsString(transfer.getTransferStatus()),
                     debitOrCredit + " $" + transfer.getAmount());
-//                System.out.println("Id: " + transfer.getTransferId() + "  ||   " + transfer.getTransferTypeString(transfer.getTransferType())
-//                                 + "  ||   $" + transfer.getAmount() + "  || " + transfer.getTransferStatusAsString(transfer.getTransferStatus()).toUpperCase());
+
             }
         System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
     }
@@ -134,12 +133,9 @@ public class ConsoleService {
             System.out.println("\033[32m+---------------+---------------+\033[0m");
             System.out.printf("\033[32m| \u001B[1m\033[36m%-13s\033[0m\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m |\033[0m\n", "ID ", "Amount" );
             System.out.println("\033[32m+---------------+---------------+\033[0m");
-            //System.out.println("\n\nPENDING REQUESTS\n_____________________________");
+
             for (Transfer transfer : transfers) {
-//            int transferStatus = transfer.getTransferStatus();
                 System.out.printf("\033[32m| \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m |\033[0m\n", transfer.getTransferId() , "$" +transfer.getAmount() );
-//                System.out.println("Id: " + transfer.getTransferId() + "  ||   " + transfer.getTransferTypeString(transfer.getTransferType())
-//                        + "  ||   $" + transfer.getAmount() + "  || " + transfer.getTransferStatusAsString(transfer.getTransferStatus()).toUpperCase() + "\n");
             }
             System.out.println("\033[32m+---------------+---------------+\033[0m");
             transferId = promptForInt("Enter the id for the transfer you would like to view: ");

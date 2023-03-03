@@ -2,6 +2,8 @@ package com.techelevator.tenmo.controller;
 
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.User;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -35,4 +37,15 @@ public class UserController {
     List<String> searchUsernames(@PathVariable String searchTerm){
         return userDao.searchUsernames(searchTerm);
     }
+
+    @DeleteMapping(path = "/removeContact/{userId}/{contactId}")
+    public void removeUserFromContacts(
+            @PathVariable Integer userId, @PathVariable Integer contactId){ userDao.removeUserFromContacts(userId, contactId);}
+
+    @PostMapping(path = "/addContact/{userId}/{contactId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addUserToContacts(@PathVariable Integer userId, @PathVariable Integer contactId) { userDao.addUserToContacts(userId, contactId);}
+
+    @GetMapping(path = "/contacts/{userId}")
+    public List<Integer> getContactIdsList(@PathVariable Integer userId){return userDao.getContactsList(userId);}
 }

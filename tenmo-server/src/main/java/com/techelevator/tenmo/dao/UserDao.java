@@ -36,6 +36,18 @@ public interface UserDao {
 
     int userToAccount(int id);
 
+    void addUserToContacts(Integer userId, Integer contactId);
+
+    void removeUserFromContacts(Integer userId, Integer contactId);
+
+    List<Integer> getContactsList(int userId);
+
+
+
+
+
+
+
 //    List<Transfer> transferHistory(int id);
 
 }
