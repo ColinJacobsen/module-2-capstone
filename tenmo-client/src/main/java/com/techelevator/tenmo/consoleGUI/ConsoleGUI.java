@@ -106,13 +106,14 @@ public class ConsoleGUI extends JFrame {
         cardPanel.add(searchBarPanel, SEARCH_MENU);
 
         contactsPanel = new ContactsPanel(activeService, transferService, currentUser);
-        contactsPanel.setBounds(10, 100, 540, 600);
+        //contactsPanel.setBounds(10, 100, 540, 600);
         contactsPanel.setBackground(new Color(10, 120, 120));
         contactsPanel.setOpaque(false);
         cardPanel.add(contactsPanel, CONTACTS_MENU);
 
         viewTransfersPanel = new ViewTransfersPanel(activeService,transferService, currentUser);
-        viewTransfersPanel.setBounds(10, 100, 540, 520);
+        viewTransfersPanel.setBounds(10, 200, 540, 520);
+
         viewTransfersPanel.setBackground(new Color(10, 222, 120));
         viewTransfersPanel.setOpaque(false);
         cardPanel.add(viewTransfersPanel, TRANSFERS_MENU);

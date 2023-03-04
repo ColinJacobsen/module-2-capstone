@@ -4,16 +4,20 @@ import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.services.ActiveService;
 import com.techelevator.tenmo.services.TransferService;
-import io.cucumber.java.bs.A;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class ViewTransfersPanel extends JPanel {
 
+    private final JPanel accountDisplayPanel;
+    private final JLabel accountPanelGreeting;
+    private final JLabel accountNumber;
+    private final JLabel accountBalance;
     private JPanel transfersDisplayPanel;
     private ActiveService activeService;
     private TransferService transferService;
@@ -35,6 +39,7 @@ public class ViewTransfersPanel extends JPanel {
     private JButton approveTransferButton;
     private JButton rejectTransferButton;
     private JLabel transferLabel;
+    BigDecimal currentUserAccountBalance;
 
     public ViewTransfersPanel(ActiveService activeService, TransferService transferService, AuthenticatedUser currentUser) {
 
@@ -42,18 +47,58 @@ public class ViewTransfersPanel extends JPanel {
         this.transferService = transferService;
         this.currentUser = currentUser;
 
+        currentUserAccountBalance = activeService.getUserBalance(currentUser, currentUser.getUser().getId());
+
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentShown(ComponentEvent e) {
-                    //transfers.addAll(transferService.getAllUserTransfers(activeService.userToAccount(currentUser.getUser())));
-                    createAndSortTransactions(currentUser.getUser().getId());
-                    printTransfersToScreen(transfers);
+                //transfers.addAll(transferService.getAllUserTransfers(activeService.userToAccount(currentUser.getUser())));
+//                currentUserAccountBalance  = activeService.getUserBalance(currentUser, currentUser.getUser().getId());
+//                accountDisplayPanel.removeAll();
+//                JLabel newAccountBalance = new JLabel(  "Balance: " + activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser())));
+//                accountDisplayPanel.add(accountPanelGreeting);
+//                accountDisplayPanel.add(accountNumber);
+//                accountDisplayPanel.add(newAccountBalance);
+                createAndSortTransactions(currentUser.getUser().getId());
+                printTransfersToScreen(transfers);
+
+
             }
         });
 
         ///BUILD PANEL
 
         setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+
+        ///ACCOUNT PANEL
+        accountDisplayPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5,5));
+        //accountDisplayPanel.setForeground(new Color(0,50,40));
+        accountDisplayPanel.setPreferredSize(new Dimension(540, 200));
+        accountDisplayPanel.setOpaque(false);
+
+        accountPanelGreeting = new JLabel("Greetings, Earth Human " + currentUser.getUser().getUsername());
+        accountPanelGreeting.setFont(new Font("Arial", Font.PLAIN, 30 ));
+        accountPanelGreeting.setForeground(new Color(0,50,40));
+        accountPanelGreeting.setPreferredSize(new Dimension(500,50));
+
+        accountNumber = new JLabel("Account #: " + activeService.userToAccount(currentUser.getUser()));
+        accountBalance = new JLabel(  "Balance: " + activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser())));
+        accountNumber.setPreferredSize(new Dimension(500,50));
+        accountNumber.setForeground(new Color(0,50,40));
+        accountBalance.setPreferredSize(new Dimension(500,50));
+        accountBalance.setForeground(new Color(0,50,40));
+
+        accountNumber.setFont(new Font("Arial", Font.PLAIN, 30 ));
+        accountBalance.setFont(new Font("Arial", Font.PLAIN, 30 ));
+        accountDisplayPanel.add(accountPanelGreeting);
+        accountDisplayPanel.add(accountNumber);
+        accountDisplayPanel.add(accountBalance);
+
+
+
+
+        ///TRANSFERS PANEL
+
         transfersDisplayPanel = new JPanel();
 
         transfersDisplayPanel.setLayout(new BoxLayout(transfersDisplayPanel, BoxLayout.Y_AXIS));
@@ -64,7 +109,7 @@ public class ViewTransfersPanel extends JPanel {
         resultsScrollPane.setPreferredSize(new Dimension(540, 500));
         transfersDisplayPanel.setBackground(new Color(10, 120, 120));
 
-        filterButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10,10));
+        filterButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         JButton allButton = new JButton("All");
         JButton sentRequestsButton = new JButton("Sent Requests");
         JButton receivedRequestsButton = new JButton("Received Requests");
@@ -73,10 +118,10 @@ public class ViewTransfersPanel extends JPanel {
         filterButtons.setOpaque(false);
 
         allButton.addActionListener(e -> {
-                printTransfersToScreen(transfers);
+            printTransfersToScreen(transfers);
         });
         receivedRequestsButton.addActionListener(e -> {
-                printTransfersToScreen(allReceivedRequests);
+            printTransfersToScreen(allReceivedRequests);
         });
         sentRequestsButton.addActionListener(e -> {
             java.util.List<Transfer> allSentRequests = new ArrayList<>();
@@ -84,7 +129,7 @@ public class ViewTransfersPanel extends JPanel {
             allSentRequests.addAll(sentRequestsRejected);
             allSentRequests.addAll(sentRequestsRejected);
             printTransfersToScreen(allSentRequests);
-                printTransfersToScreen(sentRequestsStillPending);
+            printTransfersToScreen(sentRequestsStillPending);
         });
         sentButton.addActionListener(e -> {
             printTransfersToScreen(sentTransfers);
@@ -99,8 +144,12 @@ public class ViewTransfersPanel extends JPanel {
         filterButtons.add(sentButton);
         filterButtons.add(receivedButton);
 
-        add(resultsScrollPane);
+        /// CONSTRUCT PAGE PANEL
+
+        add(accountDisplayPanel);
         add(filterButtons);
+        add(resultsScrollPane);
+
     }
 
     public void createAndSortTransactions(int userId) {
@@ -137,7 +186,7 @@ public class ViewTransfersPanel extends JPanel {
                         receivedRequestsRejected.add(transfer);
                     }
                 }
-            } else if(transfer.getTransferType()==2){// IF THE TRANSFER TYPE IS SENT---------------------------- TYPE CHECK
+            } else if (transfer.getTransferType() == 2) {// IF THE TRANSFER TYPE IS SENT---------------------------- TYPE CHECK
                 if (transfer.getAccountTo() == activeService.userToAccount(currentUser.getUser())) {   //IF THE SENDER IS USER
                     sentTransfers.add(transfer);
                 } else {
@@ -183,14 +232,14 @@ public class ViewTransfersPanel extends JPanel {
         return new ArrayList<>();
     }
 
-    public void printTransfersToScreen(java.util.List<Transfer> transfersToPrint){
+    public void printTransfersToScreen(java.util.List<Transfer> transfersToPrint) {
         int colorCounter = 0;
         int resultCounter = 0;
 
         transfersDisplayPanel.removeAll();
 
-        for(Transfer transfer: transfersToPrint){
-            JPanel transferPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,0));
+        for (Transfer transfer : transfersToPrint) {
+            JPanel transferPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
             //JLabel transferLabel = new JLabel(transfer.toLabelString());
             //mapTransferToPanel(transfer);
             transferPanel.setPreferredSize(new Dimension(520, 40));
@@ -203,16 +252,16 @@ public class ViewTransfersPanel extends JPanel {
             } else {
                 transferPanel.setBackground(new Color(100, 255, 200));
             }
-            if(transfersToPrint.equals(allReceivedRequests)){
+            if (transfersToPrint.equals(allReceivedRequests)) {
                 transferLabel = new JLabel(transfer.toRequestLabelString());
             } else {
                 transferLabel = new JLabel(transfer.toLabelString());
             }
             transferLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-            transferLabel.setPreferredSize(new Dimension(430,40));
+            transferLabel.setPreferredSize(new Dimension(430, 40));
             transferPanel.add(transferLabel);
 
-            if(transfersToPrint.equals(allReceivedRequests) && transfer.getTransferType() == 1 && transfer.getTransferStatus()==1 && transfer.getAccountFrom() == activeService.userToAccount(currentUser.getUser())){
+            if (transfersToPrint.equals(allReceivedRequests) && transfer.getTransferType() == 1 && transfer.getTransferStatus() == 1 && transfer.getAccountFrom() == activeService.userToAccount(currentUser.getUser())) {
                 approveTransferButton = new JButton(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-sent-25.png"));
                 approveTransferButton.addActionListener(e -> {
                     transferService.doTransfer(transfer);
