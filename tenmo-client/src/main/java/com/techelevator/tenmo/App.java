@@ -152,7 +152,8 @@ public class App {
             } else {
                 System.out.println("Invalid Response");
             }
-        }
+        } else
+        System.err.println("Please select a valid transaction id.\n");
     }
 
     private void sendBucks() {

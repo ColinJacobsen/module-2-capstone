@@ -190,7 +190,6 @@ public class ConsoleService {
                     System.out.printf("| \033[36m%-13s\033[0m | \033[36m%-13s\033[0m | \033[36m%-13s\033[0m | \033[36m%-13s\033[0m |\n", transferId, transfer.getTransferTypeString(transfer.getTransferType()), senderUsername,"$" +transfer.getAmount());
                     System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
                 } else {
-                    System.out.println("Please select transaction ID from list.");
                     return 0;
                 }
             }
