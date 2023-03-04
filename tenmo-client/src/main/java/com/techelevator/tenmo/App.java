@@ -47,7 +47,7 @@ public class App {
             if (menuSelection == 1) {
                 handleRegister();
             } else if (menuSelection == 2) {
-                    handleLogin();
+                handleLogin();
             }else if(menuSelection == 3){
                 LogInPage logInPage = new LogInPage();
             }else if (menuSelection != 0) {
@@ -113,7 +113,10 @@ public class App {
     private void viewCurrentBalance() {
         // TODO Auto-generated method stub
         activeService.setCurrentUser(currentUser);
-        System.out.println(activeService.getUserBalance(currentUser, currentUser.getUser().getId()));
+        BigDecimal currentBalance = activeService.getUserBalance(currentUser, currentUser.getUser().getId());
+        System.out.println("\033[32m+---------------+---------------+\033[0m");
+        System.out.printf("Current Balance%2s \u001B[1m\033[36m%s\033[0m\u001B[0m |\n", "|",("$" + currentBalance));
+        System.out.println("\033[32m+---------------+---------------+\033[0m");
 
     }
 
