@@ -92,7 +92,7 @@ public class ConsoleGUI extends JFrame {
         //Collections.sort(usernames);
 
         cardPanel = new JPanel(new CardLayout());
-        cardPanel.setBounds(0,150, 560,620);
+        cardPanel.setBounds(0,100, 560,750);
         cardPanel.setOpaque(false);
 
         mainMenuPanel = new MainMenuPanel(cardPanel);

@@ -26,9 +26,12 @@ public class ViewTransfersPanel extends JPanel {
     java.util.List<Transfer> receivedRequestsPending = new ArrayList<>();
     java.util.List<Transfer> receivedRequestsApproved = new ArrayList<>();
     java.util.List<Transfer> receivedRequestsRejected = new ArrayList<>();
+    java.util.List<Transfer> allSent = new ArrayList<>();
 
     private java.util.List<Transfer> transfers = new ArrayList<>();
     private JPanel transferPanel;
+
+    private JPanel filterButtons;
 
     public ViewTransfersPanel(ActiveService activeService, TransferService transferService, AuthenticatedUser currentUser) {
 
@@ -42,9 +45,6 @@ public class ViewTransfersPanel extends JPanel {
                     //transfers.addAll(transferService.getAllUserTransfers(activeService.userToAccount(currentUser.getUser())));
                     createAndSortTransactions(currentUser.getUser().getId());
                     printTransfersToScreen(transfers);
-                    for(Transfer transfer : transfers){
-                        System.out.println(transfer.toString());
-                    }
             }
         });
 
@@ -54,15 +54,54 @@ public class ViewTransfersPanel extends JPanel {
         transfersDisplayPanel = new JPanel();
 
         transfersDisplayPanel.setLayout(new BoxLayout(transfersDisplayPanel, BoxLayout.Y_AXIS));
-        transfersDisplayPanel.setMinimumSize(new Dimension(500, 500));
-        transfersDisplayPanel.setMaximumSize(new Dimension(500, 500));
+//        transfersDisplayPanel.setMinimumSize(new Dimension(500, 500));
+//        transfersDisplayPanel.setMaximumSize(new Dimension(500, 500));
         JScrollPane resultsScrollPane = new JScrollPane(transfersDisplayPanel);
         resultsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         resultsScrollPane.setPreferredSize(new Dimension(540, 500));
         transfersDisplayPanel.setBackground(new Color(10, 120, 120));
 
-        add(resultsScrollPane);
+        filterButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10,10));
+        JButton allButton = new JButton("All");
+        JButton sentRequestsButton = new JButton("Sent Requests");
+        JButton receivedRequestsButton = new JButton("Received Requests");
+        JButton sentButton = new JButton("Sent");
+        JButton receivedButton = new JButton("Received");
+        filterButtons.setOpaque(false);
 
+        allButton.addActionListener(e -> {
+                printTransfersToScreen(transfers);
+        });
+        receivedRequestsButton.addActionListener(e -> {
+            java.util.List<Transfer> allReceivedRequests = new ArrayList<>();
+            allReceivedRequests.addAll(receivedRequestsPending);
+            allReceivedRequests.addAll(receivedRequestsApproved);
+            allReceivedRequests.addAll(receivedRequestsRejected);
+                printTransfersToScreen(allReceivedRequests);
+        });
+        sentRequestsButton.addActionListener(e -> {
+            java.util.List<Transfer> allSentRequests = new ArrayList<>();
+            allSentRequests.addAll(sentRequestsStillPending);
+            allSentRequests.addAll(sentRequestsRejected);
+            allSentRequests.addAll(sentRequestsRejected);
+            printTransfersToScreen(allSentRequests);
+                printTransfersToScreen(sentRequestsStillPending);
+        });
+        sentButton.addActionListener(e -> {
+            printTransfersToScreen(sentTransfers);
+        });
+        receivedButton.addActionListener(e -> {
+            printTransfersToScreen(transfersSentToUser);
+        });
+
+        filterButtons.add(allButton);
+        filterButtons.add(sentRequestsButton);
+        filterButtons.add(receivedRequestsButton);
+        filterButtons.add(sentButton);
+        filterButtons.add(receivedButton);
+
+        add(resultsScrollPane);
+        add(filterButtons);
     }
 
     public void createAndSortTransactions(int userId) {
@@ -80,26 +119,26 @@ public class ViewTransfersPanel extends JPanel {
         for (Transfer transfer : transfers) {
             if (transfer.getTransferType() == 1) {              // IF THE TRANSFER TYPE IS REQUESTED------------------------------- TYPE CHECK
                 if (transfer.getTransferStatus() == 1) {         //IF THE TRANSFER IS PENDING ------------------------------------Status Check
-                    if (transfer.getAccountTo() == currentUser.getUser().getId()) { // IF REQUEST SENT BY USER --------------Sender Check
+                    if (transfer.getAccountTo() == activeService.userToAccount(currentUser.getUser())) { // IF REQUEST SENT BY USER --------------Sender Check
                         sentRequestsStillPending.add(transfer);
                     } else {                                                            //ELSE THE USER WAS RECIPIENT OF REQUEST
                         receivedRequestsPending.add(transfer);
                     }
                 } else if (transfer.getTransferStatus() == 2) {
-                    if (transfer.getAccountTo() == currentUser.getUser().getId()) {//----- REQUEST SENT BY USER AND APPROVED
+                    if (transfer.getAccountTo() == activeService.userToAccount(currentUser.getUser())) {//----- REQUEST SENT BY USER AND APPROVED
                         sentRequestsApproved.add(transfer);
                     } else {                                                            /// REQUEST SENT TO USER and APPROVED
                         receivedRequestsApproved.add(transfer);
                     }
                 } else if (transfer.getTransferStatus() == 3) {
-                    if (transfer.getAccountTo() == currentUser.getUser().getId()) {//----- REQUEST SENT BY USER AND APPROVED
+                    if (transfer.getAccountTo() == activeService.userToAccount(currentUser.getUser())) {//----- REQUEST SENT BY USER AND APPROVED
                         sentRequestsRejected.add(transfer);
                     } else {                                                            /// REQUEST SENT TO USER and APPROVED
                         receivedRequestsRejected.add(transfer);
                     }
                 }
-            } else {                                             // IF THE TRANSFER TYPE IS SENT---------------------------- TYPE CHECK
-                if (transfer.getAccountFrom() == currentUser.getUser().getId()) {   //IF THE SENDER IS USER
+            } else if(transfer.getTransferType()==2){// IF THE TRANSFER TYPE IS SENT---------------------------- TYPE CHECK
+                if (transfer.getAccountTo() == activeService.userToAccount(currentUser.getUser())) {   //IF THE SENDER IS USER
                     sentTransfers.add(transfer);
                 } else {
                     transfersSentToUser.add(transfer);
@@ -174,20 +213,20 @@ public class ViewTransfersPanel extends JPanel {
         transfersDisplayPanel.revalidate();
         transfersDisplayPanel.repaint();
     }
-    public JPanel mapTransferToPanel(Transfer transfer){
-        JLabel transferIdLabel = new JLabel(String.valueOf(transfer.getTransferId()));
-        JLabel transferType = new JLabel(transfer.getTransferTypeString(transfer.getTransferType()));
-        JLabel transferStatus = new JLabel(transfer.getTransferStatusAsString(transfer.getTransferStatus()));
-        JLabel transferAmount = new JLabel(String.valueOf(transfer.getAmount()));
-
-        transferPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        transferPanel.add(transferIdLabel);
-//        transferPanel.add(transferType);
-//        transferPanel.add(transferStatus);
-//        transferPanel.add(transferAmount);
-
-        return transferPanel;
-    }
+//    public JPanel mapTransferToPanel(Transfer transfer){
+//        JLabel transferIdLabel = new JLabel(String.valueOf(transfer.getTransferId()));
+//        JLabel transferType = new JLabel(transfer.getTransferTypeString(transfer.getTransferType()));
+//        JLabel transferStatus = new JLabel(transfer.getTransferStatusAsString(transfer.getTransferStatus()));
+//        JLabel transferAmount = new JLabel(String.valueOf(transfer.getAmount()));
+//
+//        transferPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+//        transferPanel.add(transferIdLabel);
+////        transferPanel.add(transferType);
+////        transferPanel.add(transferStatus);
+////        transferPanel.add(transferAmount);
+//
+//        return transferPanel;
+//    }
 
 }
 
