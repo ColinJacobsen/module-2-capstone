@@ -26,12 +26,15 @@ public class ViewTransfersPanel extends JPanel {
     java.util.List<Transfer> receivedRequestsPending = new ArrayList<>();
     java.util.List<Transfer> receivedRequestsApproved = new ArrayList<>();
     java.util.List<Transfer> receivedRequestsRejected = new ArrayList<>();
-    java.util.List<Transfer> allSent = new ArrayList<>();
+    java.util.List<Transfer> allReceivedRequests = new ArrayList<>();
 
     private java.util.List<Transfer> transfers = new ArrayList<>();
     private JPanel transferPanel;
 
     private JPanel filterButtons;
+    private JButton approveTransferButton;
+    private JButton rejectTransferButton;
+    private JLabel transferLabel;
 
     public ViewTransfersPanel(ActiveService activeService, TransferService transferService, AuthenticatedUser currentUser) {
 
@@ -73,10 +76,6 @@ public class ViewTransfersPanel extends JPanel {
                 printTransfersToScreen(transfers);
         });
         receivedRequestsButton.addActionListener(e -> {
-            java.util.List<Transfer> allReceivedRequests = new ArrayList<>();
-            allReceivedRequests.addAll(receivedRequestsPending);
-            allReceivedRequests.addAll(receivedRequestsApproved);
-            allReceivedRequests.addAll(receivedRequestsRejected);
                 printTransfersToScreen(allReceivedRequests);
         });
         sentRequestsButton.addActionListener(e -> {
@@ -113,6 +112,7 @@ public class ViewTransfersPanel extends JPanel {
         receivedRequestsPending.clear();
         receivedRequestsApproved.clear();
         receivedRequestsRejected.clear();
+        allReceivedRequests.clear();
         transfers.clear();
 
         transfers.addAll(transferService.getAllUserTransfers(activeService.userToAccount(currentUser.getUser())));
@@ -147,6 +147,9 @@ public class ViewTransfersPanel extends JPanel {
 
 
         }
+        allReceivedRequests.addAll(receivedRequestsPending);
+        allReceivedRequests.addAll(receivedRequestsApproved);
+        allReceivedRequests.addAll(receivedRequestsRejected);
     }
 
     public java.util.List<Transfer> returnTransactionsOfType(int type, int status, boolean didUserSend) {
@@ -187,7 +190,7 @@ public class ViewTransfersPanel extends JPanel {
         transfersDisplayPanel.removeAll();
 
         for(Transfer transfer: transfersToPrint){
-            JPanel transferPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,0,0));
+            JPanel transferPanel = new JPanel(new FlowLayout(FlowLayout.LEFT,5,0));
             //JLabel transferLabel = new JLabel(transfer.toLabelString());
             //mapTransferToPanel(transfer);
             transferPanel.setPreferredSize(new Dimension(520, 40));
@@ -200,10 +203,35 @@ public class ViewTransfersPanel extends JPanel {
             } else {
                 transferPanel.setBackground(new Color(100, 255, 200));
             }
-            JLabel transferLabel = new JLabel(transfer.toLabelString());
+            if(transfersToPrint.equals(allReceivedRequests)){
+                transferLabel = new JLabel(transfer.toRequestLabelString());
+            } else {
+                transferLabel = new JLabel(transfer.toLabelString());
+            }
             transferLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-            transferLabel.setPreferredSize(new Dimension(480,40));
+            transferLabel.setPreferredSize(new Dimension(430,40));
             transferPanel.add(transferLabel);
+
+            if(transfersToPrint.equals(allReceivedRequests) && transfer.getTransferType() == 1 && transfer.getTransferStatus()==1 && transfer.getAccountFrom() == activeService.userToAccount(currentUser.getUser())){
+                approveTransferButton = new JButton(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-sent-25.png"));
+                approveTransferButton.addActionListener(e -> {
+                    transferService.doTransfer(transfer);
+                    transferService.updateTransferStatus(2, transfer.getTransferId());
+                    createAndSortTransactions(currentUser.getUser().getId());
+                    printTransfersToScreen(allReceivedRequests);
+                });
+                rejectTransferButton = new JButton(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-close-25.png"));
+                rejectTransferButton.addActionListener(e -> {
+                    transferService.updateTransferStatus(3, transfer.getTransferId());
+                    createAndSortTransactions(currentUser.getUser().getId());
+                    printTransfersToScreen(allReceivedRequests);
+                });
+                approveTransferButton.setPreferredSize(new Dimension(35, 35));
+                rejectTransferButton.setPreferredSize(new Dimension(35, 35));
+
+                transferPanel.add(approveTransferButton);
+                transferPanel.add(rejectTransferButton);
+            }
 
             transfersDisplayPanel.add(transferPanel);
             colorCounter++;
