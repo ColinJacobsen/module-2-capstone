@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.security.jwt.TokenProvider;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.math.BigDecimal;
 import java.util.List;

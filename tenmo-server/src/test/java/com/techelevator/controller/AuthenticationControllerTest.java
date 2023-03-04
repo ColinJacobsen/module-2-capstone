@@ -1,5 +1,8 @@
 package com.techelevator.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.techelevator.tenmo.TenmoApplication;
 import com.techelevator.tenmo.controller.AuthenticationController;
 import com.techelevator.tenmo.dao.UserDao;
 import com.techelevator.tenmo.model.LoginDto;
@@ -7,32 +10,47 @@ import com.techelevator.tenmo.model.LoginResponseDto;
 import com.techelevator.tenmo.model.RegisterUserDto;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.security.jwt.TokenProvider;
-import io.jsonwebtoken.lang.Assert;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = TenmoApplication.class)
 public class AuthenticationControllerTest {
 
-    @Autowired
     private MockMvc mockMvc;
-    @MockBean
+    @Autowired
+    private WebApplicationContext wac;
+    @Autowired
+    ObjectMapper mapper = new ObjectMapper();
+    @Autowired
     private AuthenticationController authenticationController;
-    @MockBean
     private TokenProvider tokenProvider;
-    @MockBean
     private AuthenticationManagerBuilder authenticationManagerBuilder;
-    @MockBean
     private UserDao userDao;
 
     @Before
@@ -46,10 +64,12 @@ public class AuthenticationControllerTest {
 
         // Create the AuthenticationController with the dependencies
         authenticationController = new AuthenticationController(tokenProvider, authenticationManagerBuilder, userDao);
+
+        mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
     @Test
-    public void testLogin() {
+    public void testLogin() throws Exception{
         // have not figured out this one yet
         User testUser = new User();
         testUser.setUsername("sassy");
@@ -59,11 +79,28 @@ public class AuthenticationControllerTest {
         testDto.setUsername(testUser.getUsername());
         testDto.setPassword(testUser.getPassword());
 
-        LoginResponseDto testResponseDto = new LoginResponseDto("test", testUser);
+        String json = toJson(testDto);
+        MvcResult thisResult = mockMvc.perform(post("/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(json))
+                        .andExpect(status().isOk()).andReturn();
 
-        when(authenticationController.login(testDto)).thenReturn(testResponseDto);
+        String resultContent = thisResult.getResponse().getContentAsString();
+        LoginResponseDto response = mapper.readValue(resultContent, LoginResponseDto.class);
 
-        Assert.notNull(authenticationController.login(testDto));
+        Assert.assertEquals(testDto.getUsername(), response.getUser().getUsername());
+        Assert.assertNotNull(response.getToken());
+
+//        RequestBuilder request = MockMvcRequestBuilders.post("/login");
+//        MvcResult result = mockMvc.perform(request).andReturn();
+//        Assert.assertNotNull(result);
+
+//        LoginResponseDto testResponseDto = new LoginResponseDto("test", testUser);
+//
+//        when(authenticationController.login(testDto)).thenReturn(testResponseDto);
+//
+//        notNull(authenticationController.login(testDto));
     }
 
     @Test
@@ -81,5 +118,9 @@ public class AuthenticationControllerTest {
 
         // Verify that the userDao's create method was called with the correct parameters
         verify(userDao, times(1)).create(registerUserDto.getUsername(), registerUserDto.getPassword());
+    }
+
+    private String toJson(Object object) throws JsonProcessingException {
+        return mapper.writeValueAsString(object);
     }
 }
