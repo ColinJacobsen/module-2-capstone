@@ -1,18 +1,14 @@
 package com.techelevator.tenmo;
 
-import ch.qos.logback.core.subst.Token;
-import com.techelevator.tenmo.consoleGUI.ConsoleGUI;
 import com.techelevator.tenmo.consoleGUI.LogInPage;
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.UserCredentials;
-import com.techelevator.tenmo.security.jwt.TokenProvider;
 import com.techelevator.tenmo.services.ActiveService;
 import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.ConsoleService;
 import com.techelevator.tenmo.services.TransferService;
 
-import javax.validation.constraints.Null;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicReference;
@@ -130,7 +126,7 @@ public class App {
     private void viewPendingRequests() {
         // TODO Auto-generated method stub
         int accountFrom = activeService.userToAccount(currentUser.getUser());
-        Transfer[] transfers = transferService.pendingRequest(accountFrom);
+        Transfer[] transfers = transferService.getPendingRequests(accountFrom);
         int transferId = consoleService.printPendingRequests(transfers, activeService);
         if (transferId > 3000) {
             AtomicReference<Transfer> approveTransfer = new AtomicReference<>();//makes atomic transfer so i can use it in the lambda

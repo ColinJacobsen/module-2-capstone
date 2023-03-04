@@ -99,12 +99,25 @@ public class JdbcTransferDao implements TransferDao{
                 "AND transfer_type_id = 1 " +
                 "AND transfer_status_id = 1 " +
                 "ORDER BY transfer_id;";
-        //Investigate why account_to works and not account_from
+
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, accountFrom);
         while(results.next()){
             pendingRequests.add(mapRowToTransfer(results));
         }
         return pendingRequests;
+    }
+
+    @Override
+    public List<Transfer> getAllUserTransfers(int userAccountId) {
+        List<Transfer> allUserTransfers = new ArrayList<>();
+        String sql = "SELECT * FROM transfer WHERE ? IN (account_to, account_from) " +
+                     "ORDER BY transfer_id DESC";
+
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userAccountId);
+        while(results.next()){
+            allUserTransfers.add(mapRowToTransfer(results));
+        }
+        return allUserTransfers;
     }
 
 

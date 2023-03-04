@@ -10,20 +10,25 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ContactsPanel extends JPanel {
     private final Font MENU_FONT = new Font("Arial", Font.PLAIN, 40);
     private final Font RESULTS_FONT = new Font("Arial", Font.PLAIN, 25);
-    private final ActiveService activeService;
-    private final Object currentUser;
-    private ArrayList<String> usernamesList = new ArrayList<>();
+    private TransferService transferService;
+    private ActiveService activeService;
+    private AuthenticatedUser currentUser;
+
+    private List<Integer> contactIds= new ArrayList<>();
+    private List<String> contactUsernames = new ArrayList<>();
+    private List<String> allUsernames = new ArrayList<>();
     private JTextField searchBarTextField;
     private JPanel searchPanel;
     private JPanel contactsPanel;
-    private List<String> contactsList = new ArrayList<String>();
-
     private List<User> allUsers = new ArrayList<>();
     private JButton contactsSendButton;
     private JButton contactsRequestButton;
@@ -36,16 +41,19 @@ public class ContactsPanel extends JPanel {
 
     int resultCounter = 0;
 
-    public ContactsPanel(List<String> contactUsernames, ActiveService activeService, TransferService transferService, AuthenticatedUser currentUser, List<User> users) {
+    public ContactsPanel( ActiveService activeService, TransferService transferService, AuthenticatedUser currentUser) {
         this.activeService = activeService;
+        this.transferService = transferService;
         this.currentUser = currentUser;
-        usernamesList.addAll(contactUsernames);
-        allUsers.addAll(users);
         currentUserId = currentUser.getUser().getId();
-
-        if (contactUsernames.size() > 0) {
-            contactsList.addAll(contactUsernames);
-        }
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                refreshLists();
+                updateResults();
+            }
+        });
+        // Build Panel
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         searchPanel = new JPanel();
 
@@ -54,20 +62,21 @@ public class ContactsPanel extends JPanel {
         searchBarTextField.setForeground(new Color(50, 60, 60));
         searchBarTextField.setPreferredSize(new Dimension(100, 40));
 
+
         searchBarTextField.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                updateAndPrintResults();
+                updateResults();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                updateAndPrintResults();
+                updateResults();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                updateAndPrintResults();
+                updateResults();
             }
         });
 
@@ -76,43 +85,33 @@ public class ContactsPanel extends JPanel {
         contactsPanel = new JPanel() {
         };
         contactsPanel.setLayout(new BoxLayout(contactsPanel, BoxLayout.Y_AXIS));
-        //contactsPanel.setPreferredSize(new Dimension(520, 480));
         resultsScrollPane = new JScrollPane(contactsPanel);
         resultsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         resultsScrollPane.setPreferredSize(new Dimension(540, 500));
         contactsPanel.setBackground(new Color(10, 120, 120));
 
-//        contactsPanel.add(resultsScrollPane);
-
         add(searchPanel);
         add(resultsScrollPane);
 
-        //printResults(contactUsernames, 1000);
     }
 
-    private void updateAndPrintResults() {
+    private void updateResults() {
 
         String searchTerm = searchBarTextField.getText();
         List<String> filteredResults = new ArrayList<>();
         contactsPanel.removeAll();
-        for (String result : contactsList) {
-            if (result.toLowerCase().contains(searchTerm.toLowerCase())) {
-                filteredResults.add(result);
-            }
-        }
+        filteredResults.addAll(contactUsernames);
+//        for (String username : contactUsernames) {
+//            if (username.toLowerCase().contains(searchTerm.toLowerCase())) {
+//                filteredResults.add(username);
+//            }
+//        }
+        Collections.sort(filteredResults);
 
         if (filteredResults.size() > 0) {
             int colorCounter = 0;
 
             for (String username : filteredResults) {
-
-                int contactToDeleteId = 0;
-
-                for(User user: allUsers){
-                    if(user.getUsername().equals(username)){
-                        contactToDeleteId = user.getId();
-                    }
-                }
                 JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0)) {
                 };
                 usernamePanel.setPreferredSize(new Dimension(520, 40));
@@ -127,20 +126,36 @@ public class ContactsPanel extends JPanel {
                 usernameLabel.setFont(RESULTS_FONT);
                 usernamePanel.add(usernameLabel);
                 usernameLabel.setPreferredSize(new Dimension(375, 40));
+
                 contactsSendButton = new JButton();
                 contactsSendButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-money-transfer-25.png"));
+                contactsSendButton.addActionListener(e -> {
 
+                });
 
                 contactsRequestButton = new JButton();
                 contactsRequestButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-request-money-25.png"));
+                contactsRequestButton.addActionListener(e -> {
 
+                });
 
                 contactsDeleteFromContactsButton = new JButton();
+
                 contactsDeleteFromContactsButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-close-25.png"));
-                int finalContactToDeleteId = contactToDeleteId;
+//                User finalContactToDelete = contactToDelete;
+
                 contactsDeleteFromContactsButton.addActionListener(e -> {
-                    activeService.deleteUserFromContacts(currentUserId, finalContactToDeleteId);
+                    int contactId = 0;
+                    for (User user : allUsers) {
+                        if (user.getUsername().equals(username)) {
+                            contactId = user.getId();
+                        }
+                    }
+                    activeService.deleteUserFromContacts(currentUserId, contactId);
+                    refreshLists();
+                    updateResults();
                 });
+
                 contactsSendButton.setPreferredSize(new Dimension(35, 35));
                 contactsRequestButton.setPreferredSize(new Dimension(35, 35));
                 contactsDeleteFromContactsButton.setPreferredSize(new Dimension(35, 35));
@@ -152,11 +167,34 @@ public class ContactsPanel extends JPanel {
                 contactsPanel.add(usernamePanel);
                 colorCounter++;
             }
+        }
+
 
             contactsPanel.revalidate();
             contactsPanel.repaint();
+    }
+
+
+    public void refreshLists() {
+        allUsers.clear();
+        contactIds.clear();
+        contactUsernames.clear();
+        allUsernames.clear();
+
+        allUsers.addAll(activeService.getAllUsers(currentUser));
+
+        contactIds.addAll(activeService.getContactsList(currentUser.getUser().getId()));
+
+        for (User user : allUsers) {
+            if (contactIds.contains(user.getId())) {
+                contactUsernames.add(user.getUsername());
+            }
+        }
+        for (User user : allUsers) {
+            allUsernames.add(user.getUsername());
         }
     }
+
 }
 
 

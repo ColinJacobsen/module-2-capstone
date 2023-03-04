@@ -6,6 +6,7 @@ import org.springframework.data.relational.core.sql.In;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -53,9 +54,12 @@ public class TransferController {
     public List<Transfer> pendingRequests(@PathVariable int accountFrom){
         return transferDao.pendingRequests(accountFrom);
     }
-    @GetMapping(path = "/{id}")
-    public Transfer getTransferById(@PathVariable int id){
-        return transferDao.getTransferById(id);
+    @GetMapping(path = "/{transferId}")
+    public Transfer getTransferById(@PathVariable int transferId){
+        return transferDao.getTransferById(transferId);
     }
+
+    @GetMapping(path = "/all/{userAccountId}")
+    public List<Transfer> getAllUserTransfers(@PathVariable int userAccountId){return transferDao.getAllUserTransfers(userAccountId);}
 
 }
