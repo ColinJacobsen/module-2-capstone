@@ -1,6 +1,7 @@
 package com.techelevator.tenmo.consoleGUI;
 
 import com.techelevator.tenmo.model.AuthenticatedUser;
+import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.services.ActiveService;
 import com.techelevator.tenmo.services.TransferService;
@@ -11,6 +12,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +24,7 @@ public class ContactsPanel extends JPanel {
     private ActiveService activeService;
     private AuthenticatedUser currentUser;
 
-    private List<Integer> contactIds= new ArrayList<>();
+    private List<Integer> contactIds = new ArrayList<>();
     private List<String> contactUsernames = new ArrayList<>();
     private List<String> allUsernames = new ArrayList<>();
     private JTextField searchBarTextField;
@@ -40,7 +42,7 @@ public class ContactsPanel extends JPanel {
 
     int resultCounter = 0;
 
-    public ContactsPanel( ActiveService activeService, TransferService transferService, AuthenticatedUser currentUser) {
+    public ContactsPanel(ActiveService activeService, TransferService transferService, AuthenticatedUser currentUser) {
         this.activeService = activeService;
         this.transferService = transferService;
         this.currentUser = currentUser;
@@ -129,20 +131,33 @@ public class ContactsPanel extends JPanel {
                 contactsSendButton = new JButton();
                 contactsSendButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-money-transfer-25.png"));
                 contactsSendButton.addActionListener(e -> {
-
+                    String amount = JOptionPane.showInputDialog(ContactsPanel.this, "How much would you like to send to " + username,
+                            "Send Transfer", JOptionPane.PLAIN_MESSAGE);
+                    if (amount != null && amount.length() > 0) {
+                        BigDecimal bigDAmount = BigDecimal.valueOf(Double.parseDouble(amount));
+                        Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()),
+                                activeService.userToAccount((activeService.getUserByName(username))), bigDAmount);
+                        transferService.makeTransfer(transfer);
+                        transferService.doTransfer(transfer);
+                    }
                 });
 
                 contactsRequestButton = new JButton();
                 contactsRequestButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-request-money-25.png"));
                 contactsRequestButton.addActionListener(e -> {
-
+                    String amount = JOptionPane.showInputDialog(ContactsPanel.this, "How much would you like to request from " + username,
+                            "Send Request", JOptionPane.PLAIN_MESSAGE);
+                    if (amount != null && amount.length() > 0) {
+                        BigDecimal bigDAmount = BigDecimal.valueOf(Double.parseDouble(amount));
+                        Transfer transfer = new Transfer(1, 1,
+                                activeService.userToAccount(activeService.getUserByName(username)),
+                                activeService.userToAccount(currentUser.getUser()), bigDAmount);
+                        transferService.makeTransfer(transfer);
+                    }
                 });
 
                 contactsDeleteFromContactsButton = new JButton();
-
                 contactsDeleteFromContactsButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-close-25.png"));
-//                User finalContactToDelete = contactToDelete;
-
                 contactsDeleteFromContactsButton.addActionListener(e -> {
                     int contactId = 0;
                     for (User user : allUsers) {
@@ -169,8 +184,8 @@ public class ContactsPanel extends JPanel {
         }
 
 
-            contactsInsidePanel.revalidate();
-            contactsInsidePanel.repaint();
+        contactsInsidePanel.revalidate();
+        contactsInsidePanel.repaint();
     }
 
 
