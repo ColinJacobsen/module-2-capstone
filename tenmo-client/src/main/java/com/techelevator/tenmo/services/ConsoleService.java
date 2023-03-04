@@ -182,20 +182,4 @@ public class ConsoleService {
 
         return transferId;
     }
-
-    public void printTransfer(Transfer transfer, int accountId){
-        char debitOrCredit;
-        if(transfer.getAccountTo() == accountId){
-            debitOrCredit = '-';
-        } else {
-            debitOrCredit = '+';
-        }
-
-        System.out.printf("\033[32m| \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \033[0m\n",
-                transfer.getTransferId() , transfer.getTransferTypeString(transfer.getTransferType()),
-                transfer.getTransferStatusAsString(transfer.getTransferStatus()),
-                debitOrCredit + " $" + transfer.getAmount());
-
-
-    }
 }
