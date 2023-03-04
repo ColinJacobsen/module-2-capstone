@@ -78,9 +78,9 @@ public class App {
         currentUser = authenticationService.login(credentials);
         try {
             transferService.setCurrentUser(currentUser);
-//        swapping this out for just the get token, dont think we need the whole object, but keeping it here just in case
-            activeService.setAuthToken(currentUser.getToken());
             transferService.setAuthToken(currentUser.getToken());
+            activeService.setCurrentUser(currentUser);
+            activeService.setAuthToken(currentUser.getToken());
         } catch (NullPointerException e) {
             System.err.println("\nPlease enter valid login.");
         }

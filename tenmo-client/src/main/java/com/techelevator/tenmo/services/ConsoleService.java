@@ -135,16 +135,32 @@ public class ConsoleService {
                     debitOrCredit = '+';
                 }
 
-//                System.out.printf("\033[32m| \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \033[0m\n",
-//                        transfer.getTransferId() , transfer.getTransferTypeString(transfer.getTransferType()),
-//                        transfer.getTransferStatusAsString(transfer.getTransferStatus()),
-//                        debitOrCredit + " $" + transfer.getAmount());
+                String fromUsername = activeService.accountIdToUsername(transfer.getAccountFrom());
+                String toUsername = activeService.accountIdToUsername(transfer.getAccountTo());
 
-                System.out.println("Transfer ID: " + transfer.getTransferId() + "\n" +
-                        "Transfer Status: " + transfer.getTransferStatusAsString(transfer.getTransferStatus()) +
-                        "  || Transfer Type: " + transfer.getTransferTypeString(transfer.getTransferType()) + "\n" +
-                        "Account From: " + activeService.accountIdToUsername(transfer.getAccountFrom()) + "  ||  Account To: " + activeService.accountIdToUsername(transfer.getAccountTo()) + "\n" +
-                        "Amount: " + debitOrCredit + transfer.getAmount());
+                System.out.println("\033[32m+---------------+---------------+---------------+\033[0m");
+                System.out.printf("%19s \u001B[1m\033[36m%-2s\033[0m\u001B[0m |\n",
+                        "|",
+                        ("ID: " + transfer.getTransferId()));
+                System.out.println("\033[32m+---------------+---------------+---------------+\033[0m");
+                System.out.printf("| \033[36m%-20s\033[0m || \033[36m%20s\033[0m |\n",
+                        ("STATUS: " + transfer.getTransferStatusAsString(transfer.getTransferStatus())),
+                        ("TYPE: " + transfer.getTransferTypeString(transfer.getTransferType())));
+                System.out.println("\033[32m+---------------+---------------+---------------+\033[0m");
+                System.out.printf("| \033[36m%-20s\033[0m || \033[36m%20s\033[0m |\n",
+                        ("FROM: " + fromUsername),
+                        ("TO: " + toUsername));
+                System.out.println("\033[32m+---------------+---------------+---------------+\033[0m");
+                System.out.printf("%16s \u001B[1m\033[36m%-13s\033[0m\u001B[0m |\n",
+                        "|",
+                        ("AMOUNT: " + debitOrCredit + transfer.getAmount()));
+                System.out.println("\033[32m+---------------+---------------+---------------+\033[0m");
+//
+//                System.out.println("Transfer ID: " + transfer.getTransferId() + "\n" +
+//                        "Transfer Status: " + transfer.getTransferStatusAsString(transfer.getTransferStatus()) +
+//                        "  || Transfer Type: " + transfer.getTransferTypeString(transfer.getTransferType()) + "\n" +
+//                        "Account From: " + activeService.accountIdToUsername(transfer.getAccountFrom()) + "  ||  Account To: " + activeService.accountIdToUsername(transfer.getAccountTo()) + "\n" +
+//                        "Amount: " + debitOrCredit + transfer.getAmount());
 
             }
         }
@@ -173,6 +189,9 @@ public class ConsoleService {
                     System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
                     System.out.printf("| \033[36m%-13s\033[0m | \033[36m%-13s\033[0m | \033[36m%-13s\033[0m | \033[36m%-13s\033[0m |\n", transferId, transfer.getTransferTypeString(transfer.getTransferType()), senderUsername,"$" +transfer.getAmount());
                     System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
+                } else {
+                    System.out.println("Please select transaction ID from list.");
+                    return 0;
                 }
             }
 
