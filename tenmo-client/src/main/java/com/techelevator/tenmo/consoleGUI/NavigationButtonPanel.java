@@ -10,7 +10,6 @@ public class NavigationButtonPanel extends JPanel {
     final static String MAIN_MENU = "Main Menu";
     final static String SEARCH_MENU = "Search Menu";
     final static String CONTACTS_MENU = "Contacts Menu";
-
     final static String ACCOUNT_MENU = "Account Menu";
 
     public NavigationButtonPanel(JPanel cardPanel){

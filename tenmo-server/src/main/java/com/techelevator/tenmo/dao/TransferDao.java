@@ -14,4 +14,5 @@ public interface TransferDao {
     List<Transfer> transferHistory(int id);
     List<Transfer> pendingRequests(int accountFrom);
 
+    List<Transfer> getAllUserTransfers(int userId);
 }

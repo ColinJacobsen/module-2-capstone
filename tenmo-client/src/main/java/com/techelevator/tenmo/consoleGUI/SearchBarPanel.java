@@ -3,19 +3,31 @@ package com.techelevator.tenmo.consoleGUI;
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.services.ActiveService;
+import com.techelevator.tenmo.services.TransferService;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SearchBarPanel extends JPanel {
     private final Font MENU_FONT = new Font("Arial", Font.PLAIN, 40);
 
     private final Font RESULTS_FONT = new Font("Arial", Font.PLAIN, 25);
+    private int currentUserId;
+    private List<String> contactUsernames = new ArrayList<>();
+    private List<String> allUsernames = new ArrayList<>();
+    private List<String> resultsUsernames = new ArrayList<>();
+    private List<User> resultsUserList = new ArrayList<>();
+    private List<Integer> resultsIds = new ArrayList<>();
+    private TransferService transferService;
     private JTextField searchBarTextField;
-    private JButton searchButton;
     private JPanel searchPanel;
     private JPanel resultsPanel;
     private List<String> usernamesList = new ArrayList<>();
@@ -29,12 +41,20 @@ public class SearchBarPanel extends JPanel {
     private ActiveService activeService;
     private AuthenticatedUser currentUser;
 
-    public SearchBarPanel(List<String> usernames, ActiveService activeService, AuthenticatedUser currentUser, List<User> users) {
+    public SearchBarPanel(ActiveService activeService, TransferService transferService, AuthenticatedUser currentUser) {
         this.activeService = activeService;
+        this.transferService = transferService;
         this.currentUser = currentUser;
-        usernamesList.addAll(usernames);
-        allUsers.addAll(users);
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                refreshLists();
+                updateResults();
+            }
+        });
 
+        currentUserId = currentUser.getUser().getId();
+        ///Build the panel
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         searchPanel = new JPanel();
 
@@ -65,19 +85,15 @@ public class SearchBarPanel extends JPanel {
         searchPanel.add(searchBarTextField);
 
         //************************************RESULTS PANEL
-        resultsPanel = new JPanel() {};
+        resultsPanel = new JPanel() {
+        };
         resultsPanel.setLayout(new BoxLayout(resultsPanel, BoxLayout.Y_AXIS));
-        //resultsPanel.setPreferredSize(new Dimension(520, 500));
-        resultsPanel.setMinimumSize(new Dimension(520,500));
-        resultsPanel.setMaximumSize(new Dimension(520,500));
+        resultsPanel.setMinimumSize(new Dimension(520, 500));
+        resultsPanel.setMaximumSize(new Dimension(520, 500));
         JScrollPane resultsScrollPane = new JScrollPane(resultsPanel);
         resultsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         resultsScrollPane.setPreferredSize(new Dimension(540, 500));
         resultsPanel.setBackground(new Color(10, 120, 120));
-
-       // resultsPanel.add(resultsScrollPane);
-        //resultsScrollPane.add(resultsPanel);
-
 
         add(searchPanel);
         add(resultsScrollPane);
@@ -88,11 +104,12 @@ public class SearchBarPanel extends JPanel {
         String searchTerm = searchBarTextField.getText();
         List<String> filteredResults = new ArrayList<>();
         resultsPanel.removeAll();
-        for (String result : usernamesList) {
-            if (result.toLowerCase().contains(searchTerm.toLowerCase())) {
-                filteredResults.add(result);
+        for (String username : allUsernames) {
+            if (username.toLowerCase().contains(searchTerm.toLowerCase())) {
+                filteredResults.add(username);
             }
         }
+        Collections.sort(filteredResults);
 
         if (filteredResults.size() > 0) {
             int colorCounter = 0;
@@ -100,11 +117,10 @@ public class SearchBarPanel extends JPanel {
 
             for (String username : filteredResults) {
                 if (resultCounter < 30 && resultCounter < filteredResults.size()) {
-                    JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0)) {
-                    };
-                    usernamePanel.setPreferredSize(new Dimension(525, 40));
-                    usernamePanel.setMaximumSize(new Dimension(525, 40));
-                    usernamePanel.setMaximumSize(new Dimension(525, 40));
+                    JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0)) {};
+                    usernamePanel.setPreferredSize(new Dimension(520, 40));
+                    usernamePanel.setMaximumSize(new Dimension(520, 40));
+                    usernamePanel.setMaximumSize(new Dimension(520, 40));
                     if (colorCounter % 2 == 0) {
                         usernamePanel.setBackground(new Color(100, 255, 180));
                     } else {
@@ -128,15 +144,25 @@ public class SearchBarPanel extends JPanel {
                     });
 
                     resultsAddToContactsButton = new JButton();
-                    resultsAddToContactsButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-address-book-25.png"));
+                    if (contactUsernames.contains(username)) {
+                        resultsAddToContactsButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-friends-25.png"));
+                    } else {
+                        resultsAddToContactsButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-address-book-25.png"));
+                    }
                     resultsAddToContactsButton.addActionListener(e -> {
                         int contactId = 0;
-                        for(User user : allUsers){
-                            if(user.getUsername().equals(username)){
+                        for (User user : allUsers) {
+                            if (user.getUsername().equals(username)) {
                                 contactId = user.getId();
                             }
                         }
-                       activeService.addUserToContacts(currentUser.getUser().getId(), contactId);
+                        if (contactUsernames.contains(username)) {
+                            System.out.println("This user is already in your contacts");
+                        } else {
+                            activeService.addUserToContacts(currentUserId, contactId);
+                            refreshLists();
+                            updateResults();
+                        }
                     });
 
                     resultsSendButton.setPreferredSize(new Dimension(35, 35));
@@ -155,6 +181,28 @@ public class SearchBarPanel extends JPanel {
         }
         resultsPanel.revalidate();
         resultsPanel.repaint();
+
     }
 
+    public void refreshLists() {
+        allUsers.clear();
+        resultsIds.clear();
+        resultsUserList.clear();
+        contactUsernames.clear();
+        allUsernames.clear();
+
+        allUsers.addAll(activeService.getAllUsers(currentUser));
+        resultsIds.addAll(activeService.getContactsList(currentUserId));
+
+        for (User user : allUsers) {
+            allUsernames.add(user.getUsername());
+            if (resultsIds.contains(user.getId())) {
+                resultsUserList.add(user);
+                resultsUsernames.add(user.getUsername());
+            }
+            if (activeService.getContactsList(currentUserId).contains(user.getId())) {
+                contactUsernames.add(user.getUsername());
+            }
+        }
+    }
 }

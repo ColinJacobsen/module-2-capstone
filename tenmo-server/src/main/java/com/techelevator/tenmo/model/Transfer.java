@@ -92,4 +92,10 @@ public class Transfer {
                 ", amount=" + amount +
                 '}';
     }
+    public String toLabelString (){
+        return "Id: " + transferId + "   Status: " + getTransferStatusAsString(transferStatus) +
+                "   transferType='" + getTransferTypeString(transferType) +
+                "    Amount= $" + amount;
+
+    }
 }

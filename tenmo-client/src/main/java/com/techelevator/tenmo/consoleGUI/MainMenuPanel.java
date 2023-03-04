@@ -1,7 +1,6 @@
 package com.techelevator.tenmo.consoleGUI;
 
-import com.techelevator.tenmo.services.ActiveService;
-import io.cucumber.core.cli.Main;
+import com.techelevator.tenmo.model.Transfer;
 
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -9,16 +8,21 @@ import javax.swing.border.EtchedBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
-import java.util.Stack;
 
 public class MainMenuPanel extends JPanel {
+
+    final static String MAIN_MENU = "Main Menu";
+    final static String SEARCH_MENU = "Search Menu";
+    final static String CONTACTS_MENU = "Contacts Menu";
+    final static String TRANSFERS_MENU = "Transfer Menu";
+    final static String ACCOUNT_MENU = "Account Menu";
 
 
     private final Dimension MENU_OPTION_DIMENSION = new Dimension(540, 100);
 
     private final Font MENU_FONT = new Font("Arial", Font.PLAIN, 32);
-    public MainMenuPanel(){
+    public MainMenuPanel(JPanel cardPanel){
+        CardLayout cardLayout = (CardLayout) cardPanel.getLayout();
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10 ,10));
         setSize(560, 600);
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -42,24 +46,24 @@ public class MainMenuPanel extends JPanel {
             // Perform action for option 1
             System.out.println("Option 3 clicked!");
         });
-        addMenuItem("View Received Requests",
-                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-man-raising-hand-icon-50.png"),
-                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
-            // Perform action for option 1
-            System.out.println("Option 4 clicked!");
-        });
-        addMenuItem("View Sent Requests",
-                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-sent-50.png"),
-                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
-            // Perform action for option 1
-            System.out.println("Option 5 clicked!");
-        });
+//        addMenuItem("View Received Requests",
+//                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-man-raising-hand-icon-50.png"),
+//                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
+//            // Perform action for option 1
+//            System.out.println("Option 4 clicked!");
+//        });
+//        addMenuItem("View Sent Requests",
+//                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-sent-50.png"),
+//                new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
+//            // Perform action for option 1
+//            System.out.println("Option 5 clicked!");
+//        });
         addMenuItem("View All Transfers ",
                 new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-infinity-50.png"),
                 new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-next-page-50.png"), () -> {
-            // Perform action for option 1
-            System.out.println("Option 6 clicked!");
-            setVisible(false);
+            cardLayout.show(cardPanel, TRANSFERS_MENU);
+
+            //setVisible(false);
         });
 
 //        NavigationButtonPanel navigationButtonPanel = new NavigationButtonPanel();

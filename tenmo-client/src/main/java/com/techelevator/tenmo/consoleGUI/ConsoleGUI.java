@@ -27,21 +27,19 @@ public class ConsoleGUI extends JFrame {
     NavigationButtonPanel navigationButtonPanel;
 
     ContactsPanel contactsPanel;
+    ViewTransfersPanel viewTransfersPanel;
     JPanel cardPanel;
 
     private int mouseX;
     private int mouseY;
     java.util.List<String> usernames;
 
-    java.util.List<Integer> contactIds;
-
-    java.util.List<String> contactUsernames = new ArrayList<>();
-
     java.util.List<User> allUsers;
 
     final static String MAIN_MENU = "Main Menu";
     final static String SEARCH_MENU = "Search Menu";
     final static String CONTACTS_MENU = "Contacts Menu";
+    final static String TRANSFERS_MENU = "Transfer Menu";
 
     private final ActiveService activeService = new ActiveService(API_BASE_URL, currentUser);
 
@@ -91,38 +89,33 @@ public class ConsoleGUI extends JFrame {
 
         allUsers = activeService.getAllUsers(currentUser);
 
-        usernames = activeService.getAllUsernames();
-        contactIds = activeService.getContactsList(currentUser.getUser().getId());
-
-        for (User user : allUsers){
-            if(contactIds.contains(user.getId())){
-                contactUsernames.add(user.getUsername());
-            }
-        }
-
-
-
-        Collections.sort(usernames);
+        //Collections.sort(usernames);
 
         cardPanel = new JPanel(new CardLayout());
-        cardPanel.setBounds(0,150, 560,620);
+        cardPanel.setBounds(0,100, 560,750);
         cardPanel.setOpaque(false);
 
-        mainMenuPanel = new MainMenuPanel();
+        mainMenuPanel = new MainMenuPanel(cardPanel);
         mainMenuPanel.setLocation(0, 100);
         cardPanel.add(mainMenuPanel, MAIN_MENU);
 
-        searchBarPanel = new SearchBarPanel(usernames, activeService, currentUser, allUsers);
+        searchBarPanel = new SearchBarPanel(activeService,transferService, currentUser);
         searchBarPanel.setBounds(10, 100, 540, 600);
         searchBarPanel.setBackground(new Color(10, 120, 120));
         searchBarPanel.setOpaque(false);
         cardPanel.add(searchBarPanel, SEARCH_MENU);
 
-        contactsPanel = new ContactsPanel(contactUsernames, activeService, transferService, currentUser, allUsers);
+        contactsPanel = new ContactsPanel(activeService, transferService, currentUser);
         contactsPanel.setBounds(10, 100, 540, 600);
         contactsPanel.setBackground(new Color(10, 120, 120));
         contactsPanel.setOpaque(false);
         cardPanel.add(contactsPanel, CONTACTS_MENU);
+
+        viewTransfersPanel = new ViewTransfersPanel(activeService,transferService, currentUser);
+        viewTransfersPanel.setBounds(10, 100, 540, 520);
+        viewTransfersPanel.setBackground(new Color(10, 222, 120));
+        viewTransfersPanel.setOpaque(false);
+        cardPanel.add(viewTransfersPanel, TRANSFERS_MENU);
 
 
         add(cardPanel);
@@ -153,16 +146,6 @@ public class ConsoleGUI extends JFrame {
         add(exitPanel);
 
         setVisible(true);
-    }
-
-    public void changePanels(JPanel[] oldPanels, JPanel[] newPanels) {
-        for (JPanel panel : oldPanels) {
-            panel.setVisible(false);
-        }
-        for (JPanel panel : newPanels) {
-            panel.setVisible(true);
-        }
-
     }
 
 
