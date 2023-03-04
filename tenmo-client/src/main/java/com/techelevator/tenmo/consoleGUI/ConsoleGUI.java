@@ -112,8 +112,8 @@ public class ConsoleGUI extends JFrame {
         cardPanel.add(contactsPanel, CONTACTS_MENU);
 
         viewTransfersPanel = new ViewTransfersPanel(activeService,transferService, currentUser);
-        viewTransfersPanel.setBounds(10, 100, 540, 600);
-        viewTransfersPanel.setBackground(new Color(10, 120, 120));
+        viewTransfersPanel.setBounds(10, 100, 540, 520);
+        viewTransfersPanel.setBackground(new Color(10, 222, 120));
         viewTransfersPanel.setOpaque(false);
         cardPanel.add(viewTransfersPanel, TRANSFERS_MENU);
 

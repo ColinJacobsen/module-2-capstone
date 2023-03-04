@@ -148,25 +148,31 @@ public class ViewTransfersPanel extends JPanel {
         transfersDisplayPanel.removeAll();
 
         for(Transfer transfer: transfersToPrint){
-            JPanel transferPanel = new JPanel();
-            JLabel transferLabel = new JLabel(transfer.toLabelString());
+            JPanel transferPanel = new JPanel(new FlowLayout(FlowLayout.CENTER,0,0));
+            //JLabel transferLabel = new JLabel(transfer.toLabelString());
             //mapTransferToPanel(transfer);
             transferPanel.setPreferredSize(new Dimension(520, 40));
             transferPanel.setMaximumSize(new Dimension(520, 40));
             transferPanel.setMaximumSize(new Dimension(520, 40));
-            transferPanel.add(transferLabel);
+            //transferPanel.add(transferLabel);
 
             if (colorCounter % 2 == 0) {
                 transferPanel.setBackground(new Color(100, 255, 180));
             } else {
                 transferPanel.setBackground(new Color(100, 255, 200));
             }
+            JLabel transferLabel = new JLabel(transfer.toLabelString());
+            transferLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+            transferLabel.setPreferredSize(new Dimension(480,40));
+            transferPanel.add(transferLabel);
+
+            transfersDisplayPanel.add(transferPanel);
             colorCounter++;
             resultCounter++;
 
-            transfersDisplayPanel.add(transferPanel);
-
         }
+        transfersDisplayPanel.revalidate();
+        transfersDisplayPanel.repaint();
     }
     public JPanel mapTransferToPanel(Transfer transfer){
         JLabel transferIdLabel = new JLabel(String.valueOf(transfer.getTransferId()));

@@ -3,7 +3,6 @@ package com.techelevator.tenmo.consoleGUI;
 import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.services.ActiveService;
-import com.techelevator.tenmo.services.AuthenticationService;
 import com.techelevator.tenmo.services.TransferService;
 
 import javax.swing.*;
@@ -28,7 +27,7 @@ public class ContactsPanel extends JPanel {
     private List<String> allUsernames = new ArrayList<>();
     private JTextField searchBarTextField;
     private JPanel searchPanel;
-    private JPanel contactsPanel;
+    private JPanel contactsInsidePanel;
     private List<User> allUsers = new ArrayList<>();
     private JButton contactsSendButton;
     private JButton contactsRequestButton;
@@ -82,13 +81,13 @@ public class ContactsPanel extends JPanel {
 
         searchPanel.setBackground(new Color(50, 150, 100));
         searchPanel.add(searchBarTextField);
-        contactsPanel = new JPanel() {
+        contactsInsidePanel = new JPanel() {
         };
-        contactsPanel.setLayout(new BoxLayout(contactsPanel, BoxLayout.Y_AXIS));
-        resultsScrollPane = new JScrollPane(contactsPanel);
+        contactsInsidePanel.setLayout(new BoxLayout(contactsInsidePanel, BoxLayout.Y_AXIS));
+        resultsScrollPane = new JScrollPane(contactsInsidePanel);
         resultsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         resultsScrollPane.setPreferredSize(new Dimension(540, 500));
-        contactsPanel.setBackground(new Color(10, 120, 120));
+        contactsInsidePanel.setBackground(new Color(10, 120, 120));
 
         add(searchPanel);
         add(resultsScrollPane);
@@ -99,21 +98,21 @@ public class ContactsPanel extends JPanel {
 
         String searchTerm = searchBarTextField.getText();
         List<String> filteredResults = new ArrayList<>();
-        contactsPanel.removeAll();
-        filteredResults.addAll(contactUsernames);
-//        for (String username : contactUsernames) {
-//            if (username.toLowerCase().contains(searchTerm.toLowerCase())) {
-//                filteredResults.add(username);
-//            }
-//        }
+
+        contactsInsidePanel.removeAll();
+
+        for (String username : contactUsernames) {
+            if (username.toLowerCase().contains(searchTerm.toLowerCase())) {
+                filteredResults.add(username);
+            }
+        }
         Collections.sort(filteredResults);
 
         if (filteredResults.size() > 0) {
             int colorCounter = 0;
 
             for (String username : filteredResults) {
-                JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0)) {
-                };
+                JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
                 usernamePanel.setPreferredSize(new Dimension(520, 40));
                 usernamePanel.setMaximumSize(new Dimension(520, 40));
                 usernamePanel.setMaximumSize(new Dimension(520, 40));
@@ -124,8 +123,8 @@ public class ContactsPanel extends JPanel {
                 }
                 JLabel usernameLabel = new JLabel(username);
                 usernameLabel.setFont(RESULTS_FONT);
-                usernamePanel.add(usernameLabel);
                 usernameLabel.setPreferredSize(new Dimension(375, 40));
+                usernamePanel.add(usernameLabel);
 
                 contactsSendButton = new JButton();
                 contactsSendButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-money-transfer-25.png"));
@@ -164,14 +163,14 @@ public class ContactsPanel extends JPanel {
                 usernamePanel.add(contactsRequestButton);
                 usernamePanel.add(contactsDeleteFromContactsButton);
 
-                contactsPanel.add(usernamePanel);
+                contactsInsidePanel.add(usernamePanel);
                 colorCounter++;
             }
         }
 
 
-            contactsPanel.revalidate();
-            contactsPanel.repaint();
+            contactsInsidePanel.revalidate();
+            contactsInsidePanel.repaint();
     }
 
 
