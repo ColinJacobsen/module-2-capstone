@@ -161,15 +161,19 @@ public class App {
         activeService.setCurrentUser(currentUser);
         consoleService.printUsers(activeService, currentUser);
         String recipient = consoleService.promptForString("Type the name of the account you would like to send to: ");
+
         if (recipient.toLowerCase().equals(currentUser.getUser().getUsername())) {
             System.err.println("\nYou can not send to yourself");
-        } else {
+
+        } else if (activeService.getUserByName(recipient) == null) {
+            System.err.println("\nPlease enter valid username.");
+
+        }else {
 
             BigDecimal amount = consoleService.promptForBigDecimal("How much would you like to send?: ");
             if (amount.compareTo(BigDecimal.ZERO) <= 0) {
                 System.err.println("Value must be more than $0.00");
             } else {
-                try {
                     Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()),
                             activeService.userToAccount(activeService.getUserByName(recipient)),
                             amount);
@@ -182,9 +186,6 @@ public class App {
                         System.err.println("Insufficient Balance");
                         consoleService.printMainMenu();
                     }
-                } catch (NullPointerException e){
-                    System.err.println("\nPlease enter valid username");
-                }
             }
         }
     }
@@ -196,22 +197,22 @@ public class App {
         String recipient = consoleService.promptForString("Type the name of the account you would like to send request to: ");
         if (recipient.toLowerCase().equals(currentUser.getUser().getUsername())) {
             System.err.println("\nYou can not request from yourself");
-        } else {
 
+        } else if (activeService.getUserByName(recipient) == null){
+            System.err.println("\nPlease enter valid username.");
+
+        } else {
             BigDecimal amount = consoleService.promptForBigDecimal("How much would you like to request?: ");
             if (amount.compareTo(BigDecimal.ZERO) <= 0) {
                 System.err.println("Value must be more than $0.00");
+
             } else {
-                try {
                     Transfer transfer = new Transfer(1, 1, activeService.userToAccount(activeService.getUserByName(recipient)), activeService.userToAccount(currentUser.getUser()), amount);
 
                     transfer.setTransferId(transferService.makeTransfer(transfer));
                     if (transfer.getTransferId() > 3000) {
                         System.out.println("\nRequest Sent to " + recipient);
                     }
-                } catch (NullPointerException e) {
-                    System.err.println("\nPlease enter valid username.");
-                }
             }
 
         }
