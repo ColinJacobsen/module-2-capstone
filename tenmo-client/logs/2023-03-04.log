@@ -1,2 +1,4 @@
 2023-03-04T08:34:29.6983776 401 : [no body]
 2023-03-04T08:34:44.0083911 Username not found
+2023-03-04T09:53:29.0944521 500 : [{"timestamp":"2023-03-04T17:53:29.083+00:00","status":500,"error":"Internal Server Error","message":"PreparedStatementCallback; SQL [INSERT INTO transfer (transfer_status_id, transfer_type_id, account... (674 bytes)]
+2023-03-04T10:18:23.4340333 401 : [no body]
