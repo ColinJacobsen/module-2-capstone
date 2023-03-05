@@ -123,7 +123,7 @@ public class TransferService {
         return requests;
     }
 
-    // Wraps both the account debit and credit in a transaction method. Ensures both will complete or neither.
+    // Wraps both the account debit and credit in a transaction. Ensures both will complete or neither.
     public boolean doTransfer(Transfer transfer) {  //CHANGED FROM BIGDECIMAL RETURN TO A BOOLEAN
         boolean transferCompleted = false;
         HttpEntity<Transfer> entity = transferEntity(authToken, transfer);

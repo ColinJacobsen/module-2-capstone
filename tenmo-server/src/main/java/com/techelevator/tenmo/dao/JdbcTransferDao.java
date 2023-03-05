@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.exception.AccountNotFound;
 import com.techelevator.tenmo.exception.TransferNotFound;
 import com.techelevator.tenmo.model.Transfer;
 import org.jboss.logging.BasicLogger;
@@ -24,7 +25,8 @@ public class JdbcTransferDao implements TransferDao{
     @Override
     public Transfer getTransferById(int transferId) {
         Transfer transfer = null;
-        String sql = "SELECT * FROM transfer " +
+        String sql = "SELECT * " +
+                "FROM transfer " +
                 "WHERE transfer_id = ?";
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, transferId);
 
@@ -93,6 +95,9 @@ public class JdbcTransferDao implements TransferDao{
             Transfer transfer = mapRowToTransfer(rowSet);
             listOfAccountTransfers.add(transfer);
         }
+        if (listOfAccountTransfers.size() < 1){
+            throw new TransferNotFound("Transfer id " + " was not found.");
+        }
         return listOfAccountTransfers;
     }
 
@@ -110,18 +115,26 @@ public class JdbcTransferDao implements TransferDao{
         while(results.next()){
             pendingRequests.add(mapRowToTransfer(results));
         }
+        if(pendingRequests.size() < 1){
+            throw new AccountNotFound("Account with id " + accountFrom + " was not found.");
+        }
         return pendingRequests;
     }
 
     @Override
     public List<Transfer> getAllUserTransfers(int userAccountId) {
         List<Transfer> allUserTransfers = new ArrayList<>();
-        String sql = "SELECT * FROM transfer WHERE ? IN (account_to, account_from) " +
-                     "ORDER BY transfer_id DESC";
+        String sql = "SELECT * " +
+                "FROM transfer " +
+                "WHERE ? IN (account_to, account_from) " +
+                "ORDER BY transfer_id DESC";
 
         SqlRowSet results = jdbcTemplate.queryForRowSet(sql, userAccountId);
         while(results.next()){
             allUserTransfers.add(mapRowToTransfer(results));
+        }
+        if (allUserTransfers.size() < 1){
+            throw new AccountNotFound("Account id " + " doesn't exist or has no transfers.");
         }
         return allUserTransfers;
     }

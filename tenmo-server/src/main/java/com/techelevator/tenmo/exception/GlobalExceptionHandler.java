@@ -18,14 +18,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = UserNotFound.class)
-    public ResponseEntity<Response> handleUserNotFound(TransferNotFound e){
+    public ResponseEntity<Response> handleUserNotFound(UserNotFound e){
         String message = e.getMessage();
         Response response = new Response (message, LocalDateTime.now());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = AccountNotFound.class)
-    public ResponseEntity<Response> handleAccountNotFound(TransferNotFound e){
+    public ResponseEntity<Response> handleAccountNotFound(AccountNotFound e){
         String message = e.getMessage();
         Response response = new Response (message, LocalDateTime.now());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
