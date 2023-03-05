@@ -1,6 +1,7 @@
 package com.techelevator.dao;
 
 import com.techelevator.tenmo.dao.JdbcUserDao;
+import com.techelevator.tenmo.exception.UserNotFound;
 import com.techelevator.tenmo.model.User;
 import org.junit.Assert;
 import org.junit.Before;
@@ -29,7 +30,7 @@ public class JdbcUserDaoTests extends BaseDaoTests {
         sut.findIdByUsername(null);
     }
 
-    @Test(expected = UsernameNotFoundException.class)
+    @Test(expected = UserNotFound.class)
     public void findIdByUsername_given_invalid_username_throws_exception() {
         sut.findIdByUsername("invalid");
     }
@@ -46,7 +47,7 @@ public class JdbcUserDaoTests extends BaseDaoTests {
         sut.findByUsername(null);
     }
 
-    @Test(expected = UsernameNotFoundException.class)
+    @Test(expected = UserNotFound.class)
     public void findByUsername_given_invalid_username_throws_exception() {
         sut.findByUsername("invalid");
     }

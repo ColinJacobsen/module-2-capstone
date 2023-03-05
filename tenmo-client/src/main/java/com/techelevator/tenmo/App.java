@@ -131,9 +131,13 @@ public class App {
         int accountFrom = activeService.userToAccount(currentUser.getUser());
         Transfer[] transfers = transferService.getPendingRequests(accountFrom);
         int transferId = consoleService.printPendingRequests(transfers, activeService);
-        if (transferId > 3000) {
+        if (transferId == 0){
+            System.err.println("Please select a valid transaction id.\n");
+        } else if (transferId > 3000) {
             AtomicReference<Transfer> approveTransfer = new AtomicReference<>();//makes atomic transfer so i can use it in the lambda
-            Arrays.stream(transfers).forEach(transfer-> {if (transfer.getTransferId() == transferId) approveTransfer.set(transfer); });// sets a transfer object based on the one the use picks from the array
+            Arrays.stream(transfers).forEach(transfer -> {
+                if (transfer.getTransferId() == transferId) approveTransfer.set(transfer);
+            });// sets a transfer object based on the one the use picks from the array
             int response = consoleService.promptForInt("Would you like to approve to do?\n" +
                     " 1) Approve Request\n" +
                     " 2) Deny Request\n" +
@@ -143,17 +147,16 @@ public class App {
                     transferService.doTransfer(transferService.getTransferByTransferId(transferId));
                     transferService.updateTransferStatus(2, transferId);
                 } else {
-                   System.err.println("\nInsufficient Balance");
+                    System.err.println("\nInsufficient Balance");
                 }
-            }else if (response == 2) {
+            } else if (response == 2) {
                 transferService.updateTransferStatus(3, transferId);
-            }else if (response == 3) {
+            } else if (response == 3) {
                 System.out.println("\u001B[32mRequest saved for later\u001B[0m");
             } else {
                 System.out.println("Invalid Response");
             }
-        } else
-        System.err.println("Please select a valid transaction id.\n");
+        }
     }
 
     private void sendBucks() {

@@ -15,7 +15,9 @@ import java.util.List;
  * Controller for transactions
  */
 
+
 @RestController
+@PreAuthorize("isAuthenticated()")
 @RequestMapping("/transfers")
 public class TransferController {
 
@@ -23,7 +25,6 @@ public class TransferController {
 
     public TransferController(TransferDao transferDao) {this.transferDao = transferDao;}
 
-    @PreAuthorize("isAuthenticated()")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public int createTransfer(@RequestBody Transfer transfer){
@@ -34,7 +35,6 @@ public class TransferController {
     public void doTransfer(@PathVariable int id, @RequestBody Transfer transfer){
         transferDao.doTransfer(transfer, id);
     }
-    @PreAuthorize("isAuthenticated()")
     @PutMapping(path = "/update/{transferId}/{transferStatusId}")
     public ResponseEntity<String> updateTransferStatus(@PathVariable Integer transferStatusId, @PathVariable int transferId){
         try {

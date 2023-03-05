@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.exception.TransferNotFound;
 import com.techelevator.tenmo.model.Transfer;
 import org.jboss.logging.BasicLogger;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class JdbcTransferDao implements TransferDao{
@@ -28,7 +30,11 @@ public class JdbcTransferDao implements TransferDao{
 
         if (results.next()) {
             transfer = mapRowToTransfer(results);
-        } return transfer;
+        }
+        if (Objects.isNull(transfer)){
+            throw new TransferNotFound("Transfer id " + transferId + " was not found.");
+        }
+        return transfer;
     }
 
     @Override

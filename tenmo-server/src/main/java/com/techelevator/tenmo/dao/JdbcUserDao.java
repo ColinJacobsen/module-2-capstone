@@ -1,8 +1,11 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.exception.TransferNotFound;
+import com.techelevator.tenmo.exception.UserNotFound;
 import com.techelevator.tenmo.model.Transfer;
 import com.techelevator.tenmo.model.User;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.relational.core.sql.In;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class JdbcUserDao implements UserDao {
@@ -33,7 +37,7 @@ public class JdbcUserDao implements UserDao {
         try {
             userId = jdbcTemplate.queryForObject("SELECT user_id FROM tenmo_user WHERE username = ?", int.class, username);
         } catch (NullPointerException | EmptyResultDataAccessException e) {
-            throw new UsernameNotFoundException("User " + username + " was not found.");
+            throw new UserNotFound("User " + username + " was not found.");
         }
 
         return userId;
@@ -97,7 +101,7 @@ public class JdbcUserDao implements UserDao {
         if (rowSet.next()) {
             return mapRowToUser(rowSet);
         }
-        throw new UsernameNotFoundException("User " + username + " was not found.");
+        throw new UserNotFound("User " + username + " was not found.");
     }
 
     @Override
@@ -106,6 +110,9 @@ public class JdbcUserDao implements UserDao {
                "JOIN account USING (user_id) " +
                "WHERE account_id = ?";
 
+       if(jdbcTemplate.queryForObject(sql, String.class, accountId) == null){
+           throw new UserNotFound("Account id " + accountId + " was not found.");
+       }
        return jdbcTemplate.queryForObject(sql, String.class, accountId);
     }
 
@@ -118,7 +125,11 @@ public class JdbcUserDao implements UserDao {
 
         if (results.next()) {
             transfer = mapRowToTransfer(results);
-        } return transfer;
+        }
+        if(Objects.isNull(transfer)){
+            throw new TransferNotFound("Transfer id " + transferId + " was not found.");
+        }
+        return transfer;
     }
 
     @Override
@@ -128,9 +139,14 @@ public class JdbcUserDao implements UserDao {
         String sql = "INSERT INTO tenmo_user (username, password_hash) VALUES (?, ?) RETURNING user_id";
         String password_hash = new BCryptPasswordEncoder().encode(password);
         Integer newUserId;
-        newUserId = jdbcTemplate.queryForObject(sql, Integer.class, username.toLowerCase(), password_hash);
+        try {
+            newUserId = jdbcTemplate.queryForObject(sql, Integer.class, username.toLowerCase(), password_hash);
 
-        if (newUserId == null) return false;
+        } catch (NullPointerException e){
+            throw new DataIntegrityViolationException("Cannot be null.");
+        }
+
+//        if (newUserId == null) return false;
 
         // create account
         sql = "INSERT INTO account (user_id, balance) values(?, ?)";
@@ -146,6 +162,10 @@ public class JdbcUserDao implements UserDao {
     @Override
     public BigDecimal getUserBalance(int id){
         String sql = "select balance from account where user_id = ?";
+
+        if(jdbcTemplate.queryForObject(sql, BigDecimal.class, id) == null){
+            throw new UserNotFound("User with the id " + id + " was not found.");
+        }
         return jdbcTemplate.queryForObject(sql, BigDecimal.class, id);
     }
 
@@ -182,20 +202,12 @@ public class JdbcUserDao implements UserDao {
     public int userToAccount(int id) {
         String sql = "Select account_id from account where user_id = ?";
 
+        if(jdbcTemplate.queryForObject(sql, int.class, id) == null){
+            throw new UserNotFound("User with the id " + id + " was not found.");
+        }
+
         return jdbcTemplate.queryForObject(sql, int.class, id);
     }
-
-
-    private User mapRowToUser(SqlRowSet rs) {
-        User user = new User();
-        user.setId(rs.getInt("user_id"));
-        user.setUsername(rs.getString("username"));
-        user.setPassword(rs.getString("password_hash"));
-        user.setActivated(true);
-        user.setAuthorities("USER");
-        return user;
-    }
-
 
     public List<Transfer> transferHistory(int id) {
         String sql = "select * from transfer where account_from = ? or account_to = ?";
@@ -207,8 +219,6 @@ public class JdbcUserDao implements UserDao {
         }
         return listOfAccountTransfers;
     }
-
-
 
     public void addUserToContacts(Integer userId, Integer contactId){
         String sql = "INSERT INTO user_contacts (user_id, contact_user_id) " +
@@ -232,6 +242,17 @@ public class JdbcUserDao implements UserDao {
                      "user_id = ? ";
         return jdbcTemplate.queryForList(sql, Integer.class, userId);
 
+    }
+
+    // Map to Object Methods
+    private User mapRowToUser(SqlRowSet rs) {
+        User user = new User();
+        user.setId(rs.getInt("user_id"));
+        user.setUsername(rs.getString("username"));
+        user.setPassword(rs.getString("password_hash"));
+        user.setActivated(true);
+        user.setAuthorities("USER");
+        return user;
     }
 
     private Transfer mapRowToTransfer(SqlRowSet rs) {

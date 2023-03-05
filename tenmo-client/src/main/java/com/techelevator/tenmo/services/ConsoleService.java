@@ -168,6 +168,7 @@ public class ConsoleService {
 
     public int printPendingRequests(Transfer[] transfers, ActiveService activeService) {
         int transferId= 0;
+        int extantId = 0;
         if (transfers.length > 0) {
             System.out.println("\033[32m+---------------+---------------+\033[0m");
             System.out.println("\033[32m+-------\u001B[1m\033[36mPENDING REQUESTS\u001B[0m\033[32m--------+\033[0m");
@@ -189,8 +190,7 @@ public class ConsoleService {
                     System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
                     System.out.printf("| \033[36m%-13s\033[0m | \033[36m%-13s\033[0m | \033[36m%-13s\033[0m | \033[36m%-13s\033[0m |\n", transferId, transfer.getTransferTypeString(transfer.getTransferType()), senderUsername,"$" +transfer.getAmount());
                     System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
-                } else {
-                    return 0;
+                    extantId = transferId;
                 }
             }
 
@@ -198,6 +198,6 @@ public class ConsoleService {
             System.out.println("You have no pending transfer requests");
         }
 
-        return transferId;
+        return extantId;
     }
 }
