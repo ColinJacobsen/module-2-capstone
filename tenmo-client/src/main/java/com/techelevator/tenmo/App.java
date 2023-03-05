@@ -131,9 +131,7 @@ public class App {
         int accountFrom = activeService.userToAccount(currentUser.getUser());
         Transfer[] transfers = transferService.getPendingRequests(accountFrom);
         int transferId = consoleService.printPendingRequests(transfers, activeService);
-        if (transferId == 0){
-            System.err.println("Please select a valid transaction id.\n");
-        } else if (transferId > 3000) {
+        if (transferId > 3000) {
             AtomicReference<Transfer> approveTransfer = new AtomicReference<>();//makes atomic transfer so i can use it in the lambda
             Arrays.stream(transfers).forEach(transfer -> {
                 if (transfer.getTransferId() == transferId) approveTransfer.set(transfer);
