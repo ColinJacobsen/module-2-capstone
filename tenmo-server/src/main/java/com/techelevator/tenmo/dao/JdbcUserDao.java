@@ -1,5 +1,6 @@
 package com.techelevator.tenmo.dao;
 
+import com.techelevator.tenmo.exception.AccountNotFound;
 import com.techelevator.tenmo.exception.TransferNotFound;
 import com.techelevator.tenmo.exception.UserNotFound;
 import com.techelevator.tenmo.model.Transfer;
@@ -60,6 +61,10 @@ public class JdbcUserDao implements UserDao {
     public BigDecimal getBalanceByAccountId(int accountId) {
         String sql = "SELECT balance FROM account " +
                      "WHERE account_id = ?";
+
+        if(jdbcTemplate.queryForObject(sql, BigDecimal.class, accountId) == null){
+            throw new AccountNotFound("Account id " + accountId + " not found.");
+        }
         return jdbcTemplate.queryForObject(sql, BigDecimal.class, accountId);
     }
 
@@ -210,12 +215,17 @@ public class JdbcUserDao implements UserDao {
     }
 
     public List<Transfer> transferHistory(int id) {
-        String sql = "select * from transfer where account_from = ? or account_to = ?";
+        String sql = "SELECT * " +
+                "FROM transfer " +
+                "WHERE account_from = ? or account_to = ?";
         List<Transfer> listOfAccountTransfers = new ArrayList<>();
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id, id);
         while (rowSet.next()){
             Transfer transfer = mapRowToTransfer(rowSet);
             listOfAccountTransfers.add(transfer);
+        }
+        if (listOfAccountTransfers.size() < 1){
+            throw new AccountNotFound("Account id " + " was not found or has no history.");
         }
         return listOfAccountTransfers;
     }

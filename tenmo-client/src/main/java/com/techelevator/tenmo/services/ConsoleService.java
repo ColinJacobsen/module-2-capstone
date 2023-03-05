@@ -105,7 +105,7 @@ public class ConsoleService {
     public  void printHistory(int accountId, ActiveService activeService) {
         Transfer[] transfers = activeService.transferHistory(accountId);
         if(transfers == null){
-            System.err.println("You currently have no transaction.\n");
+            System.err.println("You currently have no transactions.\n");
             return;
         }
 

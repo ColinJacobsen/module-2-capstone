@@ -96,7 +96,7 @@ public class JdbcTransferDao implements TransferDao{
             listOfAccountTransfers.add(transfer);
         }
         if (listOfAccountTransfers.size() < 1){
-            throw new TransferNotFound("Transfer id " + " was not found.");
+            throw new TransferNotFound("Transfer id " + " was not found or transfer history is empty.");
         }
         return listOfAccountTransfers;
     }
@@ -116,7 +116,7 @@ public class JdbcTransferDao implements TransferDao{
             pendingRequests.add(mapRowToTransfer(results));
         }
         if(pendingRequests.size() < 1){
-            throw new AccountNotFound("Account with id " + accountFrom + " was not found.");
+            throw new AccountNotFound("Account with id " + accountFrom + " was not found or has no pending requests.");
         }
         return pendingRequests;
     }
