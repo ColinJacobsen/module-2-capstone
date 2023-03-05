@@ -8,10 +8,8 @@ import com.techelevator.tenmo.model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -61,11 +59,12 @@ public class JdbcUserDao implements UserDao {
     public BigDecimal getBalanceByAccountId(int accountId) {
         String sql = "SELECT balance FROM account " +
                      "WHERE account_id = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, BigDecimal.class, accountId);
 
-        if(jdbcTemplate.queryForObject(sql, BigDecimal.class, accountId) == null){
+        } catch(NullPointerException | EmptyResultDataAccessException e){
             throw new AccountNotFound("Account id " + accountId + " not found.");
         }
-        return jdbcTemplate.queryForObject(sql, BigDecimal.class, accountId);
     }
 
     @Override
@@ -91,10 +90,11 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public List<String> searchUsernames(String searchTerm){
-        String sql = "SELECT username FROM temno_user " +
-                     "WHERE username LIKE '?%' " +
-                     "ORDER BY username";
-        return jdbcTemplate.queryForList(sql, String.class, searchTerm);
+        String sql = "SELECT username " +
+                "FROM tenmo_user " +
+                "WHERE username ILIKE ? " +
+                "ORDER BY username";
+        return jdbcTemplate.queryForList(sql, String.class, "%" + searchTerm + "%");
     }
 
     @Override
@@ -114,28 +114,30 @@ public class JdbcUserDao implements UserDao {
        String sql = "SELECT username FROM tenmo_user " +
                "JOIN account USING (user_id) " +
                "WHERE account_id = ?";
+       try {
+           return jdbcTemplate.queryForObject(sql, String.class, accountId);
 
-       if(jdbcTemplate.queryForObject(sql, String.class, accountId) == null){
-           throw new UserNotFound("Account id " + accountId + " was not found.");
+       } catch (NullPointerException | EmptyResultDataAccessException e){
+            throw new AccountNotFound("Account id " + accountId + " was not found.");
        }
-       return jdbcTemplate.queryForObject(sql, String.class, accountId);
+
     }
 
 
-    public Transfer findTransferById(int transferId) {
-        Transfer transfer = null;
-        String sql = "SELECT * FROM transfer " +
-                "WHERE transfer_id = ?";
-        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, Transfer.class, transferId);
-
-        if (results.next()) {
-            transfer = mapRowToTransfer(results);
-        }
-        if(Objects.isNull(transfer)){
-            throw new TransferNotFound("Transfer id " + transferId + " was not found.");
-        }
-        return transfer;
-    }
+//    public Transfer findTransferById(int transferId) {
+//        Transfer transfer = null;
+//        String sql = "SELECT * FROM transfer " +
+//                "WHERE transfer_id = ?";
+//        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, Transfer.class, transferId);
+//
+//        if (results.next()) {
+//            transfer = mapRowToTransfer(results);
+//        }
+//        if(Objects.isNull(transfer)){
+//            throw new TransferNotFound("Transfer id " + transferId + " was not found.");
+//        }
+//        return transfer;
+//    }
 
     @Override
     public boolean create(String username, String password) {
@@ -165,70 +167,78 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public BigDecimal getUserBalance(int id){
-        String sql = "select balance from account where user_id = ?";
+    public BigDecimal getUserBalance(int id) {
+        String sql = "SELECT balance " +
+                "FROM account " +
+                "WHERE user_id = ?";
 
-        if(jdbcTemplate.queryForObject(sql, BigDecimal.class, id) == null){
+        try {
+            return jdbcTemplate.queryForObject(sql, BigDecimal.class, id);
+
+        } catch (NullPointerException | EmptyResultDataAccessException e) {
             throw new UserNotFound("User with the id " + id + " was not found.");
+
         }
-        return jdbcTemplate.queryForObject(sql, BigDecimal.class, id);
     }
 
 
-    public void doTransfer(Transfer transfer, int id) {
-
-        String sqlDoTransfer = "BEGIN; " +
-                "UPDATE account SET balance = balance - ? " +
-                "WHERE account_id = ?; " +
-                "UPDATE account SET balance = balance + ? " +
-                "WHERE account_id = ?; " +
-                "COMMIT;";
-
-            jdbcTemplate.update(sqlDoTransfer, transfer.getAmount(), transfer.getAccountFrom(), transfer.getAmount(), transfer.getAccountTo());
-
-    }
-
-
-    public int createTransfer(Transfer transfer) {
-        // update the balance where account from id = account id and account to id = account id
-        String createTransfer = "INSERT INTO transfer (transfer_status_id, transfer_type_id, account_from, account_to, amount) " +
-                    "values(?,?,?,?,?) returning transfer_id";
-        int transferStatus = transfer.getTransferStatus();
-        int transferType = transfer.getTransferType();
-        int senderId = transfer.getAccountFrom();
-        int recipientId = transfer.getAccountTo();
-        BigDecimal amount = transfer.getAmount();
+//    public void doTransfer(Transfer transfer, int id) {
+//
+//        String sqlDoTransfer = "BEGIN; " +
+//                "UPDATE account SET balance = balance - ? " +
+//                "WHERE account_id = ?; " +
+//                "UPDATE account SET balance = balance + ? " +
+//                "WHERE account_id = ?; " +
+//                "COMMIT;";
+//
+//            jdbcTemplate.update(sqlDoTransfer, transfer.getAmount(), transfer.getAccountFrom(), transfer.getAmount(), transfer.getAccountTo());
+//
+//    }
 
 
-        return jdbcTemplate.queryForObject(createTransfer, int.class, transferStatus, transferType, senderId, recipientId, amount);
-
-    }
+//    public int createTransfer(Transfer transfer) {
+//        // update the balance where account from id = account id and account to id = account id
+//        String createTransfer = "INSERT INTO transfer (transfer_status_id, transfer_type_id, account_from, account_to, amount) " +
+//                    "values(?,?,?,?,?) returning transfer_id";
+//        int transferStatus = transfer.getTransferStatus();
+//        int transferType = transfer.getTransferType();
+//        int senderId = transfer.getAccountFrom();
+//        int recipientId = transfer.getAccountTo();
+//        BigDecimal amount = transfer.getAmount();
+//
+//
+//        return jdbcTemplate.queryForObject(createTransfer, int.class, transferStatus, transferType, senderId, recipientId, amount);
+//
+//    }
 
     public int userToAccount(int id) {
-        String sql = "Select account_id from account where user_id = ?";
+        String sql = "SELECT account_id " +
+                "FROM account " +
+                "WHERE user_id = ?";
 
-        if(jdbcTemplate.queryForObject(sql, int.class, id) == null){
+        try {
+            return jdbcTemplate.queryForObject(sql, int.class, id);
+
+        } catch(NullPointerException | EmptyResultDataAccessException e){
             throw new UserNotFound("User with the id " + id + " was not found.");
         }
-
-        return jdbcTemplate.queryForObject(sql, int.class, id);
     }
 
-    public List<Transfer> transferHistory(int id) {
-        String sql = "SELECT * " +
-                "FROM transfer " +
-                "WHERE account_from = ? or account_to = ?";
-        List<Transfer> listOfAccountTransfers = new ArrayList<>();
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id, id);
-        while (rowSet.next()){
-            Transfer transfer = mapRowToTransfer(rowSet);
-            listOfAccountTransfers.add(transfer);
-        }
-        if (listOfAccountTransfers.size() < 1){
-            throw new AccountNotFound("Account id " + " was not found or has no history.");
-        }
-        return listOfAccountTransfers;
-    }
+//    public List<Transfer> transferHistory(int id) {
+//        String sql = "SELECT * " +
+//                "FROM transfer " +
+//                "WHERE account_from = ? or account_to = ?";
+//        List<Transfer> listOfAccountTransfers = new ArrayList<>();
+//        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id, id);
+//        while (rowSet.next()){
+//            Transfer transfer = mapRowToTransfer(rowSet);
+//            listOfAccountTransfers.add(transfer);
+//        }
+//        if (listOfAccountTransfers.size() < 1){
+//            throw new AccountNotFound("Account id " + " was not found or has no history.");
+//        }
+//        return listOfAccountTransfers;
+//    }
 
     public void addUserToContacts(Integer userId, Integer contactId){
         String sql = "INSERT INTO user_contacts (user_id, contact_user_id) " +
