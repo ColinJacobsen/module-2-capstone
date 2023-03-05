@@ -144,6 +144,7 @@ public class App {
                 if (activeService.getAccountBalance(approveTransfer.getPlain().getAccountFrom()).compareTo(approveTransfer.getPlain().getAmount()) >= 0) {//reworded to use the approvedTransfer Object
                     transferService.doTransfer(transferService.getTransferByTransferId(transferId));
                     transferService.updateTransferStatus(2, transferId);
+                    System.out.println("Approved successfully!\n");
                 } else {
                     System.err.println("\nInsufficient Balance");
                 }
