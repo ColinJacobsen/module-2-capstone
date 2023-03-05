@@ -224,21 +224,22 @@ public class JdbcUserDao implements UserDao {
         }
     }
 
-//    public List<Transfer> transferHistory(int id) {
-//        String sql = "SELECT * " +
-//                "FROM transfer " +
-//                "WHERE account_from = ? or account_to = ?";
-//        List<Transfer> listOfAccountTransfers = new ArrayList<>();
-//        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id, id);
-//        while (rowSet.next()){
-//            Transfer transfer = mapRowToTransfer(rowSet);
-//            listOfAccountTransfers.add(transfer);
-//        }
-//        if (listOfAccountTransfers.size() < 1){
-//            throw new AccountNotFound("Account id " + " was not found or has no history.");
-//        }
-//        return listOfAccountTransfers;
-//    }
+    // Move to Transfer?
+    public List<Transfer> transferHistory(int id) {
+        String sql = "SELECT * " +
+                "FROM transfer " +
+                "WHERE account_from = ? or account_to = ?";
+        List<Transfer> listOfAccountTransfers = new ArrayList<>();
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id, id);
+        while (rowSet.next()){
+            Transfer transfer = mapRowToTransfer(rowSet);
+            listOfAccountTransfers.add(transfer);
+        }
+        if (listOfAccountTransfers.size() < 1){
+            throw new AccountNotFound("Account id " + " was not found or has no history.");
+        }
+        return listOfAccountTransfers;
+    }
 
     public void addUserToContacts(Integer userId, Integer contactId){
         String sql = "INSERT INTO user_contacts (user_id, contact_user_id) " +

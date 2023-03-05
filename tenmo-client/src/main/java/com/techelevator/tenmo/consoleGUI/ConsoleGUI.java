@@ -16,7 +16,7 @@ public class ConsoleGUI extends JFrame {
     private static final String API_BASE_URL = "http://localhost:8080/";
     private AuthenticatedUser currentUser;
 
-    Image backgroundImage = Toolkit.getDefaultToolkit().getImage("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\Backgrounds\\Untitled design (15).png");
+    Image backgroundImage = Toolkit.getDefaultToolkit().getImage("tenmo-client\\src\\main\\resources\\Images\\Backgrounds\\Untitled design (15).png");
     ImageIcon backgroundIcon = new ImageIcon((backgroundImage.getScaledInstance(560, 1000, Image.SCALE_SMOOTH)));
     JLabel backGroundLabel = new JLabel(backgroundIcon);
 
