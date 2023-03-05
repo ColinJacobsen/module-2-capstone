@@ -87,8 +87,10 @@ public class JdbcTransferDao implements TransferDao{
 
     @Override
     public List<Transfer> transferHistory(int id) {
-        String sql = "select * from transfer where account_from = ? or account_to = ? " +
-                     "ORDER BY transfer_id";
+        String sql = "SELECT * " +
+                "FROM transfer " +
+                "WHERE account_from = ? or account_to = ? " +
+                "ORDER BY transfer_id";
         List<Transfer> listOfAccountTransfers = new ArrayList<>();
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet(sql, id, id);
         while (rowSet.next()){
@@ -96,7 +98,7 @@ public class JdbcTransferDao implements TransferDao{
             listOfAccountTransfers.add(transfer);
         }
         if (listOfAccountTransfers.size() < 1){
-            throw new TransferNotFound("Transfer id " + " was not found or transfer history is empty.");
+            throw new AccountNotFound("Account id " + " was not found or transfer history is empty.");
         }
         return listOfAccountTransfers;
     }
