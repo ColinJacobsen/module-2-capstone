@@ -24,3 +24,5 @@
 2023-03-05T10:58:07.3113273 400 : [{"message":"Transfer id  was not found or transfer history is empty.","timeStamp":"2023-03-05T10:58:07.309329"}]
 2023-03-05T11:02:22.975086 400 : [{"message":"Transfer id  was not found or transfer history is empty.","timeStamp":"2023-03-05T11:02:22.9584297"}]
 2023-03-05T11:02:24.8892376 400 : [{"message":"Account with id 2004 was not found or has no pending requests.","timeStamp":"2023-03-05T11:02:24.8877898"}]
+2023-03-05T14:06:59.0990546 Username not found
+2023-03-05T14:07:04.3297619 Username not found

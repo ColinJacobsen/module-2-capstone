@@ -129,9 +129,11 @@ public class ConsoleService {
         System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
 
         int requestedTransferId = promptForInt("Which transaction would you like to view?");
+        boolean transferExists = false;
 
         for(Transfer transfer : transfers){
             if(transfer.getTransferId() == requestedTransferId){
+                transferExists = true;
                 char debitOrCredit;
                 if(transfer.getAccountTo() == accountId){
                     debitOrCredit = '-';
@@ -167,6 +169,9 @@ public class ConsoleService {
 //                        "Amount: " + debitOrCredit + transfer.getAmount());
 
             }
+        }
+        if(!transferExists){
+            System.err.println("Transfer id does not exist.");
         }
     }
 
