@@ -123,21 +123,21 @@ public class JdbcUserDao implements UserDao {
 
     }
 
+    // Move to transfer?
+    public Transfer findTransferById(int transferId) {
+        Transfer transfer = null;
+        String sql = "SELECT * FROM transfer " +
+                "WHERE transfer_id = ?";
+        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, Transfer.class, transferId);
 
-//    public Transfer findTransferById(int transferId) {
-//        Transfer transfer = null;
-//        String sql = "SELECT * FROM transfer " +
-//                "WHERE transfer_id = ?";
-//        SqlRowSet results = jdbcTemplate.queryForRowSet(sql, Transfer.class, transferId);
-//
-//        if (results.next()) {
-//            transfer = mapRowToTransfer(results);
-//        }
-//        if(Objects.isNull(transfer)){
-//            throw new TransferNotFound("Transfer id " + transferId + " was not found.");
-//        }
-//        return transfer;
-//    }
+        if (results.next()) {
+            transfer = mapRowToTransfer(results);
+        }
+        if(Objects.isNull(transfer)){
+            throw new TransferNotFound("Transfer id " + transferId + " was not found.");
+        }
+        return transfer;
+    }
 
     @Override
     public boolean create(String username, String password) {
@@ -181,35 +181,35 @@ public class JdbcUserDao implements UserDao {
         }
     }
 
+    // Move to transfer?
+    public void doTransfer(Transfer transfer, int id) {
 
-//    public void doTransfer(Transfer transfer, int id) {
-//
-//        String sqlDoTransfer = "BEGIN; " +
-//                "UPDATE account SET balance = balance - ? " +
-//                "WHERE account_id = ?; " +
-//                "UPDATE account SET balance = balance + ? " +
-//                "WHERE account_id = ?; " +
-//                "COMMIT;";
-//
-//            jdbcTemplate.update(sqlDoTransfer, transfer.getAmount(), transfer.getAccountFrom(), transfer.getAmount(), transfer.getAccountTo());
-//
-//    }
+        String sqlDoTransfer = "BEGIN; " +
+                "UPDATE account SET balance = balance - ? " +
+                "WHERE account_id = ?; " +
+                "UPDATE account SET balance = balance + ? " +
+                "WHERE account_id = ?; " +
+                "COMMIT;";
+
+            jdbcTemplate.update(sqlDoTransfer, transfer.getAmount(), transfer.getAccountFrom(), transfer.getAmount(), transfer.getAccountTo());
+
+    }
+
+    // Move to transfer?
+    public int createTransfer(Transfer transfer) {
+        // update the balance where account from id = account id and account to id = account id
+        String createTransfer = "INSERT INTO transfer (transfer_status_id, transfer_type_id, account_from, account_to, amount) " +
+                    "values(?,?,?,?,?) returning transfer_id";
+        int transferStatus = transfer.getTransferStatus();
+        int transferType = transfer.getTransferType();
+        int senderId = transfer.getAccountFrom();
+        int recipientId = transfer.getAccountTo();
+        BigDecimal amount = transfer.getAmount();
 
 
-//    public int createTransfer(Transfer transfer) {
-//        // update the balance where account from id = account id and account to id = account id
-//        String createTransfer = "INSERT INTO transfer (transfer_status_id, transfer_type_id, account_from, account_to, amount) " +
-//                    "values(?,?,?,?,?) returning transfer_id";
-//        int transferStatus = transfer.getTransferStatus();
-//        int transferType = transfer.getTransferType();
-//        int senderId = transfer.getAccountFrom();
-//        int recipientId = transfer.getAccountTo();
-//        BigDecimal amount = transfer.getAmount();
-//
-//
-//        return jdbcTemplate.queryForObject(createTransfer, int.class, transferStatus, transferType, senderId, recipientId, amount);
-//
-//    }
+        return jdbcTemplate.queryForObject(createTransfer, int.class, transferStatus, transferType, senderId, recipientId, amount);
+
+    }
 
     public int userToAccount(int id) {
         String sql = "SELECT account_id " +
