@@ -167,7 +167,6 @@ public class ConsoleService {
     }
 
     public int printPendingRequests(Transfer[] transfers, ActiveService activeService) {
-        int transferId= 0;
         int extantId = 0;
         if (transfers.length > 0) {
             System.out.println("\033[32m+---------------+---------------+\033[0m");
@@ -180,7 +179,7 @@ public class ConsoleService {
                 System.out.printf("\033[32m| \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m |\033[0m\n", transfer.getTransferId() , "$" +transfer.getAmount() );
             }
             System.out.println("\033[32m+---------------+---------------+\033[0m");
-            transferId = promptForInt("Enter the id for the transfer you would like to view: ");
+            int transferId = promptForInt("Enter the id for the transfer you would like to view: ");
 
             for (Transfer transfer : transfers) {
                 if (transferId == transfer.getTransferId()) {
