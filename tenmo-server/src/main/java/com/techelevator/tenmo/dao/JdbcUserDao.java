@@ -8,10 +8,8 @@ import com.techelevator.tenmo.model.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -61,11 +59,12 @@ public class JdbcUserDao implements UserDao {
     public BigDecimal getBalanceByAccountId(int accountId) {
         String sql = "SELECT balance FROM account " +
                      "WHERE account_id = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, BigDecimal.class, accountId);
 
-        if(jdbcTemplate.queryForObject(sql, BigDecimal.class, accountId) == null){
+        } catch(NullPointerException | EmptyResultDataAccessException e){
             throw new AccountNotFound("Account id " + accountId + " not found.");
         }
-        return jdbcTemplate.queryForObject(sql, BigDecimal.class, accountId);
     }
 
     @Override
@@ -91,10 +90,11 @@ public class JdbcUserDao implements UserDao {
 
     @Override
     public List<String> searchUsernames(String searchTerm){
-        String sql = "SELECT username FROM temno_user " +
-                     "WHERE username LIKE '?%' " +
-                     "ORDER BY username";
-        return jdbcTemplate.queryForList(sql, String.class, searchTerm);
+        String sql = "SELECT username " +
+                "FROM tenmo_user " +
+                "WHERE username ILIKE ? " +
+                "ORDER BY username";
+        return jdbcTemplate.queryForList(sql, String.class, "%" + searchTerm + "%");
     }
 
     @Override
@@ -114,14 +114,16 @@ public class JdbcUserDao implements UserDao {
        String sql = "SELECT username FROM tenmo_user " +
                "JOIN account USING (user_id) " +
                "WHERE account_id = ?";
+       try {
+           return jdbcTemplate.queryForObject(sql, String.class, accountId);
 
-       if(jdbcTemplate.queryForObject(sql, String.class, accountId) == null){
-           throw new UserNotFound("Account id " + accountId + " was not found.");
+       } catch (NullPointerException | EmptyResultDataAccessException e){
+            throw new AccountNotFound("Account id " + accountId + " was not found.");
        }
-       return jdbcTemplate.queryForObject(sql, String.class, accountId);
+
     }
 
-
+    // Move to transfer?
     public Transfer findTransferById(int transferId) {
         Transfer transfer = null;
         String sql = "SELECT * FROM transfer " +
@@ -165,16 +167,21 @@ public class JdbcUserDao implements UserDao {
     }
 
     @Override
-    public BigDecimal getUserBalance(int id){
-        String sql = "select balance from account where user_id = ?";
+    public BigDecimal getUserBalance(int id) {
+        String sql = "SELECT balance " +
+                "FROM account " +
+                "WHERE user_id = ?";
 
-        if(jdbcTemplate.queryForObject(sql, BigDecimal.class, id) == null){
+        try {
+            return jdbcTemplate.queryForObject(sql, BigDecimal.class, id);
+
+        } catch (NullPointerException | EmptyResultDataAccessException e) {
             throw new UserNotFound("User with the id " + id + " was not found.");
+
         }
-        return jdbcTemplate.queryForObject(sql, BigDecimal.class, id);
     }
 
-
+    // Move to transfer?
     public void doTransfer(Transfer transfer, int id) {
 
         String sqlDoTransfer = "BEGIN; " +
@@ -188,7 +195,7 @@ public class JdbcUserDao implements UserDao {
 
     }
 
-
+    // Move to transfer?
     public int createTransfer(Transfer transfer) {
         // update the balance where account from id = account id and account to id = account id
         String createTransfer = "INSERT INTO transfer (transfer_status_id, transfer_type_id, account_from, account_to, amount) " +
@@ -205,15 +212,19 @@ public class JdbcUserDao implements UserDao {
     }
 
     public int userToAccount(int id) {
-        String sql = "Select account_id from account where user_id = ?";
+        String sql = "SELECT account_id " +
+                "FROM account " +
+                "WHERE user_id = ?";
 
-        if(jdbcTemplate.queryForObject(sql, int.class, id) == null){
+        try {
+            return jdbcTemplate.queryForObject(sql, int.class, id);
+
+        } catch(NullPointerException | EmptyResultDataAccessException e){
             throw new UserNotFound("User with the id " + id + " was not found.");
         }
-
-        return jdbcTemplate.queryForObject(sql, int.class, id);
     }
 
+    // Move to Transfer?
     public List<Transfer> transferHistory(int id) {
         String sql = "SELECT * " +
                 "FROM transfer " +

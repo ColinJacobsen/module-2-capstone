@@ -125,9 +125,7 @@ public class App {
         int accountFrom = activeService.userToAccount(currentUser.getUser());
         Transfer[] transfers = transferService.getPendingRequests(accountFrom);
         int transferId = consoleService.printPendingRequests(transfers, activeService);
-        if (transferId == 0){
-            System.err.println("Please select a valid transaction id.\n");
-        } else if (transferId > 3000) {
+        if (transferId > 3000) {
             AtomicReference<Transfer> approveTransfer = new AtomicReference<>();//makes atomic transfer so i can use it in the lambda
             Arrays.stream(transfers).forEach(transfer -> {
                 if (transfer.getTransferId() == transferId) approveTransfer.set(transfer);
@@ -140,6 +138,7 @@ public class App {
                 if (activeService.getAccountBalance(approveTransfer.getPlain().getAccountFrom()).compareTo(approveTransfer.getPlain().getAmount()) >= 0) {//reworded to use the approvedTransfer Object
                     transferService.doTransfer(transferService.getTransferByTransferId(transferId));
                     transferService.updateTransferStatus(2, transferId);
+                    System.out.println("Approved successfully!\n");
                 } else {
                     System.err.println("\nInsufficient Balance");
                 }
@@ -204,7 +203,9 @@ public class App {
                 System.err.println("Value must be more than $0.00");
 
             } else {
-                    Transfer transfer = new Transfer(1, 1, activeService.userToAccount(activeService.getUserByName(recipient)), activeService.userToAccount(currentUser.getUser()), amount);
+                    Transfer transfer = new Transfer(1, 1,
+                            activeService.userToAccount(activeService.getUserByName(recipient)),
+                            activeService.userToAccount(currentUser.getUser()), amount);
 
                     transfer.setTransferId(transferService.makeTransfer(transfer));
                     if (transfer.getTransferId() > 3000) {
