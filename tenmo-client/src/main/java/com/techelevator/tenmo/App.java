@@ -57,12 +57,6 @@ public class App {
         }
     }
 
-//    private void GUILogIn(){
-//        if(currentUser == null){
-//            ConsoleGUI gui = new ConsoleGUI(currentUser);
-//        }
-//    }
-
     private void handleRegister() {
         System.out.println("Please register a new user account");
         UserCredentials credentials = consoleService.promptForCredentials();
@@ -82,7 +76,7 @@ public class App {
             activeService.setCurrentUser(currentUser);
             activeService.setAuthToken(currentUser.getToken());
         } catch (NullPointerException e) {
-            System.err.println("\nPlease enter valid login.");
+            System.out.println("\u001B[31m\nUsername or Password Invalid.\u001B[0m");
         }
     }
 

@@ -46,9 +46,6 @@ public class ViewTransfersPanel extends JPanel {
         this.activeService = activeService;
         this.transferService = transferService;
         this.currentUser = currentUser;
-
-        currentUserAccountBalance = activeService.getUserBalance(currentUser, currentUser.getUser().getId());
-
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentShown(ComponentEvent e) {
@@ -59,6 +56,7 @@ public class ViewTransfersPanel extends JPanel {
 //                accountDisplayPanel.add(accountPanelGreeting);
 //                accountDisplayPanel.add(accountNumber);
 //                accountDisplayPanel.add(newAccountBalance);
+                refreshBalance();
                 createAndSortTransactions(currentUser.getUser().getId());
                 printTransfersToScreen(transfers);
 
@@ -76,7 +74,7 @@ public class ViewTransfersPanel extends JPanel {
         accountDisplayPanel.setPreferredSize(new Dimension(540, 200));
         accountDisplayPanel.setOpaque(false);
 
-        accountPanelGreeting = new JLabel("Greetings, Earth Human " + currentUser.getUser().getUsername());
+        accountPanelGreeting = new JLabel("Hello, " + currentUser.getUser().getUsername());
         accountPanelGreeting.setFont(new Font("Arial", Font.PLAIN, 30 ));
         accountPanelGreeting.setForeground(new Color(0,50,40));
         accountPanelGreeting.setPreferredSize(new Dimension(500,50));
@@ -266,6 +264,7 @@ public class ViewTransfersPanel extends JPanel {
                 approveTransferButton.addActionListener(e -> {
                     transferService.doTransfer(transfer);
                     transferService.updateTransferStatus(2, transfer.getTransferId());
+                    refreshBalance();
                     createAndSortTransactions(currentUser.getUser().getId());
                     printTransfersToScreen(allReceivedRequests);
                 });
@@ -290,21 +289,10 @@ public class ViewTransfersPanel extends JPanel {
         transfersDisplayPanel.revalidate();
         transfersDisplayPanel.repaint();
     }
-//    public JPanel mapTransferToPanel(Transfer transfer){
-//        JLabel transferIdLabel = new JLabel(String.valueOf(transfer.getTransferId()));
-//        JLabel transferType = new JLabel(transfer.getTransferTypeString(transfer.getTransferType()));
-//        JLabel transferStatus = new JLabel(transfer.getTransferStatusAsString(transfer.getTransferStatus()));
-//        JLabel transferAmount = new JLabel(String.valueOf(transfer.getAmount()));
-//
-//        transferPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
-//        transferPanel.add(transferIdLabel);
-////        transferPanel.add(transferType);
-////        transferPanel.add(transferStatus);
-////        transferPanel.add(transferAmount);
-//
-//        return transferPanel;
-//    }
 
+    public void refreshBalance(){
+        accountBalance.setText("Balance: " + activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser())));
+    }
 }
 
 

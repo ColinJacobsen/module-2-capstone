@@ -1,4 +1,4 @@
-package com.techelevator.tenmo.consoleGUI;
+package com.techelevator.tenmo.consoleGUI.unusedPanels;
 
 import com.techelevator.tenmo.model.Transfer;
 

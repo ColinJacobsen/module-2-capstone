@@ -11,6 +11,7 @@ public class NavigationButtonPanel extends JPanel {
     final static String SEARCH_MENU = "Search Menu";
     final static String CONTACTS_MENU = "Contacts Menu";
     final static String ACCOUNT_MENU = "Account Menu";
+    final static String TRANSFERS_MENU = "Transfer Menu";
 
     public NavigationButtonPanel(JPanel cardPanel){
 
@@ -25,15 +26,15 @@ public class NavigationButtonPanel extends JPanel {
         homeButton.setPreferredSize(new Dimension(125 , 125));
         add(homeButton);
         homeButton.addActionListener(e -> {
-            cardLayout.show(cardPanel , MAIN_MENU);
+            cardLayout.show(cardPanel , TRANSFERS_MENU);
         });
 
-        JButton accountButton = new JButton(new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-money-bag-50.png"));
-        accountButton.setPreferredSize(new Dimension(125 , 125));
-        add(accountButton);
-        accountButton.addActionListener(e -> {
-            cardLayout.show(cardPanel ,ACCOUNT_MENU);
-        });
+//        JButton accountButton = new JButton(new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-money-bag-50.png"));
+//        accountButton.setPreferredSize(new Dimension(125 , 125));
+//        add(accountButton);
+//        accountButton.addActionListener(e -> {
+//            cardLayout.show(cardPanel ,ACCOUNT_MENU);
+//        });
 
         JButton searchButton = new JButton(new ImageIcon("tenmo-client\\src\\main\\resources\\Images\\icons8-search-50.png"));
         searchButton.setPreferredSize(new Dimension(125 , 125));

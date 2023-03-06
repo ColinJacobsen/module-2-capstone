@@ -22,6 +22,10 @@ public class SearchBarPanel extends JPanel {
     private final Font MENU_FONT = new Font("Arial", Font.PLAIN, 40);
 
     private final Font RESULTS_FONT = new Font("Arial", Font.PLAIN, 25);
+    private final JPanel accountDisplayPanel;
+    private final JLabel accountPanelGreeting;
+    private final JLabel accountNumber;
+    private final JLabel accountBalance;
     private int currentUserId;
     private List<String> contactUsernames = new ArrayList<>();
     private List<String> allUsernames = new ArrayList<>();
@@ -56,6 +60,33 @@ public class SearchBarPanel extends JPanel {
         });
 
         currentUserId = currentUser.getUser().getId();
+
+        ///ACCOUNT PANEL
+        accountDisplayPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5,5));
+        //accountDisplayPanel.setForeground(new Color(0,50,40));
+        accountDisplayPanel.setPreferredSize(new Dimension(540, 200));
+        accountDisplayPanel.setOpaque(false);
+
+        accountPanelGreeting = new JLabel("Hello, " + currentUser.getUser().getUsername());
+        accountPanelGreeting.setFont(new Font("Arial", Font.PLAIN, 30 ));
+        accountPanelGreeting.setForeground(new Color(0,50,40));
+        accountPanelGreeting.setPreferredSize(new Dimension(500,50));
+
+        accountNumber = new JLabel("Account #: " + activeService.userToAccount(currentUser.getUser()));
+        accountBalance = new JLabel(  "Balance: " + activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser())));
+        accountNumber.setPreferredSize(new Dimension(500,50));
+        accountNumber.setForeground(new Color(0,50,40));
+        accountBalance.setPreferredSize(new Dimension(500,50));
+        accountBalance.setForeground(new Color(0,50,40));
+
+        accountNumber.setFont(new Font("Arial", Font.PLAIN, 30 ));
+        accountBalance.setFont(new Font("Arial", Font.PLAIN, 30 ));
+        accountDisplayPanel.add(accountPanelGreeting);
+        accountDisplayPanel.add(accountNumber);
+        accountDisplayPanel.add(accountBalance);
+        add(accountDisplayPanel);
+
+
         ///Build the panel
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         searchPanel = new JPanel();
@@ -144,6 +175,7 @@ public class SearchBarPanel extends JPanel {
                                     activeService.userToAccount((activeService.getUserByName(username))), bigDAmount);
                             transferService.makeTransfer(transfer);
                             transferService.doTransfer(transfer);
+                            refreshBalance();
                         }
                     });
 
@@ -222,5 +254,8 @@ public class SearchBarPanel extends JPanel {
                 contactUsernames.add(user.getUsername());
             }
         }
+    }
+    public void refreshBalance(){
+        accountBalance.setText("Balance: " + activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser())));
     }
 }

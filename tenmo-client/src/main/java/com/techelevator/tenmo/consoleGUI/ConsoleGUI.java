@@ -4,19 +4,17 @@ import com.techelevator.tenmo.model.AuthenticatedUser;
 import com.techelevator.tenmo.model.User;
 import com.techelevator.tenmo.services.ActiveService;
 import com.techelevator.tenmo.services.TransferService;
+import com.techelevator.tenmo.consoleGUI.unusedPanels.MainMenuPanel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 
 public class ConsoleGUI extends JFrame {
     private static final String API_BASE_URL = "http://localhost:8080/";
     private AuthenticatedUser currentUser;
 
-    Image backgroundImage = Toolkit.getDefaultToolkit().getImage("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\Backgrounds\\Untitled design (15).png");
+    Image backgroundImage = Toolkit.getDefaultToolkit().getImage("tenmo-client\\src\\main\\resources\\Images\\Backgrounds\\Untitled design (15).png");
     ImageIcon backgroundIcon = new ImageIcon((backgroundImage.getScaledInstance(560, 1000, Image.SCALE_SMOOTH)));
     JLabel backGroundLabel = new JLabel(backgroundIcon);
 
@@ -44,11 +42,6 @@ public class ConsoleGUI extends JFrame {
     private final ActiveService activeService = new ActiveService(API_BASE_URL, currentUser);
 
     private final TransferService transferService = new TransferService(API_BASE_URL, currentUser);
-
-
-    //BUTTONS
-
-    //Image logo = Toolkit.getDefaultToolkit().getImage("C:\\Users\\Kenny\\Desktop\\meritamerica\\Module2\\module-2-capstone\\tenmo-client\\src\\main\\resources\\Images\\TenmoLogo.png");
 
     public ConsoleGUI(AuthenticatedUser currentUser) {
         super("TEnmo");
@@ -89,18 +82,12 @@ public class ConsoleGUI extends JFrame {
 
         allUsers = activeService.getAllUsers(currentUser);
 
-        //Collections.sort(usernames);
-
         cardPanel = new JPanel(new CardLayout());
         cardPanel.setBounds(0,100, 560,750);
         cardPanel.setOpaque(false);
 
-        mainMenuPanel = new MainMenuPanel(cardPanel);
-        mainMenuPanel.setLocation(0, 100);
-        cardPanel.add(mainMenuPanel, MAIN_MENU);
-
         searchBarPanel = new SearchBarPanel(activeService,transferService, currentUser);
-        searchBarPanel.setBounds(10, 100, 540, 600);
+        searchBarPanel.setBounds(10, 100, 540, 500);
         searchBarPanel.setBackground(new Color(10, 120, 120));
         searchBarPanel.setOpaque(false);
         cardPanel.add(searchBarPanel, SEARCH_MENU);
@@ -122,7 +109,7 @@ public class ConsoleGUI extends JFrame {
         add(cardPanel);
 
         CardLayout cardLayout = (CardLayout) cardPanel.getLayout();
-        cardLayout.show(cardPanel, MAIN_MENU);
+        cardLayout.show(cardPanel, TRANSFERS_MENU);
 
         //////NAVIGATION BUTTONS PANEL
 
