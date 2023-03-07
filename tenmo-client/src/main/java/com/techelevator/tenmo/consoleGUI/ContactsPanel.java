@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class ContactsPanel extends JPanel {
-    private final Font MENU_FONT = new Font("Arial", Font.PLAIN, 40);
+    private final Font MENU_FONT = new Font("Arial", Font.PLAIN, 30);
     private final Font RESULTS_FONT = new Font("Arial", Font.PLAIN, 25);
     private final JPanel accountDisplayPanel;
     private final JLabel accountPanelGreeting;
@@ -119,7 +119,7 @@ public class ContactsPanel extends JPanel {
         contactsInsidePanel.setLayout(new BoxLayout(contactsInsidePanel, BoxLayout.Y_AXIS));
         resultsScrollPane = new JScrollPane(contactsInsidePanel);
         resultsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        resultsScrollPane.setPreferredSize(new Dimension(540, 500));
+        resultsScrollPane.setPreferredSize(new Dimension(540, 460));
         contactsInsidePanel.setBackground(new Color(10, 120, 120));
 
         add(searchPanel);

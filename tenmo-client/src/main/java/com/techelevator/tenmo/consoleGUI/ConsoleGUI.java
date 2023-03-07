@@ -19,7 +19,7 @@ public class ConsoleGUI extends JFrame {
     JLabel backGroundLabel = new JLabel(backgroundIcon);
 
     //PANELS
-    SearchBarPanel searchBarPanel;
+    SearchAllUsersPanel searchAllUsersPanel;
     MainMenuPanel mainMenuPanel;
 
     NavigationButtonPanel navigationButtonPanel;
@@ -86,11 +86,11 @@ public class ConsoleGUI extends JFrame {
         cardPanel.setBounds(0,100, 560,750);
         cardPanel.setOpaque(false);
 
-        searchBarPanel = new SearchBarPanel(activeService,transferService, currentUser);
-        searchBarPanel.setBounds(10, 100, 540, 500);
-        searchBarPanel.setBackground(new Color(10, 120, 120));
-        searchBarPanel.setOpaque(false);
-        cardPanel.add(searchBarPanel, SEARCH_MENU);
+        searchAllUsersPanel = new SearchAllUsersPanel(activeService,transferService, currentUser);
+        searchAllUsersPanel.setBounds(10, 100, 540, 500);
+        searchAllUsersPanel.setBackground(new Color(10, 120, 120));
+        searchAllUsersPanel.setOpaque(false);
+        cardPanel.add(searchAllUsersPanel, SEARCH_MENU);
 
         contactsPanel = new ContactsPanel(activeService, transferService, currentUser);
         //contactsPanel.setBounds(10, 100, 540, 600);

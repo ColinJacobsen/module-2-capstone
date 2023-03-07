@@ -12,14 +12,13 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class SearchBarPanel extends JPanel {
-    private final Font MENU_FONT = new Font("Arial", Font.PLAIN, 40);
+public class SearchAllUsersPanel extends JPanel {
+    private final Font MENU_FONT = new Font("Arial", Font.PLAIN, 30);
 
     private final Font RESULTS_FONT = new Font("Arial", Font.PLAIN, 25);
     private final JPanel accountDisplayPanel;
@@ -47,7 +46,7 @@ public class SearchBarPanel extends JPanel {
     private ActiveService activeService;
     private AuthenticatedUser currentUser;
 
-    public SearchBarPanel(ActiveService activeService, TransferService transferService, AuthenticatedUser currentUser) {
+    public SearchAllUsersPanel(ActiveService activeService, TransferService transferService, AuthenticatedUser currentUser) {
         this.activeService = activeService;
         this.transferService = transferService;
         this.currentUser = currentUser;
@@ -91,7 +90,7 @@ public class SearchBarPanel extends JPanel {
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         searchPanel = new JPanel();
 
-        searchBarTextField = new JTextField(13);
+        searchBarTextField = new JTextField(15);
         searchBarTextField.setFont(MENU_FONT);
         searchBarTextField.setForeground(new Color(50, 60, 60));
         searchBarTextField.setPreferredSize(new Dimension(100, 40));
@@ -125,7 +124,7 @@ public class SearchBarPanel extends JPanel {
         resultsPanel.setMaximumSize(new Dimension(520, 500));
         JScrollPane resultsScrollPane = new JScrollPane(resultsPanel);
         resultsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        resultsScrollPane.setPreferredSize(new Dimension(540, 500));
+        resultsScrollPane.setPreferredSize(new Dimension(540, 460));
         resultsPanel.setBackground(new Color(10, 120, 120));
 
         add(searchPanel);
@@ -167,7 +166,7 @@ public class SearchBarPanel extends JPanel {
                     resultsSendButton = new JButton();
                     resultsSendButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-money-transfer-25.png"));
                     resultsSendButton.addActionListener(e -> {
-                        String amount = JOptionPane.showInputDialog(SearchBarPanel.this, "How much would you like to send to " + username,
+                        String amount = JOptionPane.showInputDialog(SearchAllUsersPanel.this, "How much would you like to send to " + username,
                                 "Send Transfer", JOptionPane.PLAIN_MESSAGE);
                         if (amount != null && amount.length() > 0) {
                             BigDecimal bigDAmount = BigDecimal.valueOf(Double.parseDouble(amount));
@@ -182,7 +181,7 @@ public class SearchBarPanel extends JPanel {
                     resultsRequestButton = new JButton();
                     resultsRequestButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-request-money-25.png"));
                     resultsRequestButton.addActionListener(e -> {
-                        String amount = JOptionPane.showInputDialog(SearchBarPanel.this, "How much would you like to request from " + username,
+                        String amount = JOptionPane.showInputDialog(SearchAllUsersPanel.this, "How much would you like to request from " + username,
                                 "Send Request", JOptionPane.PLAIN_MESSAGE);
                         if (amount != null && amount.length() > 0) {
                             BigDecimal bigDAmount = BigDecimal.valueOf(Double.parseDouble(amount));
