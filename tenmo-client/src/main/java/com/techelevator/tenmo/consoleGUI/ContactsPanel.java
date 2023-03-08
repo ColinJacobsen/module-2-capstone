@@ -164,6 +164,7 @@ public class ContactsPanel extends JPanel {
 
                 contactsSendButton = new JButton();
                 contactsSendButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-money-transfer-25.png"));
+                contactsSendButton.setToolTipText("Send TE Bucks to " + username);
                 contactsSendButton.addActionListener(e -> {
                     String amount = JOptionPane.showInputDialog(ContactsPanel.this, "How much would you like to send to " + username,
                             "Send Transfer", JOptionPane.PLAIN_MESSAGE);
@@ -179,6 +180,7 @@ public class ContactsPanel extends JPanel {
 
                 contactsRequestButton = new JButton();
                 contactsRequestButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-request-money-25.png"));
+                contactsRequestButton.setToolTipText("Request TE Bucks from " + username);
                 contactsRequestButton.addActionListener(e -> {
                     String amount = JOptionPane.showInputDialog(ContactsPanel.this, "How much would you like to request from " + username,
                             "Send Request", JOptionPane.PLAIN_MESSAGE);
@@ -197,6 +199,7 @@ public class ContactsPanel extends JPanel {
 
                 contactsDeleteFromContactsButton = new JButton();
                 contactsDeleteFromContactsButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-close-25.png"));
+                contactsDeleteFromContactsButton.setToolTipText("Delete " + username + " from your contacts");
                 contactsDeleteFromContactsButton.addActionListener(e -> {
                     int contactId = 0;
                     for (User user : allUsers) {

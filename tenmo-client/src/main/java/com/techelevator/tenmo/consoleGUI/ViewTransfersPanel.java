@@ -104,10 +104,15 @@ public class ViewTransfersPanel extends JPanel {
         filterButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         filterButtons.setPreferredSize(new Dimension(520, 50));
         JButton allButton = new JButton("All");
+        allButton.setToolTipText("View All Transfers");
         JButton sentRequestsButton = new JButton("Sent Requests");
+        sentRequestsButton.setToolTipText("View All Sent Requests");
         JButton receivedRequestsButton = new JButton("Received Requests");
+        receivedRequestsButton.setToolTipText("View Received Requests");
         JButton sentButton = new JButton("Sent");
+        sentButton.setToolTipText("View All Sent Transfers");
         JButton receivedButton = new JButton("Received");
+        receivedButton.setToolTipText("View All Received Transfers");
         filterButtons.setOpaque(false);
 
         allButton.addActionListener(e -> {

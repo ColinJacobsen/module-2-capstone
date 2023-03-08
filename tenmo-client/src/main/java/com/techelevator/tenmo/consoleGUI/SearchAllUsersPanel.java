@@ -172,6 +172,7 @@ public class SearchAllUsersPanel extends JPanel {
 
                     resultsSendButton = new JButton();
                     resultsSendButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-money-transfer-25.png"));
+                    resultsSendButton.setToolTipText("Send TE Bucks to " + username);
                     resultsSendButton.addActionListener(e -> {
                         String amount = JOptionPane.showInputDialog(SearchAllUsersPanel.this, "How much would you like to send to " + username,
                                 "Send Transfer", JOptionPane.PLAIN_MESSAGE);
@@ -196,6 +197,7 @@ public class SearchAllUsersPanel extends JPanel {
 
                     resultsRequestButton = new JButton();
                     resultsRequestButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-request-money-25.png"));
+                    resultsRequestButton.setToolTipText("Request TE Bucks from " + username);
                     resultsRequestButton.addActionListener(e -> {
                         String amount = JOptionPane.showInputDialog(SearchAllUsersPanel.this, "How much would you like to request from " + username,
                                 "Send Request", JOptionPane.PLAIN_MESSAGE);
@@ -213,6 +215,7 @@ public class SearchAllUsersPanel extends JPanel {
                     });
 
                     resultsAddToContactsButton = new JButton();
+                    resultsAddToContactsButton.setToolTipText("Add " + username + " to your contacts");
                     if (contactUsernames.contains(username)) {
                         resultsAddToContactsButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-friends-25.png"));
                     } else {
