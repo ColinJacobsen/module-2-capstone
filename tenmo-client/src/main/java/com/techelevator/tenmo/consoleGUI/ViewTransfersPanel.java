@@ -49,41 +49,33 @@ public class ViewTransfersPanel extends JPanel {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentShown(ComponentEvent e) {
-                //transfers.addAll(transferService.getAllUserTransfers(activeService.userToAccount(currentUser.getUser())));
-//                currentUserAccountBalance  = activeService.getUserBalance(currentUser, currentUser.getUser().getId());
-//                accountDisplayPanel.removeAll();
-//                JLabel newAccountBalance = new JLabel(  "Balance: " + activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser())));
-//                accountDisplayPanel.add(accountPanelGreeting);
-//                accountDisplayPanel.add(accountNumber);
-//                accountDisplayPanel.add(newAccountBalance);
+
                 refreshBalance();
                 createAndSortTransactions(currentUser.getUser().getId());
                 printTransfersToScreen(transfers);
-
 
             }
         });
 
         ///BUILD PANEL
 
-        setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
 
         ///ACCOUNT PANEL
-        accountDisplayPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5,5));
-        //accountDisplayPanel.setForeground(new Color(0,50,40));
-        accountDisplayPanel.setPreferredSize(new Dimension(540, 200));
+        accountDisplayPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5,5));
+        accountDisplayPanel.setPreferredSize(new Dimension(540, 180));
         accountDisplayPanel.setOpaque(false);
 
         accountPanelGreeting = new JLabel("Hello, " + currentUser.getUser().getUsername());
         accountPanelGreeting.setFont(new Font("Arial", Font.PLAIN, 30 ));
         accountPanelGreeting.setForeground(new Color(0,50,40));
-        accountPanelGreeting.setPreferredSize(new Dimension(500,50));
+        accountPanelGreeting.setPreferredSize(new Dimension(500,40));
 
         accountNumber = new JLabel("Account #: " + activeService.userToAccount(currentUser.getUser()));
         accountBalance = new JLabel(  "Balance: " + activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser())));
-        accountNumber.setPreferredSize(new Dimension(500,50));
+        accountNumber.setPreferredSize(new Dimension(500,40));
         accountNumber.setForeground(new Color(0,50,40));
-        accountBalance.setPreferredSize(new Dimension(500,50));
+        accountBalance.setPreferredSize(new Dimension(500,40));
         accountBalance.setForeground(new Color(0,50,40));
 
         accountNumber.setFont(new Font("Arial", Font.PLAIN, 30 ));
@@ -100,14 +92,17 @@ public class ViewTransfersPanel extends JPanel {
         transfersDisplayPanel = new JPanel();
 
         transfersDisplayPanel.setLayout(new BoxLayout(transfersDisplayPanel, BoxLayout.Y_AXIS));
-//        transfersDisplayPanel.setMinimumSize(new Dimension(500, 500));
-//        transfersDisplayPanel.setMaximumSize(new Dimension(500, 500));
         JScrollPane resultsScrollPane = new JScrollPane(transfersDisplayPanel);
         resultsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        resultsScrollPane.setPreferredSize(new Dimension(540, 500));
+        resultsScrollPane.setPreferredSize(new Dimension(540, 460));
+        resultsScrollPane.setBorder(null);
         transfersDisplayPanel.setBackground(new Color(10, 120, 120));
+        transfersDisplayPanel.setOpaque(false);
+        resultsScrollPane.getViewport().setOpaque(false);
+        resultsScrollPane.setOpaque(false);
 
         filterButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        filterButtons.setPreferredSize(new Dimension(520, 50));
         JButton allButton = new JButton("All");
         JButton sentRequestsButton = new JButton("Sent Requests");
         JButton receivedRequestsButton = new JButton("Received Requests");
@@ -238,12 +233,10 @@ public class ViewTransfersPanel extends JPanel {
 
         for (Transfer transfer : transfersToPrint) {
             JPanel transferPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-            //JLabel transferLabel = new JLabel(transfer.toLabelString());
-            //mapTransferToPanel(transfer);
             transferPanel.setPreferredSize(new Dimension(520, 40));
             transferPanel.setMaximumSize(new Dimension(520, 40));
             transferPanel.setMaximumSize(new Dimension(520, 40));
-            //transferPanel.add(transferLabel);
+
 
             if (colorCounter % 2 == 0) {
                 transferPanel.setBackground(new Color(100, 255, 180));
@@ -262,11 +255,16 @@ public class ViewTransfersPanel extends JPanel {
             if (transfersToPrint.equals(allReceivedRequests) && transfer.getTransferType() == 1 && transfer.getTransferStatus() == 1 && transfer.getAccountFrom() == activeService.userToAccount(currentUser.getUser())) {
                 approveTransferButton = new JButton(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-sent-25.png"));
                 approveTransferButton.addActionListener(e -> {
-                    transferService.doTransfer(transfer);
-                    transferService.updateTransferStatus(2, transfer.getTransferId());
-                    refreshBalance();
-                    createAndSortTransactions(currentUser.getUser().getId());
-                    printTransfersToScreen(allReceivedRequests);
+                    currentUserAccountBalance = activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser()));
+                    if(transfer.getAmount().compareTo(currentUserAccountBalance) < 0) {
+                        transferService.doTransfer(transfer);
+                        transferService.updateTransferStatus(2, transfer.getTransferId());
+                        refreshBalance();
+                        createAndSortTransactions(currentUser.getUser().getId());
+                        printTransfersToScreen(allReceivedRequests);
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Your balance is insufficient to cover this transfer", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 });
                 rejectTransferButton = new JButton(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-close-25.png"));
                 rejectTransferButton.addActionListener(e -> {

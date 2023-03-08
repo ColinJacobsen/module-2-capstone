@@ -16,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class SearchAllUsersPanel extends JPanel {
     private final Font MENU_FONT = new Font("Arial", Font.PLAIN, 30);
@@ -61,21 +62,20 @@ public class SearchAllUsersPanel extends JPanel {
         currentUserId = currentUser.getUser().getId();
 
         ///ACCOUNT PANEL
-        accountDisplayPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5,5));
-        //accountDisplayPanel.setForeground(new Color(0,50,40));
-        accountDisplayPanel.setPreferredSize(new Dimension(540, 200));
+        accountDisplayPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5,5));
+        accountDisplayPanel.setPreferredSize(new Dimension(540, 180));
         accountDisplayPanel.setOpaque(false);
 
         accountPanelGreeting = new JLabel("Hello, " + currentUser.getUser().getUsername());
         accountPanelGreeting.setFont(new Font("Arial", Font.PLAIN, 30 ));
         accountPanelGreeting.setForeground(new Color(0,50,40));
-        accountPanelGreeting.setPreferredSize(new Dimension(500,50));
+        accountPanelGreeting.setPreferredSize(new Dimension(500,40));
 
         accountNumber = new JLabel("Account #: " + activeService.userToAccount(currentUser.getUser()));
         accountBalance = new JLabel(  "Balance: " + activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser())));
-        accountNumber.setPreferredSize(new Dimension(500,50));
+        accountNumber.setPreferredSize(new Dimension(500,40));
         accountNumber.setForeground(new Color(0,50,40));
-        accountBalance.setPreferredSize(new Dimension(500,50));
+        accountBalance.setPreferredSize(new Dimension(500,40));
         accountBalance.setForeground(new Color(0,50,40));
 
         accountNumber.setFont(new Font("Arial", Font.PLAIN, 30 ));
@@ -90,7 +90,7 @@ public class SearchAllUsersPanel extends JPanel {
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         searchPanel = new JPanel();
 
-        searchBarTextField = new JTextField(15);
+        searchBarTextField = new JTextField(19);
         searchBarTextField.setFont(MENU_FONT);
         searchBarTextField.setForeground(new Color(50, 60, 60));
         searchBarTextField.setPreferredSize(new Dimension(100, 40));
@@ -125,7 +125,11 @@ public class SearchAllUsersPanel extends JPanel {
         JScrollPane resultsScrollPane = new JScrollPane(resultsPanel);
         resultsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         resultsScrollPane.setPreferredSize(new Dimension(540, 460));
+        resultsScrollPane.setBorder(null);
+        resultsScrollPane.setOpaque(false);
         resultsPanel.setBackground(new Color(10, 120, 120));
+        resultsPanel.setOpaque(false);
+        resultsScrollPane.getViewport().setOpaque(false);
 
         add(searchPanel);
         add(resultsScrollPane);
@@ -137,8 +141,10 @@ public class SearchAllUsersPanel extends JPanel {
         List<String> filteredResults = new ArrayList<>();
         resultsPanel.removeAll();
         for (String username : allUsernames) {
-            if (username.toLowerCase().contains(searchTerm.toLowerCase())) {
-                filteredResults.add(username);
+            if (!Objects.equals(currentUser.getUser().getUsername(), username)) {
+                if (username.toLowerCase().contains(searchTerm.toLowerCase())) {
+                    filteredResults.add(username);
+                }
             }
         }
         Collections.sort(filteredResults);
@@ -149,7 +155,8 @@ public class SearchAllUsersPanel extends JPanel {
 
             for (String username : filteredResults) {
                 if (resultCounter < 30 && resultCounter < filteredResults.size()) {
-                    JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0)) {};
+                    JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0)) {
+                    };
                     usernamePanel.setPreferredSize(new Dimension(520, 40));
                     usernamePanel.setMaximumSize(new Dimension(520, 40));
                     usernamePanel.setMaximumSize(new Dimension(520, 40));
@@ -170,11 +177,20 @@ public class SearchAllUsersPanel extends JPanel {
                                 "Send Transfer", JOptionPane.PLAIN_MESSAGE);
                         if (amount != null && amount.length() > 0) {
                             BigDecimal bigDAmount = BigDecimal.valueOf(Double.parseDouble(amount));
-                            Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()),
-                                    activeService.userToAccount((activeService.getUserByName(username))), bigDAmount);
-                            transferService.makeTransfer(transfer);
-                            transferService.doTransfer(transfer);
-                            refreshBalance();
+                            BigDecimal currentUserBalance = activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser()));
+                            if(currentUserBalance.compareTo(bigDAmount) < 0){
+                                JOptionPane.showMessageDialog(this, "Your balance is insufficient to cover this transfer", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                            } else {
+                                if (bigDAmount.compareTo(BigDecimal.valueOf(4.99)) <= 0) {
+                                    JOptionPane.showMessageDialog(this, "The minimum transfer amount is $5.00", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                                } else {
+                                    Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()),
+                                            activeService.userToAccount((activeService.getUserByName(username))), bigDAmount);
+                                    transferService.makeTransfer(transfer);
+                                    transferService.doTransfer(transfer);
+                                    refreshBalance();
+                                }
+                            }
                         }
                     });
 
@@ -185,10 +201,14 @@ public class SearchAllUsersPanel extends JPanel {
                                 "Send Request", JOptionPane.PLAIN_MESSAGE);
                         if (amount != null && amount.length() > 0) {
                             BigDecimal bigDAmount = BigDecimal.valueOf(Double.parseDouble(amount));
-                            Transfer transfer = new Transfer(1, 1,
-                                    activeService.userToAccount(activeService.getUserByName(username)),
-                                    activeService.userToAccount(currentUser.getUser()), bigDAmount);
-                            transferService.makeTransfer(transfer);
+                            if (bigDAmount.compareTo(BigDecimal.valueOf(4.99)) <= 0) {
+                                JOptionPane.showMessageDialog(this, "The minimum transfer amount is $5.00", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                            } else {
+                                Transfer transfer = new Transfer(1, 1,
+                                        activeService.userToAccount(activeService.getUserByName(username)),
+                                        activeService.userToAccount(currentUser.getUser()), bigDAmount);
+                                transferService.makeTransfer(transfer);
+                            }
                         }
                     });
 
@@ -254,7 +274,8 @@ public class SearchAllUsersPanel extends JPanel {
             }
         }
     }
-    public void refreshBalance(){
+
+    public void refreshBalance() {
         accountBalance.setText("Balance: " + activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser())));
     }
 }

@@ -60,21 +60,20 @@ public class ContactsPanel extends JPanel {
         });
 
         ///ACCOUNT PANEL
-        accountDisplayPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5,5));
-        //accountDisplayPanel.setForeground(new Color(0,50,40));
-        accountDisplayPanel.setPreferredSize(new Dimension(540, 200));
+        accountDisplayPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5,5));
+        accountDisplayPanel.setPreferredSize(new Dimension(540, 180));
         accountDisplayPanel.setOpaque(false);
 
         accountPanelGreeting = new JLabel("Hello, " + currentUser.getUser().getUsername());
         accountPanelGreeting.setFont(new Font("Arial", Font.PLAIN, 30 ));
         accountPanelGreeting.setForeground(new Color(0,50,40));
-        accountPanelGreeting.setPreferredSize(new Dimension(500,50));
+        accountPanelGreeting.setPreferredSize(new Dimension(500,40));
 
         accountNumber = new JLabel("Account #: " + activeService.userToAccount(currentUser.getUser()));
         accountBalance = new JLabel(  "Balance: " + activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser())));
-        accountNumber.setPreferredSize(new Dimension(500,50));
+        accountNumber.setPreferredSize(new Dimension(500,40));
         accountNumber.setForeground(new Color(0,50,40));
-        accountBalance.setPreferredSize(new Dimension(500,50));
+        accountBalance.setPreferredSize(new Dimension(500,40));
         accountBalance.setForeground(new Color(0,50,40));
 
         accountNumber.setFont(new Font("Arial", Font.PLAIN, 30 ));
@@ -89,7 +88,7 @@ public class ContactsPanel extends JPanel {
         setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         searchPanel = new JPanel();
 
-        searchBarTextField = new JTextField(15);
+        searchBarTextField = new JTextField(19);
         searchBarTextField.setFont(MENU_FONT);
         searchBarTextField.setForeground(new Color(50, 60, 60));
         searchBarTextField.setPreferredSize(new Dimension(100, 40));
@@ -121,7 +120,11 @@ public class ContactsPanel extends JPanel {
         resultsScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         resultsScrollPane.setPreferredSize(new Dimension(540, 460));
         contactsInsidePanel.setBackground(new Color(10, 120, 120));
+        contactsInsidePanel.setOpaque(false);
 
+        resultsScrollPane.setOpaque(false);
+        resultsScrollPane.setBorder(null);
+        resultsScrollPane.getViewport().setOpaque(false);
         add(searchPanel);
         add(resultsScrollPane);
 
@@ -181,10 +184,14 @@ public class ContactsPanel extends JPanel {
                             "Send Request", JOptionPane.PLAIN_MESSAGE);
                     if (amount != null && amount.length() > 0) {
                         BigDecimal bigDAmount = BigDecimal.valueOf(Double.parseDouble(amount));
-                        Transfer transfer = new Transfer(1, 1,
-                                activeService.userToAccount(activeService.getUserByName(username)),
-                                activeService.userToAccount(currentUser.getUser()), bigDAmount);
-                        transferService.makeTransfer(transfer);
+                        if (bigDAmount.compareTo(BigDecimal.valueOf(4.99)) <= 0) {
+                            JOptionPane.showMessageDialog(this, "The minimum transfer amount is $5.00", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            Transfer transfer = new Transfer(1, 1,
+                                    activeService.userToAccount(activeService.getUserByName(username)),
+                                    activeService.userToAccount(currentUser.getUser()), bigDAmount);
+                            transferService.makeTransfer(transfer);
+                        }
                     }
                 });
 
@@ -245,53 +252,3 @@ public class ContactsPanel extends JPanel {
     }
 
 }
-
-
-//    public void printResults(List<String> results, int limit) {
-//        int colorCounter = 0;
-//        int limitCounter = 0;
-//        if (limitCounter < limit && limitCounter < results.size())
-//            for (String username : results) {
-//                JPanel usernamePanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0)) {
-//                };
-//                usernamePanel.setPreferredSize(new Dimension(525, 40));
-//                usernamePanel.setMaximumSize(new Dimension(525, 40));
-//                usernamePanel.setMaximumSize(new Dimension(525, 40));
-//                if (colorCounter % 2 == 0) {
-//                    usernamePanel.setBackground(new Color(100, 255, 180));
-//                } else {
-//                    usernamePanel.setBackground(new Color(100, 255, 200));
-//                }
-//                JLabel usernameLabel = new JLabel(username);
-//                usernameLabel.setFont(RESULTS_FONT);
-//                usernamePanel.add(usernameLabel);
-//                usernameLabel.setPreferredSize(new Dimension(390, 40));
-//                contactsSendButton = new JButton();
-//                contactsSendButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-money-transfer-25.png"));
-//                contactsRequestButton = new JButton();
-//                contactsRequestButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-request-money-25.png"));
-//                contactsDeleteFromContactsButton = new JButton();
-//                contactsDeleteFromContactsButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-close-25.png"));
-//                contactsDeleteFromContactsButton.addActionListener(e -> {
-//                    System.out.println("Delete Button Pressed");
-//                });
-//                contactsSendButton.setPreferredSize(new Dimension(35, 35));
-//                contactsRequestButton.setPreferredSize(new Dimension(35, 35));
-//                contactsDeleteFromContactsButton.setPreferredSize(new Dimension(35, 35));
-//
-//                usernamePanel.add(contactsSendButton);
-//                usernamePanel.add(contactsRequestButton);
-//                usernamePanel.add(contactsDeleteFromContactsButton);
-//
-//                resultsScrollPane.add(usernamePanel);
-//                colorCounter++;
-//                limitCounter++;
-//            }
-//
-//        contactsPanel.revalidate();
-//        contactsPanel.repaint();
-//    }
-//}
-//
-
-

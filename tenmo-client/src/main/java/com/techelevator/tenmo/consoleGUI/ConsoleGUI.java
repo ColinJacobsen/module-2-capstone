@@ -20,7 +20,7 @@ public class ConsoleGUI extends JFrame {
 
     //PANELS
     SearchAllUsersPanel searchAllUsersPanel;
-    MainMenuPanel mainMenuPanel;
+    //MainMenuPanel mainMenuPanel;
 
     NavigationButtonPanel navigationButtonPanel;
 
@@ -34,7 +34,7 @@ public class ConsoleGUI extends JFrame {
 
     java.util.List<User> allUsers;
 
-    final static String MAIN_MENU = "Main Menu";
+    //final static String MAIN_MENU = "Main Menu";
     final static String SEARCH_MENU = "Search Menu";
     final static String CONTACTS_MENU = "Contacts Menu";
     final static String TRANSFERS_MENU = "Transfer Menu";
@@ -47,7 +47,7 @@ public class ConsoleGUI extends JFrame {
         super("TEnmo");
 
 
-        this.currentUser= currentUser;
+        this.currentUser = currentUser;
         activeService.setCurrentUser(currentUser);
         activeService.setAuthToken(currentUser.getToken());
         transferService.setCurrentUser(currentUser);
@@ -83,11 +83,11 @@ public class ConsoleGUI extends JFrame {
         allUsers = activeService.getAllUsers(currentUser);
 
         cardPanel = new JPanel(new CardLayout());
-        cardPanel.setBounds(0,100, 560,750);
+        cardPanel.setBounds(0, 100, 560, 750);
         cardPanel.setOpaque(false);
 
-        searchAllUsersPanel = new SearchAllUsersPanel(activeService,transferService, currentUser);
-        searchAllUsersPanel.setBounds(10, 100, 540, 500);
+        searchAllUsersPanel = new SearchAllUsersPanel(activeService, transferService, currentUser);
+       // searchAllUsersPanel.setBounds(10, 100, 540, 500);
         searchAllUsersPanel.setBackground(new Color(10, 120, 120));
         searchAllUsersPanel.setOpaque(false);
         cardPanel.add(searchAllUsersPanel, SEARCH_MENU);
@@ -98,8 +98,8 @@ public class ConsoleGUI extends JFrame {
         contactsPanel.setOpaque(false);
         cardPanel.add(contactsPanel, CONTACTS_MENU);
 
-        viewTransfersPanel = new ViewTransfersPanel(activeService,transferService, currentUser);
-        viewTransfersPanel.setBounds(10, 200, 540, 520);
+        viewTransfersPanel = new ViewTransfersPanel(activeService, transferService, currentUser);
+        //viewTransfersPanel.setBounds(10, 200, 540, 520);
 
         viewTransfersPanel.setBackground(new Color(10, 222, 120));
         viewTransfersPanel.setOpaque(false);
@@ -114,13 +114,14 @@ public class ConsoleGUI extends JFrame {
         //////NAVIGATION BUTTONS PANEL
 
 
-        navigationButtonPanel = new NavigationButtonPanel(cardPanel) {};
+        navigationButtonPanel = new NavigationButtonPanel(cardPanel) {
+        };
         navigationButtonPanel.setLocation(0, 850);
-        navigationButtonPanel.setBounds(0,850,560,200);
+        navigationButtonPanel.setBounds(0, 850, 560, 200);
         add(navigationButtonPanel);
 
 
-        //EXIT AND (MAYBE) MINIMIZE BUTTONS
+        //EXIT AND (NEED TO ADD) MINIMIZE BUTTONS
 
         JButton exitButton = new JButton("X");
         exitButton.addActionListener(e -> System.exit(0));

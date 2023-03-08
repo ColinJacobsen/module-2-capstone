@@ -21,7 +21,6 @@ public class LogInPage extends JFrame {
     JLabel backGroundLabel = new JLabel(backgroundIcon);
     private final AuthenticationService authenticationService = new AuthenticationService(API_BASE_URL);
     private AuthenticatedUser currentUser;
-    //private final String token = currentUser.getToken();
     private final ActiveService activeService = new ActiveService(API_BASE_URL, currentUser);
     private final TransferService transferService = new TransferService(API_BASE_URL, currentUser);
 
@@ -42,24 +41,24 @@ public class LogInPage extends JFrame {
         setSize(520, 600);
         setLayout(null);
         JLabel usernameLabel = new JLabel("Username:");
-        usernameLabel.setSize(75,40);
-        usernameLabel.setLocation(90,200);
+        usernameLabel.setSize(75, 40);
+        usernameLabel.setLocation(90, 200);
         userNameTextField = new JTextField(30);
-        userNameTextField.setSize(200,40);
+        userNameTextField.setSize(200, 40);
         userNameTextField.setLocation(160, 200);
 
         passwordLabel = new JLabel("Password:");
-        passwordLabel.setSize(75,40);
-        passwordLabel.setLocation(90,300);
+        passwordLabel.setSize(75, 40);
+        passwordLabel.setLocation(90, 270);
 
         passwordField = new JPasswordField(20);
-        passwordField.setLocation(160, 300);
-        passwordField.setSize(200,40);
+        passwordField.setLocation(160, 270);
+        passwordField.setSize(200, 40);
 
 
         JButton signInButton = new JButton("Sign In");
-        signInButton.setLocation(220, 400);
-        signInButton.setSize(100,50);
+        signInButton.setLocation(210, 340);
+        signInButton.setSize(100, 50);
         signInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -67,27 +66,27 @@ public class LogInPage extends JFrame {
             }
         });
 
-        JLabel registerLabel = new JLabel("Don't have an account? ");
         JButton registerButton = new JButton("Register");
-        registerButton.setLocation(400, 400);
-        registerButton.setSize(100,50);
+        registerButton.setLocation(210, 400);
+        registerButton.setSize(100, 50);
 
         registerButton.addActionListener(e -> {
 
             ///REGISTER PANEL
-            registerUserNameTextField = new JTextField(20);
-            registerPasswordField = new JPasswordField(20);
-            registerConfirmPasswordField = new JPasswordField(20);
+            registerUserNameTextField = new JTextField(18);
+            registerPasswordField = new JPasswordField(18);
+            registerConfirmPasswordField = new JPasswordField(18);
 
-            registerPanel = new JPanel();
-            registerPanel.add(new JLabel("Username: "));
-            registerPanel.add(registerUserNameTextField);
-            registerPanel.add(Box.createHorizontalStrut(15));
-            registerPanel.add(new JLabel("Password: "));
-            registerPanel.add(registerPasswordField);
-            registerPanel.add(Box.createHorizontalStrut(15));
-            registerPanel.add(new JLabel("Confirm Password: "));
-            registerPanel.add(registerConfirmPasswordField);
+            registerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0,10));
+            registerPanel.setPreferredSize(new Dimension(350,175));
+            registerPanel.add(new JLabel("Username:  ", SwingConstants.RIGHT)).setPreferredSize(new Dimension(130, 40));
+            registerPanel.add(registerUserNameTextField).setPreferredSize(new Dimension(150,40));
+           // registerPanel.add(Box.createVerticalStrut(15));
+            registerPanel.add(new JLabel("Password:  ", SwingConstants.RIGHT)).setPreferredSize(new Dimension(130, 40));
+            registerPanel.add(registerPasswordField).setPreferredSize(new Dimension(150,40));
+            //registerPanel.add(Box.createVerticalStrut(15));
+            registerPanel.add(new JLabel("Confirm Password:  ", SwingConstants.RIGHT)).setPreferredSize(new Dimension(130, 40));
+            registerPanel.add(registerConfirmPasswordField).setPreferredSize(new Dimension(150,40));
 
             int option = JOptionPane.showOptionDialog(
                     null,
@@ -100,31 +99,25 @@ public class LogInPage extends JFrame {
                     "Register"
             );
 
-            if(option == JOptionPane.OK_OPTION){
+            if (option == JOptionPane.OK_OPTION) {
                 String username = registerUserNameTextField.getText().toLowerCase();
                 char[] passwordChars = registerPasswordField.getPassword();
-                char[] confirmPasswordChars = registerPasswordField.getPassword();
+                char[] confirmPasswordChars = registerConfirmPasswordField.getPassword();
                 String registerPassword = Arrays.toString(passwordChars);
                 String registerConfirmPassword = Arrays.toString(confirmPasswordChars);
-                if(registerPassword.equals(registerConfirmPassword)) {
-                    if(activeService.getAllUsernames().contains(username)) {
-                        JOptionPane.showMessageDialog(null, "Username already taken, please try another", "", JOptionPane.PLAIN_MESSAGE);
-                    } else {
-                        UserCredentials userCredentials = new UserCredentials(username, registerPassword);
+                UserCredentials userCredentials = new UserCredentials(username, registerPassword);
+                if (registerPassword.equals(registerConfirmPassword)) {
                     if (authenticationService.register(userCredentials)) {
                         JOptionPane.showMessageDialog(null, "Registration Successful", "", JOptionPane.PLAIN_MESSAGE);
                     } else {
-                            JOptionPane.showMessageDialog(null, "Something went wrong.  Registration not successful", "", JOptionPane.PLAIN_MESSAGE);
-                        }
+                        JOptionPane.showMessageDialog(null, "Something went wrong.  Registration not successful", "", JOptionPane.PLAIN_MESSAGE);
                     }
-                }else {
-                        JOptionPane.showMessageDialog(null, "Passwords do not match", "", JOptionPane.PLAIN_MESSAGE);
-                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Passwords do not match", "", JOptionPane.PLAIN_MESSAGE);
                 }
 
+            }
         });
-
-
 
         add(usernameLabel);
         add(userNameTextField);
@@ -134,12 +127,6 @@ public class LogInPage extends JFrame {
         add(registerButton);
 
         setVisible(true);
-//        registerButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                System.out.println("Open Registration Window Goes Here");
-//            }
-//        });
 
     }
 
