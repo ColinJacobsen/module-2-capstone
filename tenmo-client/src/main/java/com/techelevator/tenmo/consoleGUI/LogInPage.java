@@ -35,10 +35,9 @@ public class LogInPage extends JFrame {
     public LogInPage() {
         setContentPane(backGroundLabel);
 
-
-        setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(520, 600);
+        setLocationRelativeTo(null);
         setLayout(null);
         JLabel usernameLabel = new JLabel("Username:");
         usernameLabel.setSize(75, 40);
