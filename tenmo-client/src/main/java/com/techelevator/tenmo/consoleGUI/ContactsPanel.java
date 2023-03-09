@@ -173,10 +173,12 @@ public class ContactsPanel extends JPanel {
                         BigDecimal bigDAmount = BigDecimal.valueOf(Double.parseDouble(amount));
                         BigDecimal currentBalance = activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser()));
                         if (currentBalance.compareTo(bigDAmount) < 0) {
-                            JOptionPane.showMessageDialog(this, "Insufficient Balance", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(this, "Your balance is insufficient to cover this transfer", "Transfer Error", JOptionPane.ERROR_MESSAGE);
                         } else {
                             if (bigDAmount.compareTo(BigDecimal.valueOf(4.99)) <= 0) {
                                 JOptionPane.showMessageDialog(this, "The minimum transfer amount is $5.00", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                            } else if (bigDAmount.compareTo(BigDecimal.valueOf(100000.00)) >= 0) {
+                                JOptionPane.showMessageDialog(this, "The maximum transfer amount is $99,999.99", "Transfer Error", JOptionPane.ERROR_MESSAGE);
                             } else {
                                 Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()),
                                         activeService.userToAccount((activeService.getUserByName(username))), bigDAmount);
@@ -185,61 +187,86 @@ public class ContactsPanel extends JPanel {
                                 refreshBalance();
                             }
                         }
-
                     }
-                });
+            });
 
-                contactsRequestButton = new JButton();
-                contactsRequestButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-request-money-25.png"));
-                contactsRequestButton.setToolTipText("Request TE Bucks from " + username);
-                contactsRequestButton.addActionListener(e -> {
-                    String amount = JOptionPane.showInputDialog(ContactsPanel.this, "How much would you like to request from " + username,
-                            "Send Request", JOptionPane.PLAIN_MESSAGE);
-                    if (amount != null && amount.length() > 0) {
-                        BigDecimal bigDAmount = BigDecimal.valueOf(Double.parseDouble(amount));
-                        if (bigDAmount.compareTo(BigDecimal.valueOf(4.99)) <= 0) {
-                            JOptionPane.showMessageDialog(this, "The minimum transfer amount is $5.00", "Transfer Error", JOptionPane.ERROR_MESSAGE);
-                        } else {
-                            Transfer transfer = new Transfer(1, 1,
-                                    activeService.userToAccount(activeService.getUserByName(username)),
-                                    activeService.userToAccount(currentUser.getUser()), bigDAmount);
-                            transferService.makeTransfer(transfer);
+            contactsRequestButton = new JButton();
+            contactsRequestButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-request-money-25.png"));
+            contactsRequestButton.setToolTipText("Request TE Bucks from " + username);
+            contactsRequestButton.addActionListener(e -> {
+                InputVerifier inputVerifier = new InputVerifier() {
+                    @Override
+                    public boolean verify(JComponent input) {
+                        String inputText = ((JTextField) input).getText();
+                        try {
+                            BigDecimal bigDAmount = new BigDecimal(inputText);
+                            if (bigDAmount.compareTo(BigDecimal.valueOf(100000.00)) >= 0) {
+                                JOptionPane.showMessageDialog(input, "The maximum you can request is $99,999.99", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                                return false;
+                            } else if (bigDAmount.compareTo(BigDecimal.valueOf(4.99)) <= 0) {
+                                JOptionPane.showMessageDialog(input, "The minimum you can request is $5.00", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                                return false;
+                            }
+                            return true;
+                        } catch (NumberFormatException e) {
+                            JOptionPane.showMessageDialog(input, "Invalid input", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                            return false;
                         }
                     }
-                });
+                };
 
-                contactsDeleteFromContactsButton = new JButton();
-                contactsDeleteFromContactsButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-close-25.png"));
-                contactsDeleteFromContactsButton.setToolTipText("Delete " + username + " from your contacts");
-                contactsDeleteFromContactsButton.addActionListener(e -> {
-                    int contactId = 0;
-                    for (User user : allUsers) {
-                        if (user.getUsername().equals(username)) {
-                            contactId = user.getId();
-                        }
+                JTextField requestAmountText = new JTextField(10);
+                requestAmountText.setInputVerifier(inputVerifier);
+
+                JPanel sendPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+                sendPanel.add(new JLabel("How much would you like to request from " + username));
+                sendPanel.add(requestAmountText);
+
+                int amount = JOptionPane.showConfirmDialog(ContactsPanel.this, sendPanel,
+                        "Send Request", JOptionPane.DEFAULT_OPTION);
+                if (amount == JOptionPane.OK_OPTION) {
+                    String inputText = requestAmountText.getText();
+                    BigDecimal bigDAmount = new BigDecimal(inputText);
+
+                    Transfer transfer = new Transfer(1, 1,
+                            activeService.userToAccount(activeService.getUserByName(username)),
+                            activeService.userToAccount(currentUser.getUser()), bigDAmount);
+                    transferService.makeTransfer(transfer);
+                }
+            });
+
+            contactsDeleteFromContactsButton = new JButton();
+            contactsDeleteFromContactsButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-close-25.png"));
+            contactsDeleteFromContactsButton.setToolTipText("Delete " + username + " from your contacts");
+            contactsDeleteFromContactsButton.addActionListener(e -> {
+                int contactId = 0;
+                for (User user : allUsers) {
+                    if (user.getUsername().equals(username)) {
+                        contactId = user.getId();
                     }
-                    activeService.deleteUserFromContacts(currentUserId, contactId);
-                    refreshLists();
-                    updateResults();
-                });
+                }
+                activeService.deleteUserFromContacts(currentUserId, contactId);
+                refreshLists();
+                updateResults();
+            });
 
-                contactsSendButton.setPreferredSize(new Dimension(35, 35));
-                contactsRequestButton.setPreferredSize(new Dimension(35, 35));
-                contactsDeleteFromContactsButton.setPreferredSize(new Dimension(35, 35));
+            contactsSendButton.setPreferredSize(new Dimension(35, 35));
+            contactsRequestButton.setPreferredSize(new Dimension(35, 35));
+            contactsDeleteFromContactsButton.setPreferredSize(new Dimension(35, 35));
 
-                usernamePanel.add(contactsSendButton);
-                usernamePanel.add(contactsRequestButton);
-                usernamePanel.add(contactsDeleteFromContactsButton);
+            usernamePanel.add(contactsSendButton);
+            usernamePanel.add(contactsRequestButton);
+            usernamePanel.add(contactsDeleteFromContactsButton);
 
-                contactsInsidePanel.add(usernamePanel);
-                colorCounter++;
-            }
+            contactsInsidePanel.add(usernamePanel);
+            colorCounter++;
         }
+    }
 
 
         contactsInsidePanel.revalidate();
         contactsInsidePanel.repaint();
-    }
+}
 
 
     public void refreshLists() {

@@ -63,24 +63,24 @@ public class SearchAllUsersPanel extends JPanel {
         currentUserId = currentUser.getUser().getId();
 
         ///ACCOUNT PANEL
-        accountDisplayPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5,5));
+        accountDisplayPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
         accountDisplayPanel.setPreferredSize(new Dimension(540, 180));
         accountDisplayPanel.setOpaque(false);
 
         accountPanelGreeting = new JLabel("Hello, " + currentUser.getUser().getUsername());
-        accountPanelGreeting.setFont(new Font("Arial", Font.PLAIN, 30 ));
-        accountPanelGreeting.setForeground(new Color(0,50,40));
-        accountPanelGreeting.setPreferredSize(new Dimension(500,40));
+        accountPanelGreeting.setFont(new Font("Arial", Font.PLAIN, 30));
+        accountPanelGreeting.setForeground(new Color(0, 50, 40));
+        accountPanelGreeting.setPreferredSize(new Dimension(500, 40));
 
         accountNumber = new JLabel("Account #: " + activeService.userToAccount(currentUser.getUser()));
-        accountBalance = new JLabel(  "Balance: " + activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser())));
-        accountNumber.setPreferredSize(new Dimension(500,40));
-        accountNumber.setForeground(new Color(0,50,40));
-        accountBalance.setPreferredSize(new Dimension(500,40));
-        accountBalance.setForeground(new Color(0,50,40));
+        accountBalance = new JLabel("Balance: " + activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser())));
+        accountNumber.setPreferredSize(new Dimension(500, 40));
+        accountNumber.setForeground(new Color(0, 50, 40));
+        accountBalance.setPreferredSize(new Dimension(500, 40));
+        accountBalance.setForeground(new Color(0, 50, 40));
 
-        accountNumber.setFont(new Font("Arial", Font.PLAIN, 30 ));
-        accountBalance.setFont(new Font("Arial", Font.PLAIN, 30 ));
+        accountNumber.setFont(new Font("Arial", Font.PLAIN, 30));
+        accountBalance.setFont(new Font("Arial", Font.PLAIN, 30));
         accountDisplayPanel.add(accountPanelGreeting);
         accountDisplayPanel.add(accountNumber);
         accountDisplayPanel.add(accountBalance);
@@ -180,11 +180,13 @@ public class SearchAllUsersPanel extends JPanel {
                         if (amount != null && amount.length() > 0) {
                             BigDecimal bigDAmount = BigDecimal.valueOf(Double.parseDouble(amount));
                             BigDecimal currentUserBalance = activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser()));
-                            if(currentUserBalance.compareTo(bigDAmount) < 0){
+                            if (currentUserBalance.compareTo(bigDAmount) < 0) {
                                 JOptionPane.showMessageDialog(this, "Your balance is insufficient to cover this transfer", "Transfer Error", JOptionPane.ERROR_MESSAGE);
                             } else {
                                 if (bigDAmount.compareTo(BigDecimal.valueOf(4.99)) <= 0) {
                                     JOptionPane.showMessageDialog(this, "The minimum transfer amount is $5.00", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                                } else if (bigDAmount.compareTo(BigDecimal.valueOf(100000.00)) >= 0) {
+                                    JOptionPane.showMessageDialog(this, "The maximum transfer amount is $99,999.99", "Transfer Error", JOptionPane.ERROR_MESSAGE);
                                 } else {
                                     Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()),
                                             activeService.userToAccount((activeService.getUserByName(username))), bigDAmount);
@@ -200,18 +202,44 @@ public class SearchAllUsersPanel extends JPanel {
                     resultsRequestButton.setIcon(new ImageIcon("tenmo-client/src/main/resources/Images/icons8-request-money-25.png"));
                     resultsRequestButton.setToolTipText("Request TE Bucks from " + username);
                     resultsRequestButton.addActionListener(e -> {
-                        String amount = JOptionPane.showInputDialog(SearchAllUsersPanel.this, "How much would you like to request from " + username,
-                                "Send Request", JOptionPane.PLAIN_MESSAGE);
-                        if (amount != null && amount.length() > 0) {
-                            BigDecimal bigDAmount = BigDecimal.valueOf(Double.parseDouble(amount));
-                            if (bigDAmount.compareTo(BigDecimal.valueOf(4.99)) <= 0) {
-                                JOptionPane.showMessageDialog(this, "The minimum transfer amount is $5.00", "Transfer Error", JOptionPane.ERROR_MESSAGE);
-                            } else {
-                                Transfer transfer = new Transfer(1, 1,
-                                        activeService.userToAccount(activeService.getUserByName(username)),
-                                        activeService.userToAccount(currentUser.getUser()), bigDAmount);
-                                transferService.makeTransfer(transfer);
+                        InputVerifier inputVerifier = new InputVerifier() {
+                            @Override
+                            public boolean verify(JComponent input) {
+                                String inputText = ((JTextField) input).getText();
+                                try {
+                                    BigDecimal bigDAmount = new BigDecimal(inputText);
+                                    if (bigDAmount.compareTo(BigDecimal.valueOf(100000.00)) >= 0) {
+                                        JOptionPane.showMessageDialog(input, "The maximum you can request is $99,999.99", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                                        return false;
+                                    } else if (bigDAmount.compareTo(BigDecimal.valueOf(4.99)) <= 0) {
+                                        JOptionPane.showMessageDialog(input, "The minimum you can request is $5.00", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                                        return false;
+                                    }
+                                    return true;
+                                } catch (NumberFormatException e) {
+                                    JOptionPane.showMessageDialog(input, "Invalid input", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                                    return false;
+                                }
                             }
+                        };
+
+                        JTextField requestAmountText = new JTextField(10);
+                        requestAmountText.setInputVerifier(inputVerifier);
+
+                        JPanel sendPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
+                        sendPanel.add(new JLabel("How much would you like to request from " + username));
+                        sendPanel.add(requestAmountText);
+
+                        int amount = JOptionPane.showConfirmDialog(SearchAllUsersPanel.this, sendPanel,
+                                "Send Request", JOptionPane.DEFAULT_OPTION);
+                        if (amount == JOptionPane.OK_OPTION) {
+                            String inputText = requestAmountText.getText();
+                            BigDecimal bigDAmount = new BigDecimal(inputText);
+
+                            Transfer transfer = new Transfer(1, 1,
+                                    activeService.userToAccount(activeService.getUserByName(username)),
+                                    activeService.userToAccount(currentUser.getUser()), bigDAmount);
+                            transferService.makeTransfer(transfer);
                         }
                     });
 
