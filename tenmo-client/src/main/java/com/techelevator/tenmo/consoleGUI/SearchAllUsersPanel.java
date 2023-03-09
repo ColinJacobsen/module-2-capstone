@@ -56,6 +56,7 @@ public class SearchAllUsersPanel extends JPanel {
             public void componentShown(ComponentEvent e) {
                 refreshLists();
                 updateResults();
+                refreshBalance();
             }
         });
 

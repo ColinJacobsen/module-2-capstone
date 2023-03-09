@@ -56,6 +56,7 @@ public class ContactsPanel extends JPanel {
             public void componentShown(ComponentEvent e) {
                 refreshLists();
                 updateResults();
+                refreshBalance();
             }
         });
 
@@ -176,6 +177,7 @@ public class ContactsPanel extends JPanel {
                         } else {
                             if (bigDAmount.compareTo(BigDecimal.valueOf(4.99)) <= 0) {
                                 JOptionPane.showMessageDialog(this, "The minimum transfer amount is $5.00", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                            } else {
                                 Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()),
                                         activeService.userToAccount((activeService.getUserByName(username))), bigDAmount);
                                 transferService.makeTransfer(transfer);

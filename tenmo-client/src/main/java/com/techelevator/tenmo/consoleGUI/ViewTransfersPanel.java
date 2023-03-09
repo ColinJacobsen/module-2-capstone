@@ -250,11 +250,13 @@ public class ViewTransfersPanel extends JPanel {
             }
             if (transfersToPrint.equals(allReceivedRequests)) {
                 transferLabel = new JLabel(transfer.toRequestLabelString());
+                transferLabel.setPreferredSize(new Dimension(430, 40));
             } else {
                 transferLabel = new JLabel(transfer.toLabelString());
+                transferLabel.setPreferredSize(new Dimension(500, 40));
             }
             transferLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-            transferLabel.setPreferredSize(new Dimension(430, 40));
+
             transferPanel.add(transferLabel);
 
             if (transfersToPrint.equals(allReceivedRequests) && transfer.getTransferType() == 1 && transfer.getTransferStatus() == 1 && transfer.getAccountFrom() == activeService.userToAccount(currentUser.getUser())) {
