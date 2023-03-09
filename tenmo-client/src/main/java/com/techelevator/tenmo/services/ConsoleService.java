@@ -114,12 +114,7 @@ public class ConsoleService {
         System.out.println("\033[32m+---------------+---------------+---------------+---------------+\033[0m");
 
         for (Transfer transfer : transfers) {
-            char debitOrCredit;
-            if(transfer.getAccountTo() == accountId){
-                debitOrCredit = '-';
-            } else {
-                debitOrCredit = '+';
-            }
+            char debitOrCredit = debitOrCredit(transfer, accountId);
             System.out.printf("\033[32m| \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \u001B[1m\033[36m%-13s\u001B[32m | \033[0m\n",
                     transfer.getTransferId() , transfer.getTransferTypeString(transfer.getTransferType()),
                     transfer.getTransferStatusAsString(transfer.getTransferStatus()),
@@ -134,12 +129,7 @@ public class ConsoleService {
         for(Transfer transfer : transfers){
             if(transfer.getTransferId() == requestedTransferId){
                 transferExists = true;
-                char debitOrCredit;
-                if(transfer.getAccountTo() == accountId){
-                    debitOrCredit = '-';
-                } else {
-                    debitOrCredit = '+';
-                }
+                char debitOrCredit = debitOrCredit(transfer, accountId);
 
                 String fromUsername = activeService.accountIdToUsername(transfer.getAccountFrom());
                 String toUsername = activeService.accountIdToUsername(transfer.getAccountTo());
@@ -153,20 +143,20 @@ public class ConsoleService {
                         ("STATUS: " + transfer.getTransferStatusAsString(transfer.getTransferStatus())),
                         ("TYPE: " + transfer.getTransferTypeString(transfer.getTransferType())));
                 System.out.println("\033[32m+---------------+---------------+---------------+\033[0m");
+                String fromAccount;
+                if(transfer.getTransferType() == 1){
+                    fromAccount = "BY: ";
+                } else {
+                    fromAccount = "FROM: ";
+                }
                 System.out.printf("| \033[36m%-20s\033[0m || \033[36m%20s\033[0m |\n",
-                        ("FROM: " + fromUsername),
-                        ("TO: " + toUsername));
+                        (fromAccount + toUsername),
+                        ("TO: " + fromUsername));
                 System.out.println("\033[32m+---------------+---------------+---------------+\033[0m");
                 System.out.printf("%16s \u001B[1m\033[36m%-13s\033[0m\u001B[0m |\n",
                         "|",
                         ("AMOUNT: " + debitOrCredit + transfer.getAmount()));
                 System.out.println("\033[32m+---------------+---------------+---------------+\033[0m");
-//
-//                System.out.println("Transfer ID: " + transfer.getTransferId() + "\n" +
-//                        "Transfer Status: " + transfer.getTransferStatusAsString(transfer.getTransferStatus()) +
-//                        "  || Transfer Type: " + transfer.getTransferTypeString(transfer.getTransferType()) + "\n" +
-//                        "Account From: " + activeService.accountIdToUsername(transfer.getAccountFrom()) + "  ||  Account To: " + activeService.accountIdToUsername(transfer.getAccountTo()) + "\n" +
-//                        "Amount: " + debitOrCredit + transfer.getAmount());
 
             }
         }
@@ -209,5 +199,23 @@ public class ConsoleService {
             System.err.println("Please select a valid transaction");
         }
         return extantId;
+    }
+
+    private char debitOrCredit(Transfer transfer, int accountId) {
+    char plusOrMinus;
+            if(transfer.getAccountTo() == accountId){
+                if(transfer.getTransferType() == 1){
+                    plusOrMinus = '+';
+                } else {
+                    plusOrMinus = '-';
+                }
+            } else {
+                if(transfer.getTransferType() == 0){
+                    plusOrMinus = '+';
+                } else {
+                    plusOrMinus = '-';
+                }
+            }
+            return plusOrMinus;
     }
 }

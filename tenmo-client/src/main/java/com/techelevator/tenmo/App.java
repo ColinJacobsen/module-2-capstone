@@ -144,6 +144,7 @@ public class App {
                 }
             } else if (response == 2) {
                 transferService.updateTransferStatus(3, transferId);
+                System.out.println("\u001B[32mRequest Denied\u001B[0m");
             } else if (response == 3) {
                 System.out.println("\u001B[32mRequest saved for later\u001B[0m");
             } else {
@@ -176,7 +177,7 @@ public class App {
 
                     if (activeService.getAccountBalance(transfer.getAccountFrom()).compareTo(amount) >= 0) {
                         transfer.setTransferId(transferService.makeTransfer(transfer));
-                        System.out.println(transferService.doTransfer(transfer));
+                        System.out.println("\u001B[32mSuccesfully sent $" + amount + ".00 to " + recipient + "\u001B[0m");
 
                     } else {
                         System.err.println("Insufficient Balance");
@@ -209,7 +210,7 @@ public class App {
 
                     transfer.setTransferId(transferService.makeTransfer(transfer));
                     if (transfer.getTransferId() > 3000) {
-                        System.out.println("\nRequest Sent to " + recipient);
+                        System.out.println("\u001B[32mRequest sent to " + recipient + "\u001B[0m");
                     }
             }
 
