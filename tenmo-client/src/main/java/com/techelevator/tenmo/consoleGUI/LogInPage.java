@@ -102,8 +102,9 @@ public class LogInPage extends JFrame {
                 String username = registerUserNameTextField.getText().toLowerCase();
                 char[] passwordChars = registerPasswordField.getPassword();
                 char[] confirmPasswordChars = registerConfirmPasswordField.getPassword();
-                String registerPassword = Arrays.toString(passwordChars);
-                String registerConfirmPassword = Arrays.toString(confirmPasswordChars);
+                String registerPassword = new String(passwordChars);
+                System.out.println(registerPassword);
+                String registerConfirmPassword = new String(confirmPasswordChars);
                 UserCredentials userCredentials = new UserCredentials(username, registerPassword);
                 if (registerPassword.equals(registerConfirmPassword)) {
                     if (authenticationService.register(userCredentials)) {

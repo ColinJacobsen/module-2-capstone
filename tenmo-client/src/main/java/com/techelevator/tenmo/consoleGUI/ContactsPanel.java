@@ -60,24 +60,24 @@ public class ContactsPanel extends JPanel {
         });
 
         ///ACCOUNT PANEL
-        accountDisplayPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5,5));
+        accountDisplayPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
         accountDisplayPanel.setPreferredSize(new Dimension(540, 180));
         accountDisplayPanel.setOpaque(false);
 
         accountPanelGreeting = new JLabel("Hello, " + currentUser.getUser().getUsername());
-        accountPanelGreeting.setFont(new Font("Arial", Font.PLAIN, 30 ));
-        accountPanelGreeting.setForeground(new Color(0,50,40));
-        accountPanelGreeting.setPreferredSize(new Dimension(500,40));
+        accountPanelGreeting.setFont(new Font("Arial", Font.PLAIN, 30));
+        accountPanelGreeting.setForeground(new Color(0, 50, 40));
+        accountPanelGreeting.setPreferredSize(new Dimension(500, 40));
 
         accountNumber = new JLabel("Account #: " + activeService.userToAccount(currentUser.getUser()));
-        accountBalance = new JLabel(  "Balance: " + activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser())));
-        accountNumber.setPreferredSize(new Dimension(500,40));
-        accountNumber.setForeground(new Color(0,50,40));
-        accountBalance.setPreferredSize(new Dimension(500,40));
-        accountBalance.setForeground(new Color(0,50,40));
+        accountBalance = new JLabel("Balance: " + activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser())));
+        accountNumber.setPreferredSize(new Dimension(500, 40));
+        accountNumber.setForeground(new Color(0, 50, 40));
+        accountBalance.setPreferredSize(new Dimension(500, 40));
+        accountBalance.setForeground(new Color(0, 50, 40));
 
-        accountNumber.setFont(new Font("Arial", Font.PLAIN, 30 ));
-        accountBalance.setFont(new Font("Arial", Font.PLAIN, 30 ));
+        accountNumber.setFont(new Font("Arial", Font.PLAIN, 30));
+        accountBalance.setFont(new Font("Arial", Font.PLAIN, 30));
         accountDisplayPanel.add(accountPanelGreeting);
         accountDisplayPanel.add(accountNumber);
         accountDisplayPanel.add(accountBalance);
@@ -170,11 +170,20 @@ public class ContactsPanel extends JPanel {
                             "Send Transfer", JOptionPane.PLAIN_MESSAGE);
                     if (amount != null && amount.length() > 0) {
                         BigDecimal bigDAmount = BigDecimal.valueOf(Double.parseDouble(amount));
-                        Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()),
-                                activeService.userToAccount((activeService.getUserByName(username))), bigDAmount);
-                        transferService.makeTransfer(transfer);
-                        transferService.doTransfer(transfer);
-                        refreshBalance();
+                        BigDecimal currentBalance = activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser()));
+                        if (currentBalance.compareTo(bigDAmount) < 0) {
+                            JOptionPane.showMessageDialog(this, "Insufficient Balance", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            if (bigDAmount.compareTo(BigDecimal.valueOf(4.99)) <= 0) {
+                                JOptionPane.showMessageDialog(this, "The minimum transfer amount is $5.00", "Transfer Error", JOptionPane.ERROR_MESSAGE);
+                                Transfer transfer = new Transfer(2, 2, activeService.userToAccount(currentUser.getUser()),
+                                        activeService.userToAccount((activeService.getUserByName(username))), bigDAmount);
+                                transferService.makeTransfer(transfer);
+                                transferService.doTransfer(transfer);
+                                refreshBalance();
+                            }
+                        }
+
                     }
                 });
 
@@ -250,7 +259,8 @@ public class ContactsPanel extends JPanel {
             allUsernames.add(user.getUsername());
         }
     }
-    public void refreshBalance(){
+
+    public void refreshBalance() {
         accountBalance.setText("Balance: " + activeService.getAccountBalance(activeService.userToAccount(currentUser.getUser())));
     }
 
